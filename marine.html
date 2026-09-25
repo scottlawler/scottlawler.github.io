@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Solomons Marine Weather</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#x2693;</text></svg>">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0d1117;--card:#161b22;--border:#30363d;--text:#e6edf3;--muted:#8b949e;--blue:#58a6ff;--green:#3fb950;--orange:#e87316;--red:#f85149;--yellow:#d29922}
+body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,sans-serif;font-size:14px;line-height:1.5;min-height:100vh}
+.header{background:var(--card);border-bottom:1px solid var(--border);padding:14px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:10;gap:12px}
+.header h1{font-size:1rem;font-weight:700}
+.header h1 span{color:var(--blue)}
+.updated{font-size:11px;color:var(--muted);margin-top:2px}
+.refresh-btn{background:var(--blue);color:#0d1117;border:none;border-radius:6px;padding:8px 16px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:opacity .15s}
+.refresh-btn:hover{opacity:.85}
+.refresh-btn:disabled{opacity:.5;cursor:not-allowed}
+.spin{display:inline-block;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+main{max-width:1100px;margin:0 auto;padding:16px}
+.back{display:inline-block;font-size:12px;color:var(--muted);text-decoration:none;margin-bottom:16px}
+.back:hover{color:var(--blue)}
+.sec{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);font-weight:600;margin:16px 0 8px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:8px}
+.advisory{border-radius:8px;padding:10px 14px;margin-bottom:8px;color:#fff}
+.advisory.sca{background:#7c3400;border-left:4px solid var(--orange)}
+.advisory.cfa{background:#7f1d1d;border-left:4px solid var(--red)}
+.advisory.other{background:#1c2a3a;border-left:4px solid var(--blue)}
+.advisory strong,.advisory span{color:#fff}
+.advisory strong{display:block;font-size:13px;margin-bottom:2px}
+.advisory span{font-size:12px;opacity:.92}
+.no-adv{color:var(--green);font-size:13px;padding:10px 14px;background:rgba(63,185,80,.08);border:1px solid rgba(63,185,80,.2);border-radius:8px;margin-bottom:8px}
+.cg{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:8px}
+.cc{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px 14px}
+.cl{font-size:10px;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);margin-bottom:4px}
+.cv{font-size:22px;font-weight:700;line-height:1}
+.cs{font-size:11px;color:var(--muted);margin-top:3px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:8px}
+@media(max-width:600px){.g2{grid-template-columns:1fr}}
+.tdl{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin:8px 0 4px}
+.tr{display:flex;align-items:center;gap:8px;padding:4px 2px;border-bottom:1px solid rgba(255,255,255,.04);font-size:12px}
+.tr:last-of-type{border:none}
+.tr.past{opacity:.38}
+.tr.next{background:rgba(63,185,80,.08);border-radius:4px;padding-left:5px;padding-right:5px}
+.tb{font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px;width:30px;text-align:center;flex-shrink:0}
+.tb.h{background:#0c4a6e;color:#7dd3fa}
+.tb.l{background:#14532d;color:#86efac}
+.tt{font-weight:600;flex:1}
+.tr.next .tt,.tr.next .tv{color:var(--green)}
+.tv{font-size:11px;color:var(--muted)}
+.tnote{font-size:10px;color:var(--muted);margin-top:8px}
+.hdr{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--muted);padding-bottom:5px;border-bottom:1px solid var(--border);margin-bottom:2px}
+.hr{display:flex;align-items:center;gap:5px;padding:3px 1px;border-bottom:1px solid rgba(255,255,255,.04);font-size:12px}
+.hr:last-of-type{border:none}
+.hr.now{background:rgba(255,255,255,.04);border-radius:4px;padding-left:4px;padding-right:4px}
+.ht{width:44px;color:var(--muted);font-size:11px;flex-shrink:0}
+.hr.now .ht{color:var(--yellow);font-weight:700}
+.hc{flex:1;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bw{width:60px;height:6px;background:rgba(255,255,255,.08);border-radius:3px;overflow:hidden;flex-shrink:0}
+.bf{height:100%;border-radius:3px;background:var(--blue)}
+.hp{width:28px;text-align:right;font-size:11px;color:var(--blue);flex-shrink:0}
+.hw{width:46px;text-align:right;font-size:11px;color:var(--muted);flex-shrink:0}
+table.mt{width:100%;border-collapse:collapse;font-size:13px}
+table.mt th{font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);text-align:left;padding:0 10px 8px 0;border-bottom:1px solid var(--border);font-weight:600}
+table.mt td{padding:6px 10px 6px 0;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:top}
+table.mt tr:last-child td{border:none}
+.mp{font-weight:600;width:100px}
+.mw{color:var(--orange);width:140px}
+.mv{color:var(--green);font-weight:700;width:60px}
+.mn{color:var(--muted)}
+.mn.rain{color:var(--blue)}
+.g3{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:8px}
+.dc{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:14px 16px}
+.dc.wet{border-color:rgba(88,166,255,.3)}
+.dn{font-size:12px;font-weight:700;margin-bottom:5px}
+.dt{font-size:20px;font-weight:700;line-height:1;margin-bottom:3px}
+.dco{font-size:11px;color:var(--muted);margin-bottom:8px}
+.dr{display:flex;justify-content:space-between;font-size:11px;padding:2px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.dr:last-child{border:none}
+.dr .dl{color:var(--muted)}
+.dr .dv{font-weight:600}
+.rhi{color:var(--blue)}
+.err{color:var(--red);font-size:12px;padding:8px 12px;background:rgba(248,81,73,.08);border:1px solid rgba(248,81,73,.2);border-radius:6px;margin-bottom:8px}
+.loading{color:var(--muted);text-align:center;padding:16px;font-size:13px}
+.footer{text-align:center;padding:28px 16px;border-top:1px solid var(--border);margin-top:20px;color:var(--muted);font-size:12px}
+.footer a{color:var(--blue);text-decoration:none}
+</style>
+</head>
+<body>
+<header class="header">
+  <div>
+    <h1>&#x2693; <span>Solomons</span> Marine Weather</h1>
+    <div class="updated" id="upd">Press Refresh to load data</div>
+  </div>
+  <button class="refresh-btn" id="btn" onclick="go()"><span id="ic">&#x27F3;</span> Refresh</button>
+</header>
+<main>
+  <a href="/" class="back">&#x2190; All Demos</a>
+  <div id="adv"></div>
+  <div class="sec">Current Conditions</div>
+  <div id="cond" class="loading">Press Refresh to load</div>
+  <div class="g2">
+    <div>
+      <div class="sec">&#x1F30A; Tides &middot; NOAA Station 8577330</div>
+      <div class="card" id="tid"><div class="loading">Press Refresh to load</div></div>
+    </div>
+    <div>
+      <div class="sec">&#x1F327; Hourly Rain &amp; Wind</div>
+      <div class="card" id="hou"><div class="loading">Press Refresh to load</div></div>
+    </div>
+  </div>
+  <div class="sec">&#x2693; Marine Forecast &middot; ANZ536 Tidal Potomac / Chesapeake Bay</div>
+  <div class="card" id="mar"><div class="loading">Press Refresh to load</div></div>
+  <div class="sec">&#x1F4C5; 3-Day Forecast</div>
+  <div id="thr"><div class="loading">Press Refresh to load</div></div>
+  <div class="footer">
+    Sources: <a href="https://tidesandcurrents.noaa.gov/stationhome.html?id=8577330" target="_blank" rel="noopener">NOAA Tides #8577330</a>
+    &middot; <a href="https://www.weather.gov/lwx/" target="_blank" rel="noopener">NWS Baltimore/Washington LWX</a>
+    &middot; Data only loads when you press Refresh.
+    &middot; <a href="https://github.com/scottlawler/scottlawler.github.io" target="_blank" rel="noopener">Source</a>
+  </div>
+</main>
+<script>
+var GRID = 'LWX/120,49';
+var ZONE = 'ANZ536';
+var PT = '38.3368,-76.4608';
+var STA = '8577330';
+
+function pad(n){ return String(n).padStart(2,'0'); }
+function dateStr(d){ return '' + d.getFullYear() + pad(d.getMonth()+1) + pad(d.getDate()); }
+
+function h12(tStr){
+  var d = tStr.indexOf('T') >= 0 ? new Date(tStr) : new Date(tStr.replace(' ','T'));
+  var h = d.getHours(), m = d.getMinutes(), ap = h >= 12 ? 'PM' : 'AM';
+  h = h % 12 || 12;
+  return h + ':' + pad(m) + ' ' + ap;
+}
+
+function safej(url){
+  return fetch(url).then(function(r){ return r.ok ? r.json() : null; }).catch(function(){ return null; });
+}
+
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function go(){
+  var btn = document.getElementById('btn');
+  var ic = document.getElementById('ic');
+  btn.disabled = true;
+  ic.className = 'spin';
+
+  var now = new Date();
+  var tod = dateStr(now);
+  var tom = dateStr(new Date(now.getTime() + 86400000));
+
+  var p1 = safej('https://api.weather.gov/alerts/active?point=' + PT);
+  var p2 = safej('https://api.weather.gov/gridpoints/' + GRID + '/forecast/hourly');
+  var p3 = safej('https://api.weather.gov/gridpoints/' + GRID + '/forecast');
+  var p4 = safej('https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?product=predictions&application=web_services&begin_date=' + tod + '&end_date=' + tom + '&datum=MLLW&station=' + STA + '&time_zone=lst_ldt&interval=hilo&units=english&format=json');
+  var p5 = safej('https://api.weather.gov/zones/forecast/' + ZONE + '/forecast');
+
+  Promise.all([p1,p2,p3,p4,p5]).then(function(res){
+    renderAdv(res[0], now);
+    renderCond(res[1], now);
+    renderTides(res[3], now);
+    renderHourly(res[1], now);
+    renderMarine(res[4]);
+    renderThreeDay(res[2]);
+    var ts = now.toLocaleString('en-US',{weekday:'short',month:'short',day:'numeric',hour:'numeric',minute:'2-digit',timeZoneName:'short'});
+    document.getElementById('upd').textContent = 'Updated ' + ts;
+    ic.className = '';
+    btn.disabled = false;
+  });
+}
+
+function renderAdv(data, now){
+  var el = document.getElementById('adv');
+  if(!data || !data.features || data.features.length === 0){
+    el.innerHTML = '<div class="no-adv">&#x2705; No active advisories for Solomons, MD</div>';
+    return;
+  }
+  var html = '';
+  for(var i=0;i<data.features.length;i++){
+    var p = data.features[i].properties;
+    var ev = p.event || '';
+    var cls = ev.toLowerCase().indexOf('small craft') >= 0 ? 'sca' : ev.toLowerCase().indexOf('flood') >= 0 ? 'cfa' : 'other';
+    var ends = p.ends ? new Date(p.ends).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit',timeZoneName:'short'}) : '';
+    var desc = (p.description || '').replace(/\n/g,' ').substring(0,220);
+    html += '<div class="advisory ' + cls + '">';
+    html += '<strong>&#x26A0;&#xFE0F; ' + esc(ev.toUpperCase()) + (ends ? ' \u2014 until ' + esc(ends) : '') + '</strong>';
+    html += '<span>' + esc(desc) + '</span>';
+    html += '</div>';
+  }
+  el.innerHTML = html;
+}
+
+function renderCond(data, now){
+  var el = document.getElementById('cond');
+  if(!data || !data.properties || !data.properties.periods){
+    el.innerHTML = '<div class="err">Could not load conditions</div>'; return;
+  }
+  var periods = data.properties.periods;
+  var p = null;
+  for(var i=0;i<periods.length;i++){
+    if(new Date(periods[i].startTime) <= now && new Date(periods[i].endTime) > now){ p = periods[i]; break; }
+  }
+  if(!p) p = periods[0];
+  var rain = (p.probabilityOfPrecipitation && p.probabilityOfPrecipitation.value) ? p.probabilityOfPrecipitation.value : 0;
+  var hum = (p.relativeHumidity && p.relativeHumidity.value) ? p.relativeHumidity.value : '--';
+  el.innerHTML = '<div class="cg">' +
+    '<div class="cc"><div class="cl">&#x1F321; Temperature</div><div class="cv">' + p.temperature + '&deg;F</div><div class="cs">' + esc(p.shortForecast) + '</div></div>' +
+    '<div class="cc"><div class="cl">&#x1F4A8; Wind</div><div class="cv" style="font-size:17px">' + esc(p.windDirection) + ' ' + esc(p.windSpeed) + '</div><div class="cs">Humidity ' + hum + '%</div></div>' +
+    '<div class="cc"><div class="cl">&#x1F327; Rain Chance</div><div class="cv">' + rain + '%</div><div class="cs">This hour</div></div>' +
+    '</div>';
+}
+
+function renderTides(data, now){
+  var el = document.getElementById('tid');
+  if(!data || !data.predictions){ el.innerHTML = '<div class="err">Tide data unavailable</div>'; return; }
+  var preds = data.predictions;
+  var html = '';
+  var lastDay = '';
+  var nextDone = false;
+  for(var i=0;i<preds.length;i++){
+    var pred = preds[i];
+    var t = new Date(pred.t.replace(' ','T'));
+    var day = t.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'}).toUpperCase();
+    if(day !== lastDay){ html += '<div class="tdl">' + day + '</div>'; lastDay = day; }
+    var past = t < now;
+    var next = !nextDone && !past;
+    if(next) nextDone = true;
+    var rc = past ? 'past' : next ? 'next' : '';
+    var bc = pred.type === 'H' ? 'h' : 'l';
+    var bt = pred.type === 'H' ? 'HIGH' : 'LOW';
+    var arrow = next ? ' &#x25B6;' : '';
+    html += '<div class="tr ' + rc + '">';
+    html += '<span class="tb ' + bc + '">' + bt + '</span>';
+    html += '<span class="tt">' + h12(pred.t) + arrow + '</span>';
+    html += '<span class="tv">' + parseFloat(pred.v).toFixed(2) + ' ft MLLW</span>';
+    html += '</div>';
+  }
+  html += '<div class="tnote">Predicted tides &mdash; actual may differ. Check active advisories above.</div>';
+  el.innerHTML = html;
+}
+
+function renderHourly(data, now){
+  var el = document.getElementById('hou');
+  if(!data || !data.properties || !data.properties.periods){ el.innerHTML = '<div class="err">Hourly data unavailable</div>'; return; }
+  var periods = data.properties.periods;
+  var si = 0;
+  for(var i=0;i<periods.length;i++){
+    if(new Date(periods[i].endTime) > now){ si = i; break; }
+  }
+  var slice = periods.slice(si, si+12);
+  var html = '<div class="hdr"><span style="width:44px"></span><span style="flex:1">Conditions</span><span style="width:60px;text-align:center">Rain</span><span style="width:28px"></span><span style="width:46px;text-align:right">Wind</span></div>';
+  for(var j=0;j<slice.length;j++){
+    var p = slice[j];
+    var rain = (p.probabilityOfPrecipitation && p.probabilityOfPrecipitation.value) ? p.probabilityOfPrecipitation.value : 0;
+    var wind = esc(p.windDirection) + ' ' + esc(p.windSpeed.replace(' mph',''));
+    var now2 = j===0 ? ' now' : '';
+    var tl = j===0 ? h12(p.startTime) + ' &#x25B6;' : h12(p.startTime);
+    html += '<div class="hr' + now2 + '">';
+    html += '<span class="ht">' + tl + '</span>';
+    html += '<span class="hc">' + esc(p.shortForecast) + '</span>';
+    html += '<div class="bw"><div class="bf" style="width:' + rain + '%"></div></div>';
+    html += '<span class="hp">' + rain + '%</span>';
+    html += '<span class="hw">' + wind + '</span>';
+    html += '</div>';
+  }
+  el.innerHTML = html;
+}
+
+function getWaves(s){ var m = s.match(/[Ww]aves? (\d+(?:\s+to\s+\d+)?) ft/); return m ? m[1]+' ft' : '--'; }
+function getWindKt(s){ var m = s.match(/(\d+(?:\s+to\s+\d+)?) kt/); return m ? m[1]+' kt' : '--'; }
+function getWindDir(s){ var m = s.match(/^([A-Z]+(?:NE|NW|SE|SW|N|S|E|W)?(?:NNE|NNW|SSE|SSW|ENE|ESE|WNW|WSW)?) winds/i); return m ? m[1] : ''; }
+function getNotes(s){ var l=s.toLowerCase(); if(l.indexOf('rain likely')>=0||l.indexOf('showers likely')>=0) return 'rain-likely'1; if(l.indexOf('chance of rain')>=0||l.indexOf('chance of showers')>=0) return 'chance-rain'; if(l.indexOf('slight chance')>=0) return 'sl-chance'; return ''; }
+
+function renderMarine(data){
+  var el = document.getElementById('mar');
+  if(!data || !data.properties || !data.properties.periods){ el.innerHTML = '<div class="err">Marine forecast unavailable</div>'; return; }
+  var ps = data.properties.periods.slice(0,8);
+  var html = '<table class="mt"><thead><tr><th>Period</th><th>Wind</th><th>Waves</th><th>Notes</th></tr></thead><tbody>';
+  for(var i=0;i<ps.length;i++){
+    var p = ps[i];
+    var det = p.detailedForecast || '';
+    var waves = getWaves(det);
+    var windKt = getWindKt(det);
+    var windDir = getWindDir(det);
+    var windStr = windDir ? windDir+' '+windKt : windKt;
+    var notesKey = getNotes(det);
+    var notesText = notesKey === 'rain-likely' ? 'Rain likely' : notesKey === 'chance-rain' ? 'Chance rain' : notesKey === 'sl-chance' ? 'Sl. chance rain' : '&mdash;';
+    var noteCls = notesKey === 'rain-likely' ? 'mn rain' : 'mn';
+    html += '<tr><td class="mp">' + esc(p.name) + '</td><td class="mw">' + esc(windStr) + '</td><td class="mv">' + esc(waves) + '</td><td class="' + noteCls + '">' + notesText + '</td></tr>';
+  }
+  html += '</tbody></table>';
+  var upd = data.properties.updated ? new Date(data.properties.updated).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',timeZoneName:'short'}) : '';
+  if(upd) html += '<div style="font-size:10px;color:var(--muted);margin-top:8px">NWS update: ' + upd + '</div>';
+  el.innerHTML = html;
+}
+
+function renderThreeDay(data){
+  var el = document.getElementById('thr');
+  if(!data || !data.properties || !data.properties.periods){ el.innerHTML = '<div class="err">Forecast unavailable</div>'; return; }
+  var all = data.properties.periods;
+  var days = [], nights = [];
+  for(var i=0;i<all.length;i++){ if(all[i].isDaytime) days.push(all[i]); else nights.push(all[i]); }
+  days = days.slice(0,3);
+  var html = '<div class="g3">';
+  for(var d=0;d<days.length;d++){
+    var day = days[d];
+    var night = null;
+    for(var n=0;n<nights.length;n++){ if(nights[n].name.replace(' Night','') === day.name){ night=nights[n]; break; } }
+    var lo = night ? night.temperature + '&deg;' : '--';
+    var rain = (day.probabilityOfPrecipitation && day.probabilityOfPrecipitation.value) ? day.probabilityOfPrecipitation.value : 0;
+    var wet = rain >= 60 ? ' wet' : '';
+    var cond = day.shortForecast.toLowerCase();
+    var em = cond.indexOf('thunder')>=0 ? '&#x26C8;' : cond.indexOf('rain')>=0||cond.indexOf('shower')>=0 ? '&#x1F327;' : cond.indexOf('cloud')>=0||cond.indexOf('overcast')>=0 ? '&#x26C5;' : '&#x1F324;';
+    html += '<div class="dc' + wet + '">';
+    html += '<div class="dn">' + em + ' ' + esc(day.name) + '</div>';
+    html += '<div class="dt">' + day.temperature + '&deg;F</div>';
+    html += '<div class="dco">' + esc(day.shortForecast) + (night ? ' &middot; Low ' + lo : '') + '</div>';
+    html += '<div class="dr"><span class="dl">Wind</span><span class="dv">' + esc(day.windDirection) + ' ' + esc(day.windSpeed) + '</span></div>';
+    html += '<div class="dr"><span class="dl">Rain</span><span class="dv' + (rain>=60?' rhi':'') + '">' + rain + '%</span></div>';
+    html += '</div>';
+  }
+  html += '</div>';
+  el.innerHTML = html;
+}
+</script>
+</body>
+</html>

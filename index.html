@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scott Lawler · Tech Demos</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,sans-serif;background:#0d1117;color:#e6edf3;min-height:100vh}
+.hero{padding:80px 24px 48px;text-align:center;border-bottom:1px solid #21262d}
+.hero h1{font-size:clamp(2rem,5vw,3.5rem);font-weight:700;letter-spacing:-1px;margin-bottom:12px}
+.hero h1 span{background:linear-gradient(135deg,#58a6ff,#3fb950);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero p{font-size:1.1rem;color:#8b949e;max-width:520px;margin:0 auto 28px}
+.badge{display:inline-flex;align-items:center;gap:6px;background:#161b22;border:1px solid #30363d;border-radius:20px;padding:6px 14px;font-size:13px;color:#58a6ff}
+.demos{max-width:960px;margin:48px auto;padding:0 24px}
+.demos h2{font-size:1rem;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:#8b949e;margin-bottom:20px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.card{background:#161b22;border:1px solid #30363d;border-radius:10px;padding:24px;transition:border-color .2s,transform .2s;text-decoration:none;color:inherit;display:block}
+.card:hover{border-color:#58a6ff;transform:translateY(-2px)}
+.card .tag{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:#3fb950;margin-bottom:10px}
+.card h3{font-size:1rem;font-weight:600;margin-bottom:6px}
+.card p{font-size:13px;color:#8b949e;line-height:1.5}
+.coming-soon{opacity:.45;pointer-events:none}
+.footer{text-align:center;padding:40px 24px;border-top:1px solid #21262d;color:#8b949e;font-size:13px}
+.footer a{color:#58a6ff;text-decoration:none}
+</style>
+</head>
+<body>
+<div class="hero">
+  <h1>Scott Lawler &mdash; <span>Tech Demos</span></h1>
+  <p>Live demonstrations of AI automation, trading systems, and software experiments.</p>
+  <span class="badge">&#9679; Live</span>
+</div>
+<div class="demos">
+  <h2>Demonstrations</h2>
+  <div class="grid">
+    <a href="#" class="card coming-soon">
+      <div class="tag">AI</div>
+      <h3>Marine Weather Dashboard</h3>
+      <p>Real-time marine forecast powered by NOAA, NWS, and AI-driven updates.</p>
+    </a>
+    <a href="#" class="card coming-soon">
+      <div class="tag">Trading</div>
+      <h3>Arbitrage Monitor</h3>
+      <p>Live cross-exchange price spread detection and signal visualization.</p>
+    </a>
+    <a href="#" class="card coming-soon">
+      <div class="tag">AI</div>
+      <h3>Agent Automation</h3>
+      <p>Demos of scheduled AI tasks, briefings, and autonomous workflows.</p>
+    </a>
+  </div>
+</div>
+<div class="footer">Built by <a href="https://github.com/scottlawler">scottlawler</a> &middot; Powered by GitHub Pages</div>
+</body>
+</html>

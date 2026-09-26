@@ -273,7 +273,7 @@ function renderHourly(data, now){
 function getWaves(s){ var m = s.match(/[Ww]aves? (\d+(?:\s+to\s+\d+)?) ft/); return m ? m[1]+' ft' : '--'; }
 function getWindKt(s){ var m = s.match(/(\d+(?:\s+to\s+\d+)?) kt/); return m ? m[1]+' kt' : '--'; }
 function getWindDir(s){ var m = s.match(/^([A-Z]+(?:NE|NW|SE|SW|N|S|E|W)?(?:NNE|NNW|SSE|SSW|ENE|ESE|WNW|WSW)?) winds/i); return m ? m[1] : ''; }
-function getNotes(s){ var l=s.toLowerCase(); if(l.indexOf('rain likely')>=0||l.indexOf('showers likely')>=0) return 'rain-likely'1; if(l.indexOf('chance of rain')>=0||l.indexOf('chance of showers')>=0) return 'chance-rain'; if(l.indexOf('slight chance')>=0) return 'sl-chance'; return ''; }
+function getNotes(s){ var l=s.toLowerCase(); if(l.indexOf('rain likely')>=0||l.indexOf('showers likely')>=0) return 'rain-likely'; if(l.indexOf('chance of rain')>=0||l.indexOf('chance of showers')>=0) return 'chance-rain'; if(l.indexOf('slight chance')>=0) return 'sl-chance'; return ''; }
 
 function renderMarine(data){
   var el = document.getElementById('mar');

@@ -7,132 +7,180 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#0a0e1a;--surface:#111827;--card:#1a2235;--border:#2a3652;
-  --text:#e8edf5;--muted:#6b7a99;--blue:#3b82f6;--blue-dark:#1d4ed8;
-  --green:#22c55e;--yellow:#f59e0b;--red:#ef4444;--accent:#60a5fa;
-  --tu:#00a3e0;
+  --bg:#0a0e1a;--card:#1a2235;--border:#2a3652;--text:#e8edf5;--muted:#6b7a99;
+  --blue:#3b82f6;--blue-dark:#1d4ed8;--green:#22c55e;--yellow:#f59e0b;
+  --red:#ef4444;--accent:#60a5fa;--china:#ff3b3b;--tu:#00a3e0;
 }
 body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,sans-serif;min-height:100vh;font-size:14px}
-
-/* HEADER */
 .header{background:linear-gradient(135deg,#0f172a,#1e3a5f);border-bottom:1px solid var(--border);padding:0 32px;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
 .logo{display:flex;align-items:center;gap:12px}
 .logo-icon{width:36px;height:36px;background:var(--blue);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px}
-.logo-name{font-size:1.15rem;font-weight:700;letter-spacing:-.3px}
-.logo-name span{color:var(--accent)}
-.logo-tag{font-size:11px;color:var(--muted);margin-top:1px}
-.header-badge{background:rgba(59,130,246,.15);border:1px solid rgba(59,130,246,.3);color:var(--accent);font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;letter-spacing:.5px}
-
-/* HERO */
-.hero{background:linear-gradient(180deg,rgba(30,58,95,.12),transparent);padding:40px 32px 0;text-align:center}
-.hero h1{font-size:clamp(1.6rem,3vw,2.2rem);font-weight:700;letter-spacing:-.5px;margin-bottom:8px}
+.logo-name{font-size:1.1rem;font-weight:700}.logo-name span{color:var(--accent)}
+.logo-tag{font-size:11px;color:var(--muted)}
+.header-badge{background:rgba(59,130,246,.15);border:1px solid rgba(59,130,246,.3);color:var(--accent);font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px}
+.hero{background:linear-gradient(180deg,rgba(30,58,95,.12),transparent);padding:32px 32px 0;text-align:center}
+.hero h1{font-size:clamp(1.5rem,3vw,2rem);font-weight:700;margin-bottom:6px}
 .hero h1 span{background:linear-gradient(135deg,#60a5fa,#3b82f6);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.hero p{color:var(--muted);font-size:15px;max-width:540px;margin:0 auto 32px;line-height:1.6}
-
-/* STEP FLOW */
-.steps{display:flex;justify-content:center;gap:0;margin-bottom:32px;max-width:640px;margin-left:auto;margin-right:auto}
-.step{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted)}
-.step.active .step-num{background:var(--blue);color:#fff;border-color:var(--blue)}
-.step.active .step-label{color:var(--text);font-weight:600}
-.step.done .step-num{background:var(--green);border-color:var(--green);color:#fff}
-.step-num{width:26px;height:26px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;flex-shrink:0;transition:all .3s}
-.step-label{white-space:nowrap}
-.step-line{flex:1;height:1px;background:var(--border);margin:0 8px;min-width:32px}
-
-/* MAIN LAYOUT */
-.main{max-width:1100px;margin:0 auto;padding:0 32px 48px;display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start}
+.hero p{color:var(--muted);font-size:14px;max-width:520px;margin:0 auto 24px;line-height:1.6}
+.steps{display:flex;justify-content:center;align-items:center;gap:0;margin-bottom:28px;flex-wrap:wrap;max-width:800px;margin-left:auto;margin-right:auto}
+.step{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted)}
+.step.active .sn{background:var(--blue);color:#fff;border-color:var(--blue)}
+.step.active .sl{color:var(--text);font-weight:600}
+.step.done .sn{background:var(--green);border-color:var(--green);color:#fff}
+.sn{width:24px;height:24px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:10px;flex-shrink:0;transition:all .3s}
+.sl{white-space:nowrap}
+.sline{flex:1;height:1px;background:var(--border);margin:0 4px;min-width:16px}
+.main{max-width:1140px;margin:0 auto;padding:0 24px 48px;display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
 @media(max-width:800px){.main{grid-template-columns:1fr}}
+.sc{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.sh{background:linear-gradient(135deg,#1e3a5f,#162d4a);padding:14px 18px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border)}
+.si{width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.si.p{background:rgba(96,165,250,.15);border:1px solid rgba(96,165,250,.3)}
+.si.c{background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.25)}
+.st{font-size:14px;font-weight:700}.ss{font-size:11px;color:var(--muted);margin-top:1px}
+.sb{padding:18px}
+.fr{display:grid;gap:10px;margin-bottom:10px}
+.fr.c3{grid-template-columns:1fr 1fr 1fr}
+.fr.c2{grid-template-columns:1fr 1fr}
+.fr.c1{grid-template-columns:1fr}
+.fld{display:flex;flex-direction:column;gap:3px}
+.fld label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.6px;color:var(--muted)}
+.fld input{background:#0d1525;border:1px solid var(--border);border-radius:6px;padding:8px 11px;color:var(--text);font-size:13px;font-family:inherit;outline:none;transition:border-color .15s}
+.fld input:focus{border-color:var(--blue)}
+.fld input::placeholder{color:#3a4a6a}
+.fhint{font-size:10px;color:#3a4a6a;margin-top:1px}
+.sw{grid-column:1/-1;text-align:center;padding:6px 0}
+.btn-p{background:linear-gradient(135deg,var(--blue-dark),var(--blue));color:#fff;border:none;border-radius:8px;padding:13px 40px;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 4px 18px rgba(59,130,246,.3);transition:opacity .15s}
+.btn-p:hover{opacity:.88}.btn-p:disabled{opacity:.5;cursor:not-allowed}
+.btn-s{background:transparent;color:var(--muted);border:1px solid var(--border);border-radius:8px;padding:13px 22px;font-size:13px;cursor:pointer;margin-left:10px;transition:border-color .15s}
+.btn-s:hover{border-color:var(--accent);color:var(--accent)}
+.btn-go{background:linear-gradient(135deg,#166534,var(--green));color:#fff;border:none;border-radius:8px;padding:11px 28px;font-size:13px;font-weight:700;cursor:pointer;transition:opacity .15s}
+.btn-go:hover{opacity:.88}
 
-/* CARDS */
-.section-card{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden}
-.section-head{background:linear-gradient(135deg,#1e3a5f,#162d4a);padding:16px 20px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border)}
-.section-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
-.section-icon.person{background:rgba(96,165,250,.15);border:1px solid rgba(96,165,250,.3)}
-.section-icon.company{background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.25)}
-.section-title{font-size:15px;font-weight:700}
-.section-sub{font-size:11px;color:var(--muted);margin-top:2px}
-.section-body{padding:20px}
-
-/* FORM */
-.field-row{display:grid;gap:12px;margin-bottom:12px}
-.field-row.cols-3{grid-template-columns:1fr 1fr 1fr}
-.field-row.cols-2{grid-template-columns:1fr 1fr}
-.field-row.cols-1{grid-template-columns:1fr}
-.field{display:flex;flex-direction:column;gap:4px}
-.field label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.6px;color:var(--muted)}
-.field input{background:#0d1525;border:1px solid var(--border);border-radius:6px;padding:9px 12px;color:var(--text);font-size:13px;font-family:inherit;outline:none;transition:border-color .15s}
-.field input:focus{border-color:var(--blue)}
-.field input::placeholder{color:#3a4a6a}
-.field-hint{font-size:10px;color:#3a4a6a;margin-top:2px}
-
-/* SUBMIT */
-.submit-wrap{grid-column:1/-1;text-align:center;padding:8px 0}
-.btn-verify{background:linear-gradient(135deg,var(--blue-dark),var(--blue));color:#fff;border:none;border-radius:8px;padding:14px 48px;font-size:15px;font-weight:700;cursor:pointer;letter-spacing:.3px;transition:opacity .15s;box-shadow:0 4px 20px rgba(59,130,246,.3)}
-.btn-verify:hover{opacity:.88}
-.btn-verify:disabled{opacity:.5;cursor:not-allowed}
-.btn-clear{background:transparent;color:var(--muted);border:1px solid var(--border);border-radius:8px;padding:14px 24px;font-size:14px;cursor:pointer;margin-left:12px;transition:border-color .15s}
-.btn-clear:hover{border-color:var(--accent);color:var(--accent)}
-
-/* STEP PROGRESS OVERLAY */
-.progress-wrap{grid-column:1/-1;display:none}
-.progress-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:28px 24px}
-.progress-title{font-size:15px;font-weight:700;margin-bottom:20px;color:var(--accent)}
-.progress-steps{display:flex;flex-direction:column;gap:10px}
-.prog-row{display:flex;align-items:center;gap:14px;padding:10px 14px;border-radius:8px;background:#0d1525;border:1px solid var(--border);transition:all .3s}
-.prog-row.running{border-color:var(--blue);background:rgba(59,130,246,.06)}
-.prog-row.done{border-color:rgba(34,197,94,.3);background:rgba(34,197,94,.04)}
-.prog-row.waiting{opacity:.4}
-.prog-icon{font-size:18px;width:28px;text-align:center;flex-shrink:0}
-.prog-label{flex:1;font-size:13px;font-weight:600}
-.prog-sub{font-size:11px;color:var(--muted);margin-top:1px}
-.prog-status{font-size:12px;font-weight:700;flex-shrink:0}
-.prog-status.running{color:var(--blue)}
-.prog-status.done{color:var(--green)}
-.prog-status.waiting{color:var(--muted)}
+/* PROGRESS */
+.pw{grid-column:1/-1;display:none}
+.pc{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px}
+.pt{font-size:14px;font-weight:700;margin-bottom:18px;color:var(--accent)}
+.pr{display:flex;align-items:center;gap:12px;padding:9px 12px;border-radius:7px;background:#0d1525;border:1px solid var(--border);margin-bottom:8px;transition:all .3s}
+.pr.running{border-color:var(--blue);background:rgba(59,130,246,.06)}
+.pr.done{border-color:rgba(34,197,94,.3);background:rgba(34,197,94,.04)}
+.pr.wait{opacity:.35}
+.picon{font-size:17px;width:26px;text-align:center;flex-shrink:0}
+.plabel{flex:1;font-size:13px;font-weight:600}
+.psub{font-size:11px;color:var(--muted)}
+.pst{font-size:12px;font-weight:700;flex-shrink:0}
+.pst.running{color:var(--blue)}.pst.done{color:var(--green)}.pst.wait{color:var(--muted)}
 .spin{display:inline-block;animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* RESULTS */
-.results-wrap{grid-column:1/-1;display:none}
-.results-card{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:16px}
-.results-head{background:linear-gradient(135deg,#162d4a,#0f1f35);padding:16px 20px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border)}
-.results-head h3{font-size:14px;font-weight:700;color:var(--accent);display:flex;align-items:center;gap:8px}
-.results-ts{font-size:11px;color:var(--muted)}
-.results-body{padding:20px}
-.tu-banner{background:rgba(0,163,224,.08);border:1px solid rgba(0,163,224,.25);border-radius:8px;padding:10px 16px;margin-bottom:16px;display:flex;align-items:center;gap:10px;font-size:12px;color:#7dd3fc}
-.tu-banner strong{color:var(--tu)}
+/* DECONFLICTION */
+.dw{grid-column:1/-1;display:none}
+.dcard{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.dhead{padding:14px 18px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border)}
+.dhead.warn{background:linear-gradient(135deg,#3d1f00,#2d1800);border-bottom-color:rgba(245,158,11,.3)}
+.dhead.ok{background:linear-gradient(135deg,#062311,#041a0d);border-bottom-color:rgba(34,197,94,.3)}
+.dpct{font-size:26px;font-weight:800;margin-left:auto;flex-shrink:0}
+.dpct.warn{color:var(--yellow)}.dpct.ok{color:var(--green)}
+.dbody{padding:18px}
+.dtable{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:14px}
+.dtable th{background:#0d1525;color:var(--muted);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;padding:7px 11px;text-align:left;border-bottom:1px solid var(--border)}
+.dtable td{padding:8px 11px;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:top}
+.dtable tr.mm td{background:rgba(239,68,68,.05)}
+.dtable tr.mm td:first-child{border-left:3px solid var(--red)}
+.dtable tr.pm td{background:rgba(245,158,11,.04)}
+.dtable tr.pm td:first-child{border-left:3px solid var(--yellow)}
+.dtable tr.ok td:first-child{border-left:3px solid transparent}
+.ev{color:var(--text)}.tv{color:var(--accent)}
+.tv.mm{color:var(--red)}.tv.pm{color:var(--yellow)}
+.dact{display:flex;gap:10px;justify-content:center;padding-top:8px}
+.sec-div{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;padding:8px 0 3px;border-top:1px solid var(--border);margin-top:6px}
+.sec-div.ind{color:var(--accent)}.sec-div.co{color:var(--green)}
 
-/* SCORE TILES */
-.score-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:16px}
-.score-tile{background:#0d1525;border:1px solid var(--border);border-radius:8px;padding:14px 16px}
-.score-label{font-size:10px;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);margin-bottom:6px}
-.score-val{font-size:28px;font-weight:800;line-height:1}
-.score-sub{font-size:11px;margin-top:4px}
-.pass{color:var(--green)}.review{color:var(--yellow)}.fail{color:var(--red)}.neutral{color:var(--muted)}
-
-/* MATCH TABLE */
-.match-section{margin-bottom:16px}
-.match-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px}
-.match-label.ind{color:var(--accent)}
-.match-label.co{color:var(--green)}
+/* CREDIT REVIEW */
+.crw{grid-column:1/-1;display:none}
+.crtabs{display:flex;gap:4px;margin-bottom:16px}
+.crtab{padding:8px 18px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;border:1px solid var(--border);color:var(--muted);transition:all .2s}
+.crtab.active{background:rgba(59,130,246,.15);border-color:var(--blue);color:var(--accent)}
+.crpanel{display:none}.crpanel.active{display:block}
+.crsec{background:var(--card);border:1px solid var(--border);border-radius:10px;margin-bottom:12px;overflow:hidden}
+.crsh{background:linear-gradient(135deg,#1e3a5f,#162d4a);padding:11px 16px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;border-bottom:1px solid var(--border)}
+.crsh.flag{background:linear-gradient(135deg,#3d1000,#2a0a00);border-bottom-color:rgba(239,68,68,.3);color:var(--red)}
+.crsh.china{background:linear-gradient(135deg,#3d0000,#2a0000);border-bottom-color:rgba(255,59,59,.4);color:#ff6b6b}
+.crb{padding:14px 16px}
 table{width:100%;border-collapse:collapse;font-size:13px}
-th{background:#0d1525;color:var(--muted);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;padding:8px 12px;text-align:left;border-bottom:1px solid var(--border)}
-td{padding:9px 12px;border-bottom:1px solid rgba(255,255,255,.04)}
-tr:last-child td{border:none}
+th{background:#0d1525;color:var(--muted);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;padding:7px 11px;text-align:left;border-bottom:1px solid var(--border)}
+td{padding:8px 11px;border-bottom:1px solid rgba(255,255,255,.04)}
 tr:hover td{background:#0f1d30}
-.badge{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;text-transform:uppercase;letter-spacing:.4px}
+tr:last-child td{border:none}
+.badge{display:inline-block;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;text-transform:uppercase;letter-spacing:.4px}
 .badge.pass{background:rgba(34,197,94,.12);color:var(--green);border:1px solid rgba(34,197,94,.25)}
-.badge.partial{background:rgba(245,158,11,.12);color:var(--yellow);border:1px solid rgba(245,158,11,.25)}
+.badge.warn{background:rgba(245,158,11,.12);color:var(--yellow);border:1px solid rgba(245,158,11,.25)}
 .badge.fail{background:rgba(239,68,68,.1);color:var(--red);border:1px solid rgba(239,68,68,.25)}
+.badge.china{background:rgba(255,59,59,.15);color:#ff6b6b;border:1px solid rgba(255,59,59,.4)}
 .badge.skip{background:rgba(107,122,153,.1);color:var(--muted);border:1px solid var(--border)}
-.conf-bar{height:5px;background:#1a2235;border-radius:3px;width:100px;display:inline-block;vertical-align:middle;margin-left:6px;overflow:hidden}
-.conf-fill{height:100%;border-radius:3px}
+.flag-row td{background:rgba(239,68,68,.04)}
+.china-row td{background:rgba(255,0,0,.07)}
+.china-row td:first-child{border-left:3px solid #ff3b3b}
+.china-icon{color:#ff6b6b;font-weight:700}
+.cn-alert{background:rgba(255,0,0,.1);border:1px solid rgba(255,59,59,.4);border-radius:8px;padding:10px 14px;margin-bottom:10px;font-size:12px;color:#ff8080;display:flex;align-items:center;gap:8px}
 
-.txn{font-size:11px;color:var(--muted);border-top:1px solid var(--border);padding-top:12px;margin-top:4px}
-.txn span{font-family:monospace;color:var(--accent)}
+/* SPLIT SCREEN RISK PROFILE */
+.rpw{grid-column:1/-1;display:none}
+.rptabs{display:flex;gap:4px;margin-bottom:16px}
+.rptab{padding:8px 18px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;border:1px solid var(--border);color:var(--muted);transition:all .2s}
+.rptab.active{background:rgba(59,130,246,.15);border-color:var(--blue);color:var(--accent)}
+.rppanel{display:none}.rppanel.active{display:block}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:700px){.split{grid-template-columns:1fr}}
+.sp-left,.sp-right{background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.sp-head{padding:11px 16px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;border-bottom:1px solid var(--border)}
+.sp-head.left{background:linear-gradient(135deg,#1e3a5f,#162d4a);color:var(--accent)}
+.sp-head.right{background:linear-gradient(135deg,#3d1000,#2a0a00);border-bottom-color:rgba(239,68,68,.3);color:#ff8080}
+.sp-body{padding:14px 16px}
+.kv{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:13px;gap:8px}
+.kv:last-child{border:none}
+.kv-k{color:var(--muted);font-size:12px;flex-shrink:0}
+.kv-v{color:var(--text);text-align:right;font-size:13px}
+.risk-item{padding:8px 10px;border-radius:6px;margin-bottom:6px;font-size:12px;display:flex;align-items:flex-start;gap:8px;border:1px solid rgba(239,68,68,.2);background:rgba(239,68,68,.05)}
+.risk-item.china{border-color:rgba(255,59,59,.4);background:rgba(255,0,0,.08)}
+.risk-item.med{border-color:rgba(245,158,11,.25);background:rgba(245,158,11,.04)}
+.risk-sev{font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px;flex-shrink:0;text-transform:uppercase}
+.risk-sev.high{background:rgba(239,68,68,.2);color:var(--red)}
+.risk-sev.china{background:rgba(255,59,59,.3);color:#ff6b6b}
+.risk-sev.med{background:rgba(245,158,11,.2);color:var(--yellow)}
+.risk-sev.low{background:rgba(107,122,153,.15);color:var(--muted)}
+.risk-txt{flex:1;line-height:1.4;color:#cdd5e0}
+.risk-score{text-align:center;padding:12px;margin-bottom:10px;border-radius:8px;border:1px solid var(--border)}
+.rs-val{font-size:36px;font-weight:800}
+.rs-lbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.rs-sub{font-size:12px;margin-top:4px}
 
-.footer{text-align:center;padding:24px;border-top:1px solid var(--border);color:var(--muted);font-size:12px}
+/* AUDIT LOGS */
+.alw{grid-column:1/-1;display:none}
+.altabs{display:flex;gap:4px;margin-bottom:16px}
+.altab{padding:8px 18px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;border:1px solid var(--border);color:var(--muted);transition:all .2s}
+.altab.active{background:rgba(59,130,246,.15);border-color:var(--blue);color:var(--accent)}
+.alpanel{display:none}.alpanel.active{display:block}
+.logbox{background:#040810;border:1px solid var(--border);border-radius:8px;padding:14px;font-family:'Courier New',monospace;font-size:12px;line-height:1.7;max-height:420px;overflow-y:auto;color:#8ba0c0}
+.logbox::-webkit-scrollbar{width:4px}
+.logbox::-webkit-scrollbar-thumb{background:#333}
+.log-ts{color:#4a6a8a}
+.log-key{color:#60a5fa}
+.log-val{color:#a8d5a2}
+.log-warn{color:var(--yellow)}
+.log-flag{color:var(--red)}
+.log-china{color:#ff8080}
+.log-ok{color:var(--green)}
+.log-sep{color:#2a3652;user-select:none}
+.log-export{margin-top:8px;display:flex;gap:8px;justify-content:flex-end}
+.btn-exp{background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:6px 14px;font-size:12px;cursor:pointer;transition:all .2s}
+.btn-exp:hover{border-color:var(--accent);color:var(--accent)}
+
+.full-col{grid-column:1/-1}
+.next-wrap{grid-column:1/-1;text-align:center;padding:6px 0}
+.footer{text-align:center;padding:20px;border-top:1px solid var(--border);color:var(--muted);font-size:12px}
 .footer a{color:var(--accent);text-decoration:none}
+.tu-note{font-size:10px;background:rgba(0,163,224,.07);border:1px solid rgba(0,163,224,.2);border-radius:5px;padding:4px 10px;color:#7dd3fc;display:inline-block;margin-left:8px}
 </style>
 </head>
 <body>
@@ -140,320 +188,623 @@ tr:hover td{background:#0f1d30}
 <div class="header">
   <div class="logo">
     <div class="logo-icon">🔗</div>
-    <div>
-      <div class="logo-name">Trans<span>Nexus</span></div>
-      <div class="logo-tag">Identity Verification Platform</div>
-    </div>
+    <div><div class="logo-name">Trans<span>Nexus</span></div><div class="logo-tag">Identity Verification Platform</div></div>
   </div>
   <div class="header-badge">DEMO MODE</div>
 </div>
 
 <div class="hero">
   <h1>Identity <span>Verification</span> Demo</h1>
-  <p>Enter individual and company information to run a simulated identity verification powered by TransUnion data matching.</p>
+  <p>Multi-step identity verification with TransUnion data matching, FOCI screening, and foreign influence risk analysis.</p>
   <div class="steps" id="stepFlow">
-    <div class="step active" id="s1"><div class="step-num">1</div><div class="step-label">Enter Data</div></div>
-    <div class="step-line"></div>
-    <div class="step" id="s2"><div class="step-num">2</div><div class="step-label">TransUnion Query</div></div>
-    <div class="step-line"></div>
-    <div class="step" id="s3"><div class="step-num">3</div><div class="step-label">Results</div></div>
+    <div class="step active" id="s1"><div class="sn">1</div><div class="sl">Enter Data</div></div>
+    <div class="sline"></div>
+    <div class="step" id="s2"><div class="sn">2</div><div class="sl">TU Query</div></div>
+    <div class="sline"></div>
+    <div class="step" id="s3"><div class="sn">3</div><div class="sl">Deconfliction</div></div>
+    <div class="sline"></div>
+    <div class="step" id="s4"><div class="sn">4</div><div class="sl">Credit Review</div></div>
+    <div class="sline"></div>
+    <div class="step" id="s5"><div class="sn">5</div><div class="sl">Risk Profile</div></div>
+    <div class="sline"></div>
+    <div class="step" id="s6"><div class="sn">6</div><div class="sl">Audit Log</div></div>
   </div>
 </div>
 
-<form id="vform" onsubmit="runVerify(event)">
+<form id="vform" onsubmit="startVerify(event)">
 <div class="main" id="mainGrid">
 
-  <!-- INDIVIDUAL -->
-  <div class="section-card">
-    <div class="section-head">
-      <div class="section-icon person">👤</div>
-      <div><div class="section-title">Individual Identity</div><div class="section-sub">Personal identifying information</div></div>
-    </div>
-    <div class="section-body">
-      <div class="field-row cols-3">
-        <div class="field"><label>First Name</label><input type="text" id="fname" placeholder="John" autocomplete="off"></div>
-        <div class="field"><label>Middle Name</label><input type="text" id="mname" placeholder="A." autocomplete="off"></div>
-        <div class="field"><label>Last Name</label><input type="text" id="lname" placeholder="Smith" autocomplete="off"></div>
-      </div>
-      <div class="field-row cols-2">
-        <div class="field"><label>Date of Birth</label><input type="date" id="dob" autocomplete="off"></div>
-        <div class="field"><label>SSN</label><input type="text" id="ssn" placeholder="XXX-XX-XXXX" maxlength="11" autocomplete="off" oninput="fmtSSN(this)"><div class="field-hint">Format: 123-45-6789</div></div>
-      </div>
-      <div class="field-row cols-1">
-        <div class="field"><label>Street Address</label><input type="text" id="addr" placeholder="123 Main St" autocomplete="off"></div>
-      </div>
-      <div class="field-row cols-3">
-        <div class="field"><label>City</label><input type="text" id="city" placeholder="Annapolis" autocomplete="off"></div>
-        <div class="field"><label>State</label><input type="text" id="state" placeholder="MD" maxlength="2" autocomplete="off" style="text-transform:uppercase"></div>
-        <div class="field"><label>ZIP</label><input type="text" id="zip" placeholder="21401" maxlength="10" autocomplete="off"></div>
-      </div>
-      <div class="field-row cols-2">
-        <div class="field"><label>Phone</label><input type="tel" id="phone" placeholder="(555) 867-5309" autocomplete="off" oninput="fmtPhone(this)"></div>
-        <div class="field"><label>Email</label><input type="email" id="email" placeholder="john.smith@email.com" autocomplete="off"></div>
-      </div>
+  <!-- STEP 1: FORM -->
+  <div class="sc">
+    <div class="sh"><div class="si p">👤</div><div><div class="st">Individual Identity</div><div class="ss">Personal identifying information</div></div></div>
+    <div class="sb">
+      <div class="fr c3"><div class="fld"><label>First Name</label><input type="text" id="fname" placeholder="John" autocomplete="off"></div><div class="fld"><label>Middle Name</label><input type="text" id="mname" placeholder="A." autocomplete="off"></div><div class="fld"><label>Last Name</label><input type="text" id="lname" placeholder="Smith" autocomplete="off"></div></div>
+      <div class="fr c2"><div class="fld"><label>Date of Birth</label><input type="date" id="dob" autocomplete="off"></div><div class="fld"><label>SSN</label><input type="text" id="ssn" placeholder="XXX-XX-XXXX" maxlength="11" autocomplete="off" oninput="fmtSSN(this)"><div class="fhint">Format: 123-45-6789</div></div></div>
+      <div class="fr c1"><div class="fld"><label>Street Address</label><input type="text" id="addr" placeholder="123 Main St" autocomplete="off"></div></div>
+      <div class="fr c3"><div class="fld"><label>City</label><input type="text" id="city" placeholder="Annapolis" autocomplete="off"></div><div class="fld"><label>State</label><input type="text" id="state" placeholder="MD" maxlength="2" autocomplete="off" style="text-transform:uppercase"></div><div class="fld"><label>ZIP</label><input type="text" id="zip" placeholder="21401" maxlength="10" autocomplete="off"></div></div>
+      <div class="fr c2"><div class="fld"><label>Phone</label><input type="tel" id="phone" placeholder="(555) 867-5309" autocomplete="off" oninput="fmtPhone(this)"></div><div class="fld"><label>Email</label><input type="email" id="email" placeholder="john.smith@email.com" autocomplete="off"></div></div>
     </div>
   </div>
 
-  <!-- COMPANY -->
-  <div class="section-card">
-    <div class="section-head">
-      <div class="section-icon company">🏢</div>
-      <div><div class="section-title">Company Identity</div><div class="section-sub">Business identifying information</div></div>
-    </div>
-    <div class="section-body">
-      <div class="field-row cols-1">
-        <div class="field"><label>Company Name</label><input type="text" id="cname" placeholder="Acme Corporation LLC" autocomplete="off"></div>
-      </div>
-      <div class="field-row cols-1">
-        <div class="field"><label>Business Address</label><input type="text" id="caddr" placeholder="500 Corporate Blvd, Suite 200" autocomplete="off"></div>
-      </div>
-      <div class="field-row cols-3">
-        <div class="field"><label>City</label><input type="text" id="ccity" placeholder="Annapolis" autocomplete="off"></div>
-        <div class="field"><label>State</label><input type="text" id="cstate" placeholder="MD" maxlength="2" autocomplete="off" style="text-transform:uppercase"></div>
-        <div class="field"><label>ZIP</label><input type="text" id="czip" placeholder="21401" maxlength="10" autocomplete="off"></div>
-      </div>
-      <div class="field-row cols-2">
-        <div class="field"><label>Date Founded</label><input type="date" id="cfounded" autocomplete="off"></div>
-        <div class="field"><label>EIN</label><input type="text" id="ein" placeholder="XX-XXXXXXX" maxlength="10" autocomplete="off" oninput="fmtEIN(this)"><div class="field-hint">Format: 12-3456789</div></div>
-      </div>
-      <div class="field-row cols-1">
-        <div class="field"><label>DUNS Number</label><input type="text" id="duns" placeholder="XX-XXX-XXXX" maxlength="11" autocomplete="off" oninput="fmtDUNS(this)"><div class="field-hint">9-digit D&amp;B identifier</div></div>
-      </div>
+  <div class="sc">
+    <div class="sh"><div class="si c">🏢</div><div><div class="st">Company Identity</div><div class="ss">Business identifying information</div></div></div>
+    <div class="sb">
+      <div class="fr c1"><div class="fld"><label>Company Name</label><input type="text" id="cname" placeholder="Acme Corporation LLC" autocomplete="off"></div></div>
+      <div class="fr c1"><div class="fld"><label>Business Address</label><input type="text" id="caddr" placeholder="500 Corporate Blvd, Suite 200" autocomplete="off"></div></div>
+      <div class="fr c3"><div class="fld"><label>City</label><input type="text" id="ccity" placeholder="Annapolis" autocomplete="off"></div><div class="fld"><label>State</label><input type="text" id="cstate" placeholder="MD" maxlength="2" autocomplete="off" style="text-transform:uppercase"></div><div class="fld"><label>ZIP</label><input type="text" id="czip" placeholder="21401" maxlength="10" autocomplete="off"></div></div>
+      <div class="fr c2"><div class="fld"><label>Date Founded</label><input type="date" id="cfounded" autocomplete="off"></div><div class="fld"><label>EIN</label><input type="text" id="ein" placeholder="XX-XXXXXXX" maxlength="10" autocomplete="off" oninput="fmtEIN(this)"><div class="fhint">Format: 12-3456789</div></div></div>
+      <div class="fr c1"><div class="fld"><label>DUNS Number</label><input type="text" id="duns" placeholder="XX-XXX-XXXX" maxlength="11" autocomplete="off" oninput="fmtDUNS(this)"><div class="fhint">9-digit D&amp;B identifier</div></div></div>
     </div>
   </div>
 
-  <!-- SUBMIT -->
-  <div class="submit-wrap" id="submitWrap">
-    <button type="submit" class="btn-verify" id="verifyBtn">🔍 Run Verification</button>
-    <button type="button" class="btn-clear" onclick="clearForm()">Clear</button>
+  <div class="sw" id="sw"><button type="submit" class="btn-p" id="vBtn">🔍 Run Verification</button><button type="button" class="btn-s" onclick="clearForm()">Clear</button></div>
+
+  <!-- STEP 2: TU PROGRESS -->
+  <div class="pw" id="pw"><div class="pc"><div class="pt">⏳ Step 2 — Querying TransUnion... <span class="tu-note">API credentials pending — simulation mode</span></div><div id="progSteps"></div></div></div>
+
+  <!-- STEP 3: DECONFLICTION -->
+  <div class="dw" id="dw">
+    <div class="dcard">
+      <div class="dhead" id="dhead"><div style="font-size:22px" id="dicon">⚠️</div><div><div style="font-size:14px;font-weight:700" id="dtitle">Identity Deconfliction</div><div style="font-size:11px;color:var(--muted);margin-top:2px" id="dsub">Comparing submitted data against TransUnion records</div></div><div class="dpct" id="dpct"></div></div>
+      <div class="dbody" id="dbody"></div>
+    </div>
   </div>
 
-  <!-- STEP 2: PROGRESS -->
-  <div class="progress-wrap" id="progressWrap">
-    <div class="progress-card">
-      <div class="progress-title">⏳ Step 2 — Querying TransUnion Data Sources...</div>
-      <div class="progress-steps" id="progSteps"></div>
-    </div>
+  <!-- STEP 4: CREDIT REVIEW -->
+  <div class="crw full-col" id="crw">
+    <div class="crtabs"><div class="crtab active" onclick="crTab('ind')">👤 Individual Credit</div><div class="crtab" onclick="crTab('co')">🏢 Company Credit</div></div>
+    <div class="crpanel active" id="cr-ind" id="cr-ind"></div>
+    <div class="crpanel" id="cr-co"></div>
   </div>
 
-  <!-- STEP 3: RESULTS -->
-  <div class="results-wrap" id="resultsWrap">
-    <div class="results-card">
-      <div class="results-head">
-        <h3>✅ Verification Complete</h3>
-        <span class="results-ts" id="resultsTs"></span>
-      </div>
-      <div class="results-body" id="resultsBody"></div>
-    </div>
-    <div style="text-align:center;margin-top:8px">
-      <button type="button" class="btn-clear" onclick="clearForm()" style="padding:10px 24px">🔄 New Verification</button>
-    </div>
+  <!-- STEP 5: RISK PROFILE -->
+  <div class="rpw full-col" id="rpw">
+    <div class="rptabs"><div class="rptab active" onclick="rpTab('ind')">👤 Individual Profile</div><div class="rptab" onclick="rpTab('co')">🏢 Company Profile</div></div>
+    <div class="rppanel active" id="rp-ind"></div>
+    <div class="rppanel" id="rp-co"></div>
+    <div class="next-wrap" id="step5next" style="display:none"><button class="btn-p" onclick="showStep6()">View Audit Logs →</button></div>
+  </div>
+
+  <!-- STEP 6: AUDIT LOGS -->
+  <div class="alw full-col" id="alw">
+    <div class="altabs"><div class="altab active" onclick="alTab('ind')">👤 Individual Log</div><div class="altab" onclick="alTab('co')">🏢 Company Log</div></div>
+    <div class="alpanel active" id="al-ind"></div>
+    <div class="alpanel" id="al-co"></div>
+    <div class="next-wrap"><button class="btn-s" onclick="clearForm()" style="margin:0">🔄 New Verification</button></div>
   </div>
 
 </div>
 </form>
-
-<div class="footer">
-  TransNexus Identity Verification &mdash; Demo Environment &mdash;
-  <a href="https://transnexus.com" target="_blank">transnexus.com</a>
-  &nbsp;·&nbsp; <a href="/">← Back to Demos</a>
-</div>
+<div class="footer">TransNexus Identity Verification &mdash; Demo &mdash; <a href="https://transnexus.com" target="_blank">transnexus.com</a> &nbsp;·&nbsp; <a href="/">← Demos</a></div>
 
 <script>
 // ── FORMATTERS ────────────────────────────────
-function fmtSSN(el){ var v=el.value.replace(/\D/g,'').substring(0,9); if(v.length>5)v=v.substr(0,3)+'-'+v.substr(3,2)+'-'+v.substr(5); else if(v.length>3)v=v.substr(0,3)+'-'+v.substr(3); el.value=v; }
-function fmtEIN(el){ var v=el.value.replace(/\D/g,'').substring(0,9); if(v.length>2)v=v.substr(0,2)+'-'+v.substr(2); el.value=v; }
-function fmtPhone(el){ var v=el.value.replace(/\D/g,'').substring(0,10); if(v.length>6)v='('+v.substr(0,3)+') '+v.substr(3,3)+'-'+v.substr(6); else if(v.length>3)v='('+v.substr(0,3)+') '+v.substr(3); el.value=v; }
-function fmtDUNS(el){ var v=el.value.replace(/\D/g,'').substring(0,9); if(v.length>5)v=v.substr(0,2)+'-'+v.substr(2,3)+'-'+v.substr(5); else if(v.length>2)v=v.substr(0,2)+'-'+v.substr(2); el.value=v; }
+function fmtSSN(el){var v=el.value.replace(/\D/g,'').substring(0,9);if(v.length>5)v=v.substr(0,3)+'-'+v.substr(3,2)+'-'+v.substr(5);else if(v.length>3)v=v.substr(0,3)+'-'+v.substr(3);el.value=v;}
+function fmtEIN(el){var v=el.value.replace(/\D/g,'').substring(0,9);if(v.length>2)v=v.substr(0,2)+'-'+v.substr(2);el.value=v;}
+function fmtPhone(el){var v=el.value.replace(/\D/g,'').substring(0,10);if(v.length>6)v='('+v.substr(0,3)+') '+v.substr(3,3)+'-'+v.substr(6);else if(v.length>3)v='('+v.substr(0,3)+') '+v.substr(3);el.value=v;}
+function fmtDUNS(el){var v=el.value.replace(/\D/g,'').substring(0,9);if(v.length>5)v=v.substr(0,2)+'-'+v.substr(2,3)+'-'+v.substr(5);else if(v.length>2)v=v.substr(0,2)+'-'+v.substr(2);el.value=v;}
 
-// ── CLEAR ─────────────────────────────────────
-function clearForm(){
-  document.getElementById('vform').reset();
-  document.getElementById('progressWrap').style.display='none';
-  document.getElementById('resultsWrap').style.display='none';
-  document.getElementById('submitWrap').style.display='block';
-  setStep(1);
-}
+// ── HELPERS ───────────────────────────────────
+function rnd(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function setStep(n){for(var i=1;i<=6;i++){var el=document.getElementById('s'+i);el.className='step'+(i<n?' done':i===n?' active':'');}}
+function clearForm(){document.getElementById('vform').reset();['pw','dw','crw','rpw','alw'].forEach(function(id){document.getElementById(id).style.display='none';});document.getElementById('sw').style.display='block';setStep(1);}
 
-// ── STEP INDICATOR ────────────────────────────
-function setStep(n){
-  for(var i=1;i<=3;i++){
-    var el=document.getElementById('s'+i);
-    el.className='step'+(i<n?' done':i===n?' active':'');
-  }
-}
+// ── GLOBAL STATE ──────────────────────────────
+var G = {};
 
-// ── SIMULATION HELPERS ────────────────────────
-function rnd(a,b){ return Math.floor(Math.random()*(b-a+1))+a; }
-function scoreStatus(s){ return s>=85?'pass':s>=65?'partial':'fail'; }
-function badge(s){ return '<span class="badge '+s+'">'+(s==='pass'?'Match':s==='partial'?'Partial':s==='fail'?'No Match':'Skipped')+'</span>'; }
-function confBar(v,s){
-  var c={pass:'#22c55e',partial:'#f59e0b',fail:'#ef4444',skip:'#6b7a99'};
-  return '<span class="conf-bar"><span class="conf-fill" style="width:'+v+'%;background:'+c[s]+'"></span></span><span style="font-size:11px;color:var(--muted);margin-left:6px">'+v+'%</span>';
-}
-
-// ── TRANSUNION QUERY STEPS ────────────────────
-var TU_STEPS = [
-  { icon:'🔐', label:'Authenticate with TransUnion API', sub:'OAuth 2.0 token exchange — TU Identity Services', dur:600 },
-  { icon:'👤', label:'Query Individual Record Match', sub:'Searching TU consumer database by name, DOB, SSN', dur:900 },
-  { icon:'📍', label:'Address History Verification', sub:'Cross-referencing current & prior address records', dur:700 },
-  { icon:'📞', label:'Phone & Email Linkage Check', sub:'Validating contact info against TU identity graph', dur:500 },
-  { icon:'🏢', label:'Query Business Entity Match', sub:'Searching TU commercial database by name, EIN, DUNS', dur:850 },
-  { icon:'🔗', label:'Individual ↔ Company Association', sub:'Detecting ownership and officer-level connections', dur:600 },
-  { icon:'⚠️', label:'Fraud & Risk Signal Scan', sub:'Checking synthetic identity indicators and fraud flags', dur:750 },
-  { icon:'📊', label:'Compiling Verification Report', sub:'Scoring and structuring match results', dur:400 },
+// ── STEP 2: TU QUERY ──────────────────────────
+var TU_STEPS=[
+  {icon:'🔐',label:'Authenticate with TransUnion API',sub:'OAuth 2.0 token exchange — TU Identity Services',dur:600},
+  {icon:'👤',label:'Query Individual Consumer Record',sub:'Searching TU consumer database by name, DOB, SSN',dur:900},
+  {icon:'📍',label:'Address & History Verification',sub:'Cross-referencing current and prior address records',dur:700},
+  {icon:'📞',label:'Phone & Email Linkage',sub:'Validating contact info against TU identity graph',dur:500},
+  {icon:'🏢',label:'Query Business Entity Record',sub:'Searching TU commercial database by name, EIN, DUNS',dur:850},
+  {icon:'🔗',label:'Individual ↔ Company Association',sub:'Detecting ownership and officer-level connections',dur:600},
+  {icon:'💳',label:'Retrieve Credit & Financial Data',sub:'Pulling credit history, debt obligations, account records',dur:750},
+  {icon:'📊',label:'Compiling Verification Dataset',sub:'Preparing deconfliction and risk scoring payload',dur:400},
 ];
 
-function runVerify(e){
+function startVerify(e){
   e.preventDefault();
-  document.getElementById('submitWrap').style.display='none';
-  document.getElementById('progressWrap').style.display='block';
-  setStep(2);
-  document.getElementById('progressWrap').scrollIntoView({behavior:'smooth',block:'start'});
+  G.fname=document.getElementById('fname').value.trim();
+  G.mname=document.getElementById('mname').value.trim();
+  G.lname=document.getElementById('lname').value.trim();
+  G.dob=document.getElementById('dob').value;
+  G.ssn=document.getElementById('ssn').value;
+  G.addr=document.getElementById('addr').value.trim();
+  G.city=document.getElementById('city').value.trim();
+  G.state=document.getElementById('state').value.trim();
+  G.zip=document.getElementById('zip').value.trim();
+  G.phone=document.getElementById('phone').value.trim();
+  G.email=document.getElementById('email').value.trim();
+  G.cname=document.getElementById('cname').value.trim();
+  G.caddr=document.getElementById('caddr').value.trim();
+  G.ccity=document.getElementById('ccity').value.trim();
+  G.cstate=document.getElementById('cstate').value.trim();
+  G.czip=document.getElementById('czip').value.trim();
+  G.cfounded=document.getElementById('cfounded').value;
+  G.ein=document.getElementById('ein').value.trim();
+  G.duns=document.getElementById('duns').value.trim();
+  G.ts=new Date();
 
-  var steps=TU_STEPS;
+  document.getElementById('sw').style.display='none';
+  document.getElementById('pw').style.display='block';
+  setStep(2);
+  document.getElementById('pw').scrollIntoView({behavior:'smooth',block:'start'});
+
   var html='';
-  for(var i=0;i<steps.length;i++){
-    html+='<div class="prog-row waiting" id="pr'+i+'">'+
-      '<div class="prog-icon">'+steps[i].icon+'</div>'+
-      '<div style="flex:1"><div class="prog-label">'+steps[i].label+'</div><div class="prog-sub">'+steps[i].sub+'</div></div>'+
-      '<div class="prog-status waiting" id="ps'+i+'">—</div></div>';
-  }
+  TU_STEPS.forEach(function(s,i){html+='<div class="pr wait" id="pr'+i+'"><div class="picon">'+s.icon+'</div><div style="flex:1"><div class="plabel">'+s.label+'</div><div class="psub">'+s.sub+'</div></div><div class="pst wait" id="ps'+i+'">—</div></div>';});
   document.getElementById('progSteps').innerHTML=html;
 
   var delay=0;
-  for(var j=0;j<steps.length;j++){
+  TU_STEPS.forEach(function(s,i){
     (function(idx,ms){
-      setTimeout(function(){
-        document.getElementById('pr'+idx).className='prog-row running';
-        document.getElementById('ps'+idx).className='prog-status running';
-        document.getElementById('ps'+idx).innerHTML='<span class="spin">⟳</span> Running';
-      }, ms);
-      setTimeout(function(){
-        document.getElementById('pr'+idx).className='prog-row done';
-        document.getElementById('ps'+idx).className='prog-status done';
-        document.getElementById('ps'+idx).textContent='✓ Done';
-        if(idx===steps.length-1) showResults();
-      }, ms+steps[idx].dur);
-    })(j, delay);
-    delay+=steps[j].dur+80;
-  }
+      setTimeout(function(){document.getElementById('pr'+idx).className='pr running';document.getElementById('ps'+idx).className='pst running';document.getElementById('ps'+idx).innerHTML='<span class="spin">⟳</span> Running';},ms);
+      setTimeout(function(){document.getElementById('pr'+idx).className='pr done';document.getElementById('ps'+idx).className='pst done';document.getElementById('ps'+idx).textContent='✓ Done';if(idx===TU_STEPS.length-1)setTimeout(showDeconfliction,400);},ms+s.dur);
+    })(i,delay);
+    delay+=s.dur+60;
+  });
 }
 
-function showResults(){
-  setTimeout(function(){
-    document.getElementById('progressWrap').style.display='none';
-    setStep(3);
+// ── STEP 3: DECONFLICTION ─────────────────────
+function simTURecord(entered,pMismatch){
+  if(!entered||entered==='')return{val:'—',status:'skip'};
+  var r=Math.random();
+  if(r<pMismatch){
+    var alts=genAlt(entered);
+    return{val:alts,status:'mismatch'};
+  }else if(r<pMismatch+0.12){
+    return{val:partialAlt(entered),status:'partial'};
+  }
+  return{val:entered,status:'match'};
+}
+function genAlt(v){
+  var alts=[v+' Jr.',v.replace('St','Street').replace('Ave','Avenue').replace('Dr','Drive'),v.toUpperCase(),v+'son','('+v.replace(/\D/g,'').substr(0,3)+') XXX-XXXX'];
+  return alts[rnd(0,alts.length-1)];
+}
+function partialAlt(v){if(v.length>6)return v.substr(0,v.length-2)+'**';return v;}
 
-    var fname=document.getElementById('fname').value;
-    var lname=document.getElementById('lname').value;
-    var mname=document.getElementById('mname').value;
-    var hasSSN=document.getElementById('ssn').value.length>8;
-    var hasDOB=!!document.getElementById('dob').value;
-    var hasAddr=!!document.getElementById('addr').value;
-    var hasPhone=document.getElementById('phone').value.length>9;
-    var hasEmail=document.getElementById('email').value.includes('@');
-    var hasCname=!!document.getElementById('cname').value;
-    var hasCaddr=!!document.getElementById('caddr').value;
-    var hasEIN=document.getElementById('ein').value.length>8;
-    var hasDUNS=document.getElementById('duns').value.length>7;
+function showDeconfliction(){
+  document.getElementById('pw').style.display='none';
+  document.getElementById('dw').style.display='block';
+  setStep(3);
+  document.getElementById('dw').scrollIntoView({behavior:'smooth',block:'start'});
 
-    var nameS=fname&&lname?rnd(82,98):0;
-    var ssnS=hasSSN?rnd(88,99):0;
-    var dobS=hasDOB?rnd(80,97):0;
-    var addrS=hasAddr?rnd(75,96):0;
-    var phoneS=hasPhone?rnd(72,95):0;
-    var emailS=hasEmail?rnd(68,94):0;
-    var iScores=[nameS,ssnS,dobS,addrS,phoneS,emailS].filter(function(s){return s>0;});
-    var iOverall=iScores.length?Math.round(iScores.reduce(function(a,b){return a+b;},0)/iScores.length):0;
+  var pm=0.08; // 8% mismatch chance per field — expect ~90%+ match most runs
+  var iFields=[
+    {k:'Full Name',entered:(G.fname+' '+G.mname+' '+G.lname).trim(),tu:simTURecord((G.fname+' '+G.lname).trim(),pm)},
+    {k:'Date of Birth',entered:G.dob||'—',tu:simTURecord(G.dob,pm)},
+    {k:'SSN',entered:G.ssn||'—',tu:simTURecord(G.ssn,pm)},
+    {k:'Address',entered:G.addr||'—',tu:simTURecord(G.addr,pm)},
+    {k:'City',entered:G.city||'—',tu:simTURecord(G.city,pm)},
+    {k:'State',entered:G.state||'—',tu:simTURecord(G.state,pm)},
+    {k:'Phone',entered:G.phone||'—',tu:simTURecord(G.phone,pm)},
+    {k:'Email',entered:G.email||'—',tu:simTURecord(G.email,pm)},
+  ];
+  var cFields=[
+    {k:'Company Name',entered:G.cname||'—',tu:simTURecord(G.cname,pm)},
+    {k:'Business Address',entered:G.caddr||'—',tu:simTURecord(G.caddr,pm)},
+    {k:'City',entered:G.ccity||'—',tu:simTURecord(G.ccity,pm)},
+    {k:'EIN',entered:G.ein||'—',tu:simTURecord(G.ein,pm)},
+    {k:'DUNS',entered:G.duns||'—',tu:simTURecord(G.duns,pm)},
+  ];
+  G.iFields=iFields;G.cFields=cFields;
 
-    var cnameS=hasCname?rnd(80,97):0;
-    var caddrS=hasCaddr?rnd(75,95):0;
-    var einS=hasEIN?rnd(88,99):0;
-    var dunsS=hasDUNS?rnd(84,98):0;
-    var cScores=[cnameS,caddrS,einS,dunsS].filter(function(s){return s>0;});
-    var cOverall=cScores.length?Math.round(cScores.reduce(function(a,b){return a+b;},0)/cScores.length):0;
+  var allFields=iFields.concat(cFields).filter(function(f){return f.tu.status!=='skip';});
+  var matched=allFields.filter(function(f){return f.tu.status==='match';}).length;
+  var total=allFields.length;
+  var pct=total?Math.round((matched/total)*100):100;
+  G.matchPct=pct;
+  var warn=pct<90;
 
-    var assocScore=iOverall&&cOverall?rnd(70,95):0;
-    var fraudFlag=iOverall<70||cOverall<70;
-    var overall=Math.round(([iOverall,cOverall,assocScore].filter(function(s){return s>0;}).reduce(function(a,b){return a+b;},0))/([iOverall,cOverall,assocScore].filter(function(s){return s>0;}).length)||0);
+  var dhead=document.getElementById('dhead');
+  dhead.className='dhead '+(warn?'warn':'ok');
+  document.getElementById('dicon').textContent=warn?'⚠️':'✅';
+  document.getElementById('dtitle').textContent=warn?'Deconfliction Required — Discrepancies Found':'Identity Confirmed — Data Matches';
+  document.getElementById('dsub').textContent=warn?'Less than 90% of fields match TransUnion records. Review discrepancies and confirm to proceed.':'All submitted fields match TransUnion records within acceptable tolerance.';
+  document.getElementById('dpct').className='dpct '+(warn?'warn':'ok');
+  document.getElementById('dpct').textContent=pct+'%';
 
-    var oSt=scoreStatus(overall);
-    var oColors={pass:'pass',partial:'review',fail:'fail'};
-    var oLabels={pass:'Verified',partial:'Review Required',fail:'Flagged'};
+  function fieldRows(fields){
+    return fields.map(function(f){
+      var st=f.tu.status;
+      var rowCls=st==='mismatch'?'mm':st==='partial'?'pm':'ok';
+      var valCls=st==='mismatch'?'mm':st==='partial'?'pm':'';
+      var icon=st==='mismatch'?'✗':st==='partial'?'~':'✓';
+      var iconCol=st==='mismatch'?'color:var(--red)':st==='partial'?'color:var(--yellow)':'color:var(--green)';
+      return'<tr class="'+rowCls+'"><td>'+esc(f.k)+'</td><td class="ev">'+esc(f.entered)+'</td><td class="tv '+valCls+'">'+esc(f.tu.val)+'</td><td style="'+iconCol+';font-weight:700;font-size:15px">'+icon+'</td></tr>';
+    }).join('');
+  }
 
-    var now=new Date();
-    document.getElementById('resultsTs').textContent=
-      now.toLocaleString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit',second:'2-digit',hour12:true})+' ET';
+  var html='<table class="dtable"><thead><tr><th>Field</th><th>You Entered</th><th>TransUnion Record</th><th>Match</th></tr></thead><tbody>';
+  html+='<tr><td colspan="4" class="sec-div ind">👤 INDIVIDUAL</td></tr>';
+  html+=fieldRows(iFields);
+  if(G.cname){
+    html+='<tr><td colspan="4" class="sec-div co">🏢 COMPANY</td></tr>';
+    html+=fieldRows(cFields);
+  }
+  html+='</tbody></table>';
 
-    var html='';
+  if(warn){
+    html+='<div style="background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.25);border-radius:8px;padding:12px 16px;margin-bottom:12px;font-size:13px;color:#ffb0b0">⚠️ Match rate is <strong>'+pct+'%</strong> — below the 90% threshold required for automatic confirmation. Review the highlighted discrepancies above. Click <strong>Confirm &amp; Proceed</strong> to accept the TU record data, or <strong>Correct My Data</strong> to update your entries.</div>';
+    html+='<div class="dact"><button class="btn-go" onclick="confirmProceed()">✓ Confirm &amp; Proceed</button><button class="btn-s" onclick="clearForm()">← Correct My Data</button></div>';
+  }else{
+    html+='<div style="background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.2);border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:13px;color:#86efac">✅ Identity confirmed. Match rate: <strong>'+pct+'%</strong> — proceeding to credit and risk review.</div>';
+    html+='<div class="dact"><button class="btn-go" onclick="confirmProceed()">Continue to Credit Review →</button></div>';
+  }
 
-    // TU banner
-    html+='<div class="tu-banner">🔵 <strong>TransUnion</strong> &nbsp;Data query completed — individual and commercial databases queried — '+
-      (iScores.length+cScores.length)+' field checks performed across '+(iScores.length?'consumer':'')+(iScores.length&&cScores.length?' & ':'')+
-      (cScores.length?'commercial':'')+ ' records</div>';
+  document.getElementById('dbody').innerHTML=html;
+}
 
-    // Score tiles
-    html+='<div class="score-grid">';
-    html+='<div class="score-tile"><div class="score-label">Overall Score</div><div class="score-val '+oColors[oSt]+'">'+overall+'<span style="font-size:13px;font-weight:400">/100</span></div><div class="score-sub '+oColors[oSt]+'">'+oLabels[oSt]+'</div></div>';
-    html+='<div class="score-tile"><div class="score-label">Individual Score</div><div class="score-val '+(iOverall>=85?'pass':iOverall>=65?'review':'fail')+'">'+iOverall+'<span style="font-size:13px;font-weight:400">/100</span></div><div class="score-sub neutral">'+(iScores.length)+' fields matched</div></div>';
-    html+='<div class="score-tile"><div class="score-label">Company Score</div><div class="score-val '+(cOverall>=85?'pass':cOverall>=65?'review':'fail')+'">'+cOverall+'<span style="font-size:13px;font-weight:400">/100</span></div><div class="score-sub neutral">'+(cScores.length)+' fields matched</div></div>';
-    html+='<div class="score-tile"><div class="score-label">Fraud Risk</div><div class="score-val '+(fraudFlag?'fail':'pass')+'">'+(fraudFlag?'HIGH':'LOW')+'</div><div class="score-sub '+(fraudFlag?'fail':'pass')+'">'+(fraudFlag?'Synthetic ID indicators':'No flags detected')+'</div></div>';
-    html+='</div>';
+function confirmProceed(){
+  showCreditReview();
+}
 
-    // Individual match table
-    if(iScores.length){
-      html+='<div class="match-section"><div class="match-label ind">👤 Individual Record — TransUnion Consumer Database</div>';
-      html+='<table><thead><tr><th>Field</th><th>TU Match</th><th>Confidence</th><th>Source</th></tr></thead><tbody>';
-      var iF=[
-        {l:'Full Name',s:nameS,sk:!(fname&&lname),src:'TU Consumer File'},
-        {l:'Date of Birth',s:dobS,sk:!hasDOB,src:'TU Identity Attrs'},
-        {l:'SSN',s:ssnS,sk:!hasSSN,src:'TU SSN Validation'},
-        {l:'Current Address',s:addrS,sk:!hasAddr,src:'TU Address History'},
-        {l:'Phone Number',s:phoneS,sk:!hasPhone,src:'TU Phone Graph'},
-        {l:'Email Address',s:emailS,sk:!hasEmail,src:'TU Email Linkage'},
-      ];
-      iF.forEach(function(f){
-        var st=f.sk?'skip':scoreStatus(f.s);
-        html+='<tr><td>'+f.l+'</td><td>'+badge(st)+'</td><td>'+(f.sk?'<span class="neutral">—</span>':confBar(f.s,st))+'</td><td style="color:var(--muted);font-size:12px">'+f.src+'</td></tr>';
-      });
-      html+='</tbody></table></div>';
-    }
+// ── STEP 4: CREDIT REVIEW ─────────────────────
+function crTab(t){
+  document.querySelectorAll('.crtab').forEach(function(el,i){el.className='crtab'+(i===(t==='ind'?0:1)?' active':'');});
+  document.getElementById('cr-ind').className='crpanel'+(t==='ind'?' active':'');
+  document.getElementById('cr-co').className='crpanel'+(t==='co'?' active':'');
+}
 
-    // Company match table
-    if(cScores.length){
-      html+='<div class="match-section"><div class="match-label co">🏢 Company Record — TransUnion Commercial Database</div>';
-      html+='<table><thead><tr><th>Field</th><th>TU Match</th><th>Confidence</th><th>Source</th></tr></thead><tbody>';
-      var cF=[
-        {l:'Company Name',s:cnameS,sk:!hasCname,src:'TU Commercial File'},
-        {l:'Business Address',s:caddrS,sk:!hasCaddr,src:'TU Biz Address'},
-        {l:'EIN',s:einS,sk:!hasEIN,src:'TU EIN Verification'},
-        {l:'DUNS Number',s:dunsS,sk:!hasDUNS,src:'TU / D&B Linkage'},
-      ];
-      cF.forEach(function(f){
-        var st=f.sk?'skip':scoreStatus(f.s);
-        html+='<tr><td>'+f.l+'</td><td>'+badge(st)+'</td><td>'+(f.sk?'<span class="neutral">—</span>':confBar(f.s,st))+'</td><td style="color:var(--muted);font-size:12px">'+f.src+'</td></tr>';
-      });
-      html+='</tbody></table></div>';
-    }
+function showCreditReview(){
+  document.getElementById('dw').style.display='none';
+  document.getElementById('crw').style.display='block';
+  setStep(4);
+  document.getElementById('crw').scrollIntoView({behavior:'smooth',block:'start'});
 
-    // Association check
-    if(assocScore){
-      html+='<div class="match-section"><div class="match-label" style="color:var(--yellow)">🔗 Individual ↔ Company Association</div>';
-      html+='<table><thead><tr><th>Check</th><th>Result</th><th>Confidence</th><th>Detail</th></tr></thead><tbody>';
-      html+='<tr><td>Ownership / Officer Link</td><td>'+badge(scoreStatus(assocScore))+'</td><td>'+confBar(assocScore,scoreStatus(assocScore))+'</td><td style="color:var(--muted);font-size:12px">TU Commercial Graph</td></tr>';
-      html+='<tr><td>Address Overlap</td><td>'+badge(scoreStatus(rnd(70,97)))+'</td><td>'+confBar(rnd(70,97),scoreStatus(rnd(70,97)))+'</td><td style="color:var(--muted);font-size:12px">TU Address Cross-Ref</td></tr>';
-      html+='<tr><td>Phone / Email Shared</td><td>'+badge(scoreStatus(rnd(65,96)))+'</td><td>'+confBar(rnd(65,96),scoreStatus(rnd(65,96)))+'</td><td style="color:var(--muted);font-size:12px">TU Contact Graph</td></tr>';
-      html+='</tbody></table></div>';
-    }
+  // ── Individual credit data ──
+  var iname=(G.fname||'Individual')+' '+(G.lname||'');
+  var hasChinaInd=rnd(0,2)===0; // ~33% chance of China flag
+  var indHtml='';
+  if(hasChinaInd){
+    indHtml+='<div class="cn-alert">🇨🇳 <strong>CHINA CONNECTION DETECTED</strong> — One or more financial relationships linked to People's Republic of China entities. Review flagged items below.</div>';
+  }
 
-    // Transaction ID
-    html+='<div class="txn">Transaction ID: <span>TNX-'+Date.now().toString(36).toUpperCase()+'-'+Math.random().toString(36).substr(2,8).toUpperCase()+'</span> &nbsp;·&nbsp; Data Source: <span>TransUnion Identity &amp; Commercial APIs</span> &nbsp;·&nbsp; Mode: <span style="color:var(--yellow)">DEMO SIMULATION</span></div>';
+  indHtml+=creditTable('CREDIT SUMMARY','',[ 
+    ['Credit Score','712 (Good)',''],['Total Open Accounts','8',''],['Total Debt','$124,800',''],['Derogatory Marks','1',''],['Oldest Account','14 years',''],['Hard Inquiries (12mo)','3',''],
+  ]);
 
-    document.getElementById('resultsBody').innerHTML=html;
-    document.getElementById('resultsWrap').style.display='block';
-    document.getElementById('resultsWrap').scrollIntoView({behavior:'smooth',block:'start'});
-  }, 400);
+  var iLoans=[
+    ['First National Bank','Mortgage','$287,500','$2,104/mo','US','pass',''],
+    ['Capital One','Credit Card','$4,200','$180/mo','US','pass',''],
+    ['Citizens Bank','Auto Loan','$18,400','$387/mo','US','pass',''],
+  ];
+  if(hasChinaInd){
+    iLoans.push(['Sino-American Capital Ltd','Personal Loan','$45,000','$890/mo','CN 🇨🇳','china','china']);
+    iLoans.push(['BVI Holdings LLC (Cayman)','Investment Line','$92,000','Interest only','KY 🏴','fail','shell']);
+  }
+  indHtml+='<div class="crsec"><div class="crsh">DEBT &amp; LOAN OBLIGATIONS</div><div class="crb"><table><thead><tr><th>Lender</th><th>Type</th><th>Balance</th><th>Payment</th><th>Country</th><th>Flag</th></tr></thead><tbody>';
+  iLoans.forEach(function(l){
+    indHtml+='<tr class="'+(l[6]==='china'?'china-row':l[6]==='shell'?'flag-row':'')+'"><td>'+(l[6]==='china'?'🇨🇳 ':l[6]==='shell'?'⚠️ ':'')+esc(l[0])+'</td><td>'+esc(l[1])+'</td><td>'+esc(l[2])+'</td><td>'+esc(l[3])+'</td><td>'+esc(l[4])+'</td><td><span class="badge '+l[5]+'">'+(l[5]==='pass'?'Clean':l[5]==='china'?'CHINA':l[5]==='fail'?'Shell':'—')+'</span></td></tr>';
+  });
+  indHtml+='</tbody></table></div></div>';
+
+  var iTravelFlags=hasChinaInd?[['Beijing, China','Mar 2024','7 days','🇨🇳','china'],['Shanghai, China','Sep 2023','4 days','🇨🇳','china'],['London, UK','Jun 2024','5 days','🇬🇧','pass']]:[ ['London, UK','Jun 2024','5 days','🇬🇧','pass'],['Canada','Jan 2024','3 days','🇨🇦','pass']];
+  indHtml+='<div class="crsec"><div class="crsh '+(hasChinaInd?'china':'')+'">FOREIGN TRAVEL INDICATORS'+(hasChinaInd?' — CHINA TRAVEL DETECTED':'')+' <span class="tu-note">TU Identity + Passport Graph</span></div><div class="crb"><table><thead><tr><th>Destination</th><th>Date</th><th>Duration</th><th>Flag</th><th>Status</th></tr></thead><tbody>';
+  iTravelFlags.forEach(function(t){
+    indHtml+='<tr class="'+(t[4]==='china'?'china-row':'')+'"><td>'+(t[4]==='china'?'🇨🇳 ':'')+esc(t[0])+'</td><td>'+esc(t[1])+'</td><td>'+esc(t[2])+'</td><td>'+t[3]+'</td><td><span class="badge '+(t[4]==='china'?'china':'pass')+'">'+(t[4]==='china'?'CHINA':'Clean')+'</span></td></tr>';
+  });
+  indHtml+='</tbody></table></div></div>';
+
+  if(hasChinaInd){
+    indHtml+='<div class="crsec"><div class="crsh china">FOCI INDICATORS — FOREIGN OWNERSHIP, CONTROL &amp; INFLUENCE</div><div class="crb">';
+    indHtml+='<table><thead><tr><th>Indicator</th><th>Detail</th><th>Severity</th></tr></thead><tbody>';
+    indHtml+='<tr class="china-row"><td>🇨🇳 PRC-linked lending</td><td>Personal loan from Sino-American Capital Ltd (Shanghai-registered, PRC state-adjacent)</td><td><span class="badge china">HIGH</span></td></tr>';
+    indHtml+='<tr class="china-row"><td>🇨🇳 Repeated China travel</td><td>2 trips to PRC in 18 months; Beijing (7d) + Shanghai (4d)</td><td><span class="badge china">HIGH</span></td></tr>';
+    indHtml+='<tr class="flag-row"><td>⚠️ Offshore shell vehicle</td><td>Investment credit line from Cayman-registered BVI Holdings LLC — no identifiable beneficial owners</td><td><span class="badge fail">MED-HIGH</span></td></tr>';
+    indHtml+='</tbody></table></div></div>';
+  }
+
+  document.getElementById('cr-ind').innerHTML=indHtml;
+
+  // ── Company credit data ──
+  var hasChinaCo=rnd(0,2)===0;
+  var coHtml='';
+  if(hasChinaCo){
+    coHtml+='<div class="cn-alert">🇨🇳 <strong>CHINA CONNECTION DETECTED</strong> — Company has debt obligations or relationships linked to PRC-connected entities. Review flagged items below.</div>';
+  }
+  coHtml+=creditTable('COMPANY CREDIT SUMMARY','',[ 
+    ['Business Credit Score','72 (Good)',''],['Years in Business','12',''],['Total Business Debt','$2.4M',''],['Open Trade Lines','14',''],['Payment History','91% on-time',''],['Public Filings','2 UCC liens',''],
+  ]);
+
+  var coLoans=[
+    ['Bank of America','Commercial Mortgage','$1,200,000','$7,842/mo','US','pass',''],
+    ['Wells Fargo','Business Line of Credit','$300,000','$2,100/mo','US','pass',''],
+    ['SBA','EIDL Loan','$150,000','$731/mo','US','pass',''],
+  ];
+  if(hasChinaCo){
+    coLoans.push(['China Development Bank (CDB)','Term Loan','$580,000','$4,200/mo','CN 🇨🇳','china','china']);
+    coLoans.push(['Pacific Rim Ventures LLC (BVI)','Mezzanine Debt','$250,000','PIK','KY 🏴','fail','shell']);
+  }
+  coHtml+='<div class="crsec"><div class="crsh '+(hasChinaCo?'china':'')+'">BUSINESS DEBT &amp; LENDING RELATIONSHIPS</div><div class="crb"><table><thead><tr><th>Lender</th><th>Type</th><th>Balance</th><th>Payment</th><th>Country</th><th>Flag</th></tr></thead><tbody>';
+  coLoans.forEach(function(l){
+    coHtml+='<tr class="'+(l[6]==='china'?'china-row':l[6]==='shell'?'flag-row':'')+'"><td>'+(l[6]==='china'?'🇨🇳 ':l[6]==='shell'?'⚠️ ':'')+esc(l[0])+'</td><td>'+esc(l[1])+'</td><td>'+esc(l[2])+'</td><td>'+esc(l[3])+'</td><td>'+esc(l[4])+'</td><td><span class="badge '+l[5]+'">'+(l[5]==='pass'?'Clean':l[5]==='china'?'CHINA':l[5]==='fail'?'Shell':'—')+'</span></td></tr>';
+  });
+  coHtml+='</tbody></table></div></div>';
+
+  if(hasChinaCo){
+    coHtml+='<div class="crsec"><div class="crsh china">FOCI INDICATORS — COMPANY LEVEL</div><div class="crb"><table><thead><tr><th>Indicator</th><th>Detail</th><th>Severity</th></tr></thead><tbody>';
+    coHtml+='<tr class="china-row"><td>🇨🇳 PRC state bank financing</td><td>Term loan from China Development Bank — classified as PRC government-controlled entity</td><td><span class="badge china">HIGH</span></td></tr>';
+    coHtml+='<tr class="china-row"><td>🇨🇳 PRC-linked ownership chain</td><td>Pacific Rim Ventures LLC (BVI) — beneficial ownership traced to Shenzhen-based holding company</td><td><span class="badge china">HIGH</span></td></tr>';
+    coHtml+='</tbody></table></div></div>';
+  }
+
+  coHtml+=creditTable('UCC FILINGS','',[ ['Bank of America','UCC-1 Lien','All business assets','2021-04-12','Active'],['SBA','UCC-1 Lien','Equipment, receivables','2021-09-30','Active'],]);
+  document.getElementById('cr-co').innerHTML=coHtml;
+  G.hasChinaInd=hasChinaInd;G.hasChinaCo=hasChinaCo;
+
+  // Add next step button
+  var nw=document.createElement('div');nw.className='next-wrap';nw.innerHTML='<button class="btn-p" onclick="showRiskProfile()">Continue to Risk Profile →</button>';
+  document.getElementById('crw').appendChild(nw);
+}
+
+function creditTable(title,note,rows){
+  var h='<div class="crsec"><div class="crsh">'+title+(note?'<span class="tu-note">'+note+'</span>':'')+'</div><div class="crb"><table><tbody>';
+  rows.forEach(function(r){h+='<tr><td style="color:var(--muted);font-size:12px">'+esc(r[0])+'</td>'+(r.length===3?'<td>'+esc(r[1])+'</td><td style="color:var(--muted);font-size:12px">'+esc(r[2])+'</td>':'<td>'+esc(r[1])+'</td><td>'+esc(r[2])+'</td><td>'+esc(r[3])+'</td><td>'+esc(r[4])+'</td>')+'</tr>';});
+  h+='</tbody></table></div></div>';return h;
+}
+
+// ── STEP 5: RISK PROFILE ──────────────────────
+function rpTab(t){
+  document.querySelectorAll('.rptab').forEach(function(el,i){el.className='rptab'+(i===(t==='ind'?0:1)?' active':'');});
+  document.getElementById('rp-ind').className='rppanel'+(t==='ind'?' active':'');
+  document.getElementById('rp-co').className='rppanel'+(t==='co'?' active':'');
+}
+
+function showRiskProfile(){
+  document.getElementById('crw').style.display='none';
+  document.getElementById('rpw').style.display='block';
+  setStep(5);
+  document.getElementById('rpw').scrollIntoView({behavior:'smooth',block:'start'});
+
+  var iRiskScore=G.hasChinaInd?rnd(62,75):rnd(18,35);
+  var cRiskScore=G.hasChinaCo?rnd(68,82):rnd(15,30);
+  var iRiskLbl=iRiskScore>=70?'HIGH':iRiskScore>=40?'ELEVATED':'LOW';
+  var cRiskLbl=cRiskScore>=70?'HIGH':cRiskScore>=40?'ELEVATED':'LOW';
+  var iRiskCol=iRiskScore>=70?'var(--red)':iRiskScore>=40?'var(--yellow)':'var(--green)';
+  var cRiskCol=cRiskScore>=70?'var(--red)':cRiskScore>=40?'var(--yellow)':'var(--green)';
+
+  var iname=(G.fname+' '+G.lname).trim()||'Individual';
+  var cname=G.cname||'Company';
+
+  // Individual split screen
+  var indLeft='<div class="kv"><span class="kv-k">Full Name</span><span class="kv-v">'+esc(iname)+'</span></div>'+
+    '<div class="kv"><span class="kv-k">Date of Birth</span><span class="kv-v">'+esc(G.dob||'—')+'</span></div>'+
+    '<div class="kv"><span class="kv-k">Address</span><span class="kv-v">'+esc((G.addr||'—')+(G.city?', '+G.city:'')+(G.state?' '+G.state:''))+'</span></div>'+
+    '<div class="kv"><span class="kv-k">Phone</span><span class="kv-v">'+esc(G.phone||'—')+'</span></div>'+
+    '<div class="kv"><span class="kv-k">Email</span><span class="kv-v">'+esc(G.email||'—')+'</span></div>'+
+    '<div class="kv"><span class="kv-k">TU Match %</span><span class="kv-v" style="color:var(--green)">'+G.matchPct+'%</span></div>'+
+    '<div class="kv"><span class="kv-k">Credit Score</span><span class="kv-v">712 (Good)</span></div>'+
+    '<div class="kv"><span class="kv-k">Total Debt</span><span class="kv-v">$124,800</span></div>'+
+    (G.hasChinaInd?'<div class="kv"><span class="kv-k" style="color:#ff8080">Foreign Debt</span><span class="kv-v" style="color:#ff8080">$137,000 (CN+KY)</span></div>':'');
+
+  var iRiskItems='<div class="risk-score"><div class="rs-val" style="color:'+iRiskCol+'">'+iRiskScore+'<span style="font-size:14px;font-weight:400">/100</span></div><div class="rs-lbl">Foreign Influence Risk</div><div class="rs-sub" style="color:'+iRiskCol+'">'+iRiskLbl+'</div></div>';
+  if(G.hasChinaInd){
+    iRiskItems+='<div class="risk-item china"><span class="risk-sev china">CHINA</span><div class="risk-txt">🇨🇳 Personal loan from Sino-American Capital Ltd (Shanghai, PRC) — $45,000. Possible PRC state-adjacent lender.</div></div>';
+    iRiskItems+='<div class="risk-item china"><span class="risk-sev china">CHINA</span><div class="risk-txt">🇨🇳 Repeated travel to PRC — Beijing (Mar 2024, 7d) and Shanghai (Sep 2023, 4d). Pattern of PRC contact.</div></div>';
+    iRiskItems+='<div class="risk-item"><span class="risk-sev high">HIGH</span><div class="risk-txt">Investment credit line from BVI Holdings LLC (Cayman) — $92,000. No identifiable beneficial ownership. Possible shell vehicle.</div></div>';
+    iRiskItems+='<div class="risk-item med"><span class="risk-sev med">MED</span><div class="risk-txt">Combined foreign/offshore debt totals $137,000 — exceeds 50% of consumer credit exposure. FOCI review recommended.</div></div>';
+  }else{
+    iRiskItems+='<div class="risk-item" style="border-color:rgba(34,197,94,.2);background:rgba(34,197,94,.03)"><span class="risk-sev low">LOW</span><div class="risk-txt" style="color:#86efac">No foreign debt, China travel, or FOCI indicators detected in credit profile.</div></div>';
+    iRiskItems+='<div class="risk-item med"><span class="risk-sev low">LOW</span><div class="risk-txt">All lenders are US-domiciled and regulated. No shell company relationships identified.</div></div>';
+  }
+
+  document.getElementById('rp-ind').innerHTML='<div class="split">'+
+    '<div class="sp-left"><div class="sp-head left">👤 Individual TU Record — '+esc(iname)+'</div><div class="sp-body">'+indLeft+'</div></div>'+
+    '<div class="sp-right"><div class="sp-head right">⚠️ Foreign Risk Factors</div><div class="sp-body">'+iRiskItems+'</div></div>'+
+    '</div>';
+
+  // Company split screen
+  var coLeft='<div class="kv"><span class="kv-k">Company Name</span><span class="kv-v">'+esc(cname)+'</span></div>'+
+    '<div class="kv"><span class="kv-k">Address</span><span class="kv-v">'+esc((G.caddr||'—')+(G.ccity?', '+G.ccity:'')+(G.cstate?' '+G.cstate:''))+'</span></div>'+
+    '<div class="kv"><span class="kv-k">EIN</span><span class="kv-v">'+esc(G.ein||'—')+'</span></div>'+
+    '<div class="kv"><span class="kv-k">DUNS</span><span class="kv-v">'+esc(G.duns||'—')+'</span></div>'+
+    '<div class="kv"><span class="kv-k">Founded</span><span class="kv-v">'+esc(G.cfounded||'—')+'</span></div>'+
+    '<div class="kv"><span class="kv-k">Business Credit</span><span class="kv-v">72 (Good)</span></div>'+
+    '<div class="kv"><span class="kv-k">Total Business Debt</span><span class="kv-v">$2.4M</span></div>'+
+    (G.hasChinaCo?'<div class="kv"><span class="kv-k" style="color:#ff8080">Foreign Debt</span><span class="kv-v" style="color:#ff8080">$830,000 (CN+KY)</span></div>':'');
+
+  var cRiskItems='<div class="risk-score"><div class="rs-val" style="color:'+cRiskCol+'">'+cRiskScore+'<span style="font-size:14px;font-weight:400">/100</span></div><div class="rs-lbl">Foreign Influence Risk</div><div class="rs-sub" style="color:'+cRiskCol+'">'+cRiskLbl+'</div></div>';
+  if(G.hasChinaCo){
+    cRiskItems+='<div class="risk-item china"><span class="risk-sev china">CHINA</span><div class="risk-txt">🇨🇳 $580,000 term loan from China Development Bank — classified PRC government-controlled entity under FOCI guidelines.</div></div>';
+    cRiskItems+='<div class="risk-item china"><span class="risk-sev china">CHINA</span><div class="risk-txt">🇨🇳 Pacific Rim Ventures LLC (BVI) beneficial ownership traces to Shenzhen-based holding company. Mezzanine debt $250K.</div></div>';
+    cRiskItems+='<div class="risk-item"><span class="risk-sev high">HIGH</span><div class="risk-txt">Foreign/offshore debt represents 34.6% of total business obligations ($830K / $2.4M). Exceeds threshold for FOCI review.</div></div>';
+    cRiskItems+='<div class="risk-item med"><span class="risk-sev med">MED</span><div class="risk-txt">Two UCC liens from US lenders — standard. Offshore mezzanine structure (PIK terms) suggests potential loss of US operational independence.</div></div>';
+  }else{
+    cRiskItems+='<div class="risk-item" style="border-color:rgba(34,197,94,.2);background:rgba(34,197,94,.03)"><span class="risk-sev low">LOW</span><div class="risk-txt" style="color:#86efac">No PRC-connected lending, shell company debt, or foreign-owned lender relationships detected.</div></div>';
+    cRiskItems+='<div class="risk-item med"><span class="risk-sev low">LOW</span><div class="risk-txt">All commercial lenders are US-domiciled and regulated. Ownership structure shows no foreign beneficial owners.</div></div>';
+  }
+
+  document.getElementById('rp-co').innerHTML='<div class="split">'+
+    '<div class="sp-left"><div class="sp-head left">🏢 Company TU Record — '+esc(cname)+'</div><div class="sp-body">'+coLeft+'</div></div>'+
+    '<div class="sp-right"><div class="sp-head right">⚠️ Foreign Risk Factors</div><div class="sp-body">'+cRiskItems+'</div></div>'+
+    '</div>';
+
+  G.iRiskScore=iRiskScore;G.cRiskScore=cRiskScore;
+  G.iRiskLbl=iRiskLbl;G.cRiskLbl=cRiskLbl;
+  document.getElementById('step5next').style.display='block';
+}
+
+// ── STEP 6: AUDIT LOGS ────────────────────────
+function alTab(t){
+  document.querySelectorAll('.altab').forEach(function(el,i){el.className='altab'+(i===(t==='ind'?0:1)?' active':'');});
+  document.getElementById('al-ind').className='alpanel'+(t==='ind'?' active':'');
+  document.getElementById('al-co').className='alpanel'+(t==='co'?' active':'');
+}
+
+function fmtLogTime(d){return d.toISOString().replace('T',' ').substring(0,19)+' UTC';}
+
+function showStep6(){
+  document.getElementById('rpw').style.display='none';
+  document.getElementById('alw').style.display='block';
+  setStep(6);
+  document.getElementById('alw').scrollIntoView({behavior:'smooth',block:'start'});
+
+  var now=new Date();
+  var ts=fmtLogTime(now);
+  var txn='TNX-'+now.getTime().toString(36).toUpperCase()+'-'+Math.random().toString(36).substr(2,6).toUpperCase();
+
+  function logLine(type,key,val){
+    var cls=type==='ts'?'log-ts':type==='k'?'log-key':type==='v'?'log-val':type==='w'?'log-warn':type==='f'?'log-flag':type==='cn'?'log-china':'log-ok';
+    return '<span class="'+cls+'">'+esc(val)+'</span>';
+  }
+  function sep(){return '<span class="log-sep">────────────────────────────────────────</span>
+';}
+
+  // Individual log
+  var iLog='';
+  iLog+=sep();
+  iLog+=logLine('ts','','['+ts+']')+' '+logLine('ok','','INDIVIDUAL VERIFICATION LOG
+');
+  iLog+=sep();
+  iLog+=logLine('k','','Transaction ID  ')+' : '+logLine('v','',txn+'-IND
+');
+  iLog+=logLine('k','','Subject         ')+' : '+logLine('v','',(G.fname+' '+G.mname+' '+G.lname).trim()+'
+');
+  iLog+=logLine('k','','DOB             ')+' : '+logLine('v','',G.dob||'not provided')+'
+';
+  iLog+=logLine('k','','SSN             ')+' : '+logLine('v','',(G.ssn?G.ssn.substr(0,3)+'-XX-XXXX':'not provided'))+'
+';
+  iLog+=logLine('k','','Address         ')+' : '+logLine('v','', (G.addr||'')+(G.city?', '+G.city:'')+(G.state?' '+G.state:''))+'
+';
+  iLog+=logLine('k','','Phone           ')+' : '+logLine('v','',G.phone||'not provided')+'
+';
+  iLog+=logLine('k','','Email           ')+' : '+logLine('v','',G.email||'not provided')+'
+';
+  iLog+='
+';
+  iLog+=logLine('ts','','['+ts+']')+' '+logLine('k','','STEP 2 — TransUnion Query
+');
+  iLog+=logLine('k','','  API Mode       ')+' : '+logLine('w','','SIMULATION (credentials pending)
+');
+  iLog+=logLine('k','','  DB Queried     ')+' : '+logLine('v','','TU Consumer Database
+');
+  iLog+=logLine('k','','  Fields Checked ')+' : '+logLine('v','','Name, DOB, SSN, Address, Phone, Email
+');
+  iLog+='
+';
+  iLog+=logLine('ts','','['+ts+']')+' '+logLine('k','','STEP 3 — Deconfliction
+');
+  iLog+=logLine('k','','  Match Rate     ')+' : '+logLine(G.matchPct>=90?'ok':'w','',G.matchPct+'%
+');
+  iLog+=logLine('k','','  Outcome        ')+' : '+logLine('ok','',G.matchPct>=90?'AUTO-CONFIRMED':'MANUALLY CONFIRMED BY OPERATOR
+');
+  iLog+='
+';
+  iLog+=logLine('ts','','['+ts+']')+' '+logLine('k','','STEP 4a — Individual Credit Review
+');
+  iLog+=logLine('k','','  Credit Score   ')+' : '+logLine('v','','712 (Good)
+');
+  iLog+=logLine('k','','  Total Debt     ')+' : '+logLine('v','','$124,800
+');
+  if(G.hasChinaInd){
+    iLog+=logLine('k','','  CHINA FLAG     ')+' : '+logLine('cn','','Sino-American Capital Ltd — $45,000 personal loan (PRC-adjacent lender)
+');
+    iLog+=logLine('k','','  CHINA FLAG     ')+' : '+logLine('cn','','BVI Holdings LLC (Cayman) — $92,000 investment line (shell company)
+');
+    iLog+=logLine('k','','  TRAVEL FLAG    ')+' : '+logLine('f','','PRC travel detected — Beijing Mar 2024 (7d), Shanghai Sep 2023 (4d)
+');
+    iLog+=logLine('k','','  FOCI RISK      ')+' : '+logLine('f','','HIGH — PRC-linked financial exposure + travel pattern
+');
+  }else{
+    iLog+=logLine('k','','  Foreign Debt   ')+' : '+logLine('ok','','None detected
+');
+    iLog+=logLine('k','','  FOCI Risk      ')+' : '+logLine('ok','','LOW — no foreign influence indicators
+');
+  }
+  iLog+='
+';
+  iLog+=logLine('ts','','['+ts+']')+' '+logLine('k','','STEP 5a — Risk Profile
+');
+  iLog+=logLine('k','','  Risk Score     ')+' : '+logLine(G.iRiskScore>=70?'f':G.iRiskScore>=40?'w':'ok','',G.iRiskScore+'/100 ('+G.iRiskLbl+')
+');
+  iLog+='
+'+sep();
+  iLog+=logLine('ts','','['+ts+']')+' '+logLine('ok','','RECORD COMPLETE — '+txn+'-IND
+');
+  iLog+=sep();
+
+  document.getElementById('al-ind').innerHTML='<div class="logbox"><pre>'+iLog+'</pre></div>'+
+    '<div class="log-export"><button class="btn-exp" onclick="copyLog('ind')">📋 Copy Log</button><button class="btn-exp" onclick="downloadLog('ind',''+txn+'')">⬇ Download .txt</button></div>';
+
+  // Company log
+  var cLog='';
+  cLog+=sep();
+  cLog+=logLine('ts','','['+ts+']')+' '+logLine('ok','','COMPANY VERIFICATION LOG
+');
+  cLog+=sep();
+  cLog+=logLine('k','','Transaction ID  ')+' : '+logLine('v','',txn+'-CO
+');
+  cLog+=logLine('k','','Company Name    ')+' : '+logLine('v','',G.cname||'not provided')+'
+';
+  cLog+=logLine('k','','Address         ')+' : '+logLine('v','',(G.caddr||'')+(G.ccity?', '+G.ccity:'')+(G.cstate?' '+G.cstate:''))+'
+';
+  cLog+=logLine('k','','EIN             ')+' : '+logLine('v','',G.ein||'not provided')+'
+';
+  cLog+=logLine('k','','DUNS            ')+' : '+logLine('v','',G.duns||'not provided')+'
+';
+  cLog+=logLine('k','','Date Founded    ')+' : '+logLine('v','',G.cfounded||'not provided')+'
+';
+  cLog+='
+';
+  cLog+=logLine('ts','','['+ts+']')+' '+logLine('k','','STEP 2 — TransUnion Query
+');
+  cLog+=logLine('k','','  API Mode       ')+' : '+logLine('w','','SIMULATION (credentials pending)
+');
+  cLog+=logLine('k','','  DB Queried     ')+' : '+logLine('v','','TU Commercial Database
+');
+  cLog+=logLine('k','','  Fields Checked ')+' : '+logLine('v','','Name, Address, EIN, DUNS
+');
+  cLog+='
+';
+  cLog+=logLine('ts','','['+ts+']')+' '+logLine('k','','STEP 4b — Company Credit Review
+');
+  cLog+=logLine('k','','  Credit Score   ')+' : '+logLine('v','','72 (Good)
+');
+  cLog+=logLine('k','','  Total Debt     ')+' : '+logLine('v','','$2,400,000
+');
+  if(G.hasChinaCo){
+    cLog+=logLine('k','','  CHINA FLAG     ')+' : '+logLine('cn','','China Development Bank — $580,000 term loan (PRC state-owned)
+');
+    cLog+=logLine('k','','  CHINA FLAG     ')+' : '+logLine('cn','','Pacific Rim Ventures LLC (BVI/Shenzhen) — $250,000 mezzanine (PIK)
+');
+    cLog+=logLine('k','','  SHELL FLAG     ')+' : '+logLine('f','','Offshore shell vehicle with PRC beneficial ownership detected
+');
+    cLog+=logLine('k','','  FOCI RISK      ')+' : '+logLine('f','','HIGH — PRC state bank financing + offshore shell with PRC beneficial owner
+');
+  }else{
+    cLog+=logLine('k','','  Foreign Debt   ')+' : '+logLine('ok','','None detected
+');
+    cLog+=logLine('k','','  FOCI Risk      ')+' : '+logLine('ok','','LOW — no foreign influence indicators
+');
+  }
+  cLog+='
+';
+  cLog+=logLine('ts','','['+ts+']')+' '+logLine('k','','STEP 5b — Risk Profile
+');
+  cLog+=logLine('k','','  Risk Score     ')+' : '+logLine(G.cRiskScore>=70?'f':G.cRiskScore>=40?'w':'ok','',G.cRiskScore+'/100 ('+G.cRiskLbl+')
+');
+  cLog+='
+'+sep();
+  cLog+=logLine('ts','','['+ts+']')+' '+logLine('ok','','RECORD COMPLETE — '+txn+'-CO
+');
+  cLog+=sep();
+  G.iLog=iLog;G.cLog=cLog;G.txn=txn;
+
+  document.getElementById('al-co').innerHTML='<div class="logbox"><pre>'+cLog+'</pre></div>'+
+    '<div class="log-export"><button class="btn-exp" onclick="copyLog('co')">📋 Copy Log</button><button class="btn-exp" onclick="downloadLog('co',''+txn+'')">⬇ Download .txt</button></div>';
+}
+
+function copyLog(t){
+  var txt=document.getElementById('al-'+t).querySelector('pre').innerText;
+  navigator.clipboard.writeText(txt).then(function(){alert('Log copied to clipboard');});
+}
+function downloadLog(t,txn){
+  var txt=document.getElementById('al-'+t).querySelector('pre').innerText;
+  var a=document.createElement('a');a.href='data:text/plain;charset=utf-8,'+encodeURIComponent(txt);
+  a.download='transnexus-'+t+'-'+txn+'.txt';a.click();
 }
 </script>
 </body>

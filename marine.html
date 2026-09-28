@@ -157,7 +157,10 @@ function go(){
   var p2 = safej('https://api.weather.gov/gridpoints/' + GRID + '/forecast/hourly');
   var p3 = safej('https://api.weather.gov/gridpoints/' + GRID + '/forecast');
   var p4 = safej('https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?product=predictions&application=web_services&begin_date=' + tod + '&end_date=' + tom + '&datum=MLLW&station=' + STA + '&time_zone=lst_ldt&interval=hilo&units=english&format=json');
-  var p5 = safej('https://api.weather.gov/zones/forecast/' + ZONE + '/forecast');
+  var p5 = safej('https://api.weather.gov/products?type=CWF&location=LWX').then(function(list){
+    if(!list||!list['@graph']||!list['@graph'].length) return null;
+    return safej(list['@graph'][0]['@id']);
+  });
 
   Promise.all([p1,p2,p3,p4,p5]).then(function(res){
     renderAdv(res[0], now);
@@ -277,24 +280,56 @@ function getNotes(s){ var l=s.toLowerCase(); if(l.indexOf('rain likely')>=0||l.i
 
 function renderMarine(data){
   var el = document.getElementById('mar');
-  if(!data || !data.properties || !data.properties.periods){ el.innerHTML = '<div class="err">Marine forecast unavailable</div>'; return; }
-  var ps = data.properties.periods.slice(0,8);
-  var html = '<table class="mt"><thead><tr><th>Period</th><th>Wind</th><th>Waves</th><th>Notes</th></tr></thead><tbody>';
-  for(var i=0;i<ps.length;i++){
-    var p = ps[i];
-    var det = p.detailedForecast || '';
-    var waves = getWaves(det);
-    var windKt = getWindKt(det);
-    var windDir = getWindDir(det);
+  if(!data || !data.productText){ el.innerHTML = '<div class="err">Marine forecast unavailable</div>'; return; }
+  var text = data.productText;
+  // Split on $ section separators and find the ANZ536 or ANZ535 zone
+  var sections = text.split('$');
+  var zone = null;
+  for(var i=0;i<sections.length;i++){
+    if(sections[i].indexOf('ANZ536') !== -1){ zone = sections[i]; break; }
+  }
+  if(!zone){
+    for(var i=0;i<sections.length;i++){
+      if(sections[i].indexOf('ANZ535') !== -1){ zone = sections[i]; break; }
+    }
+  }
+  if(!zone && sections.length > 1) zone = sections[1];
+  if(!zone){ el.innerHTML = '<div class="err">Marine forecast unavailable</div>'; return; }
+  // Extract period lines: .PERIOD...details
+  var lines = zone.split('\n');
+  var periods = [];
+  var cur = null;
+  for(var i=0;i<lines.length;i++){
+    var l = lines[i].trim();
+    if(l.indexOf('.') === 0 && l.indexOf('...') > 0){
+      if(cur) periods.push(cur);
+      var dotEnd = l.indexOf('...');
+      cur = { name: l.substring(1, dotEnd), text: l.substring(dotEnd+3) };
+    } else if(cur && l.length > 0 && l.indexOf('$') === -1){
+      cur.text += ' ' + l;
+    }
+  }
+  if(cur) periods.push(cur);
+  if(!periods.length){
+    var clean = zone.replace(/ANZ5\d\d-[^\n]*\n/g,'').trim();
+    el.innerHTML = '<pre style="font-size:12px;color:var(--muted);white-space:pre-wrap;line-height:1.6">' + esc(clean) + '</pre>';
+    return;
+  }
+  var html = '<table class="mt"><thead><tr><th>Period</th><th>Wind</th><th>Waves</th><th>Conditions</th></tr></thead><tbody>';
+  for(var i=0;i<periods.length;i++){
+    var p = periods[i];
+    var waves = getWaves(p.text);
+    var windKt = getWindKt(p.text);
+    var windDir = getWindDir(p.text);
     var windStr = windDir ? windDir+' '+windKt : windKt;
-    var notesKey = getNotes(det);
+    var notesKey = getNotes(p.text);
     var notesText = notesKey === 'rain-likely' ? 'Rain likely' : notesKey === 'chance-rain' ? 'Chance rain' : notesKey === 'sl-chance' ? 'Sl. chance rain' : '&mdash;';
     var noteCls = notesKey === 'rain-likely' ? 'mn rain' : 'mn';
     html += '<tr><td class="mp">' + esc(p.name) + '</td><td class="mw">' + esc(windStr) + '</td><td class="mv">' + esc(waves) + '</td><td class="' + noteCls + '">' + notesText + '</td></tr>';
   }
   html += '</tbody></table>';
-  var upd = data.properties.updated ? new Date(data.properties.updated).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',timeZoneName:'short'}) : '';
-  if(upd) html += '<div style="font-size:10px;color:var(--muted);margin-top:8px">NWS update: ' + upd + '</div>';
+  var iss = data.issuanceTime ? new Date(data.issuanceTime).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',timeZoneName:'short'}) : '';
+  if(iss) html += '<div style="font-size:10px;color:var(--muted);margin-top:8px">NWS issued: ' + iss + '</div>';
   el.innerHTML = html;
 }
 

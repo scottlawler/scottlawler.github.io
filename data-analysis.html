@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TransNexus — Data Analysis</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0a0e1a;--card:#1a2235;--border:#2a3652;--text:#e8edf5;--muted:#6b7a99;--blue:#3b82f6;--green:#22c55e;--yellow:#f59e0b;--red:#ef4444;--accent:#60a5fa;--china:#ff4444;--hover:#1f2d47}
+body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,sans-serif;font-size:13px;height:100vh;display:flex;flex-direction:column;overflow:hidden}
+.header{background:linear-gradient(135deg,#0f172a,#1e3a5f);border-bottom:1px solid var(--border);padding:0 20px;height:52px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-icon{width:30px;height:30px;background:var(--blue);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:15px}
+.logo-name{font-size:1rem;font-weight:700}.logo-name span{color:var(--accent)}
+.header-right{display:flex;align-items:center;gap:10px}
+.hbadge{background:rgba(59,130,246,.15);border:1px solid rgba(59,130,246,.3);color:var(--accent);font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px}
+.htitle{font-size:1rem;font-weight:700;color:var(--accent);letter-spacing:.5px}
+.layout{display:flex;flex:1;overflow:hidden}
+/* SIDEBAR */
+.sidebar{width:280px;flex-shrink:0;background:var(--card);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+.sidebar-tabs{display:flex;border-bottom:1px solid var(--border);flex-shrink:0}
+.stab{flex:1;padding:10px 0;text-align:center;font-size:12px;font-weight:600;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;transition:all .2s}
+.stab.active{color:var(--accent);border-bottom-color:var(--blue);background:rgba(59,130,246,.05)}
+.sidebar-inner{flex:1;overflow-y:auto;padding:12px}
+.sidebar-inner::-webkit-scrollbar{width:3px}
+.sidebar-inner::-webkit-scrollbar-thumb{background:#333}
+.filter-group{margin-bottom:14px}
+.fg-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);margin-bottom:6px;padding-bottom:4px;border-bottom:1px solid var(--border)}
+.fld{margin-bottom:6px}
+.fld label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);display:block;margin-bottom:3px}
+.fld input,.fld select{width:100%;background:#0d1525;border:1px solid var(--border);border-radius:5px;padding:6px 9px;color:var(--text);font-size:12px;font-family:inherit;outline:none;transition:border-color .15s}
+.fld input:focus,.fld select:focus{border-color:var(--blue)}
+.fld input::placeholder{color:#3a4a6a}
+.fld select option{background:#0d1525}
+.btn-query{width:100%;background:linear-gradient(135deg,#1d4ed8,var(--blue));color:#fff;border:none;border-radius:6px;padding:9px;font-size:13px;font-weight:700;cursor:pointer;margin-top:8px;transition:opacity .15s}
+.btn-query:hover{opacity:.88}
+.btn-clear-f{width:100%;background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:7px;font-size:12px;cursor:pointer;margin-top:4px;transition:border-color .15s}
+.btn-clear-f:hover{border-color:var(--accent);color:var(--accent)}
+/* MAIN */
+.main-panel{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.results-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--border);flex-shrink:0;background:rgba(10,14,26,.8)}
+.res-count{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:8px}
+.res-count strong{color:var(--text);font-size:14px}
+.flag-summary{display:flex;gap:8px}
+.fsumm{font-size:11px;padding:2px 8px;border-radius:10px;font-weight:600}
+.fsumm.china{background:rgba(255,68,68,.15);color:#ff8080;border:1px solid rgba(255,68,68,.3)}
+.fsumm.foci{background:rgba(239,68,68,.1);color:var(--red);border:1px solid rgba(239,68,68,.25)}
+.res-actions{display:flex;gap:6px}
+.btn-sm{background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:5px;padding:4px 10px;font-size:11px;cursor:pointer;transition:all .2s}
+.btn-sm:hover{border-color:var(--accent);color:var(--accent)}
+/* TABLE */
+.table-wrap{flex:1;overflow:auto}
+.table-wrap::-webkit-scrollbar{width:4px;height:4px}
+.table-wrap::-webkit-scrollbar-thumb{background:#333}
+table{width:100%;border-collapse:collapse;font-size:12px}
+thead{position:sticky;top:0;z-index:2}
+th{background:#0f1a2e;color:var(--muted);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;padding:8px 11px;text-align:left;border-bottom:2px solid var(--border);white-space:nowrap;cursor:pointer;user-select:none}
+th:hover{color:var(--accent)}
+th.sorted{color:var(--accent)}
+td{padding:8px 11px;border-bottom:1px solid rgba(255,255,255,.04);white-space:nowrap;vertical-align:middle}
+tr.china-rec td{background:rgba(255,0,0,.05)}
+tr.china-rec td:first-child{border-left:2px solid var(--china)}
+tr.foci-rec td{background:rgba(239,68,68,.04)}
+tr.foci-rec td:first-child{border-left:2px solid var(--red)}
+tr:hover td{background:var(--hover);cursor:pointer}
+tr.selected td{background:rgba(59,130,246,.1)}
+tr.selected td:first-child{border-left:2px solid var(--blue)}
+.badge{display:inline-block;font-size:9px;font-weight:700;padding:1px 6px;border-radius:8px;text-transform:uppercase;letter-spacing:.4px}
+.badge.pass{background:rgba(34,197,94,.12);color:var(--green);border:1px solid rgba(34,197,94,.2)}
+.badge.warn{background:rgba(245,158,11,.12);color:var(--yellow);border:1px solid rgba(245,158,11,.2)}
+.badge.fail{background:rgba(239,68,68,.1);color:var(--red);border:1px solid rgba(239,68,68,.2)}
+.badge.china{background:rgba(255,68,68,.15);color:#ff8080;border:1px solid rgba(255,68,68,.35)}
+.badge.neutral{background:rgba(107,122,153,.1);color:var(--muted);border:1px solid var(--border)}
+/* DETAIL PANEL */
+.detail-panel{width:340px;flex-shrink:0;background:var(--card);border-left:1px solid var(--border);display:none;flex-direction:column;overflow:hidden}
+.detail-panel.open{display:flex}
+.dp-head{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:linear-gradient(135deg,#1e3a5f,#162d4a)}
+.dp-title{font-size:13px;font-weight:700;color:var(--accent)}
+.dp-close{background:transparent;border:none;color:var(--muted);cursor:pointer;font-size:18px;padding:0 4px}
+.dp-close:hover{color:var(--text)}
+.dp-body{flex:1;overflow-y:auto;padding:14px}
+.dp-body::-webkit-scrollbar{width:3px}
+.dp-body::-webkit-scrollbar-thumb{background:#333}
+.dp-section{margin-bottom:14px}
+.dp-section-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);margin-bottom:6px;padding-bottom:4px;border-bottom:1px solid var(--border)}
+.dp-section-title.ind{color:var(--accent)}
+.dp-section-title.flag{color:#ff8080}
+.kv{display:flex;justify-content:space-between;gap:8px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:12px}
+.kv:last-child{border:none}
+.kv-k{color:var(--muted);flex-shrink:0}
+.kv-v{text-align:right;color:var(--text)}
+.kv-v.china{color:#ff8080;font-weight:600}
+.kv-v.flag{color:var(--red)}
+.kv-v.ok{color:var(--green)}
+.no-results{padding:48px;text-align:center;color:var(--muted)}
+.no-results .nr-icon{font-size:36px;margin-bottom:12px}
+.no-results .nr-txt{font-size:14px}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="logo">
+    <div class="logo-icon">🔗</div>
+    <div><div class="logo-name">Trans<span>Nexus</span></div></div>
+  </div>
+  <div class="htitle">DATA ANALYSIS</div>
+  <div class="header-right">
+    <span class="hbadge">SIMULATION MODE</span>
+    <a href="transnexus.html" style="color:var(--muted);font-size:12px;text-decoration:none">← Verification</a>
+    <a href="/" style="color:var(--muted);font-size:12px;text-decoration:none">← Demos</a>
+  </div>
+</div>
+
+<div class="layout">
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-tabs">
+      <div class="stab active" id="tab-ind" onclick="switchTab('ind')">👤 Individual</div>
+      <div class="stab" id="tab-co" onclick="switchTab('co')">🏢 Company</div>
+    </div>
+    <div class="sidebar-inner" id="filter-panel"></div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main-panel">
+    <div class="results-bar">
+      <div class="res-count">
+        <strong id="res-num">0</strong> records found
+        <span id="flag-summary" class="flag-summary"></span>
+      </div>
+      <div class="res-actions">
+        <button class="btn-sm" onclick="exportCSV()">⬇ Export CSV</button>
+      </div>
+    </div>
+    <div class="table-wrap" id="table-wrap"></div>
+  </div>
+
+  <!-- DETAIL PANEL -->
+  <div class="detail-panel" id="detail-panel">
+    <div class="dp-head">
+      <div class="dp-title" id="dp-title">Record Detail</div>
+      <button class="dp-close" onclick="closeDetail()">✕</button>
+    </div>
+    <div class="dp-body" id="dp-body"></div>
+  </div>
+</div>
+
+<script>
+// ── DATASET ───────────────────────────────────
+var IND_DATA = [
+  {id:'I001',first:'James',middle:'R.',last:'Harrison',dob:'1978-04-12',ssn:'***-**-4821',gender:'M',addr:'1402 Chesapeake Dr',city:'Annapolis',state:'MD',zip:'21401',phone:'(410) 555-0192',email:'j.harrison@gmail.com',employer:'Northrop Grumman',income:'$125K-$150K',score:748,debt:98400,accounts:9,derogs:0,inquiries:2,foreignConn:false,countries:'',fociFlag:false,travel:false,chinaFlag:false,clearance:'Secret',notes:'Clean record. DoD contractor.'},
+  {id:'I002',first:'Linda',middle:'M.',last:'Chen',dob:'1985-09-23',ssn:'***-**-7734',gender:'F',addr:'3821 Blossom Way',city:'Rockville',state:'MD',zip:'20850',phone:'(301) 555-0447',email:'l.chen@outlook.com',employer:'MITRE Corp',income:'$150K-$200K',score:712,debt:124800,accounts:11,derogs:1,inquiries:3,foreignConn:true,countries:'CN',fociFlag:true,travel:true,chinaFlag:true,clearance:'TS/SCI',notes:'PRC-linked personal loan. Repeated China travel. FOCI review required.'},
+  {id:'I003',first:'Robert',middle:'',last:'Kowalski',dob:'1970-02-28',ssn:'***-**-3356',gender:'M',addr:'88 Oak Street',city:'Baltimore',state:'MD',zip:'21202',phone:'(443) 555-0812',email:'rkowalski@comcast.net',employer:'Booz Allen Hamilton',income:'$100K-$125K',score:690,debt:214000,accounts:14,derogs:2,inquiries:5,foreignConn:false,countries:'',fociFlag:false,travel:false,chinaFlag:false,clearance:'Secret',notes:'High debt load. No foreign connections.'},
+  {id:'I004',first:'Wei',middle:'',last:'Zhang',dob:'1990-07-04',ssn:'***-**-9912',gender:'M',addr:'507 Harbor View',city:'Alexandria',state:'VA',zip:'22314',phone:'(703) 555-0328',email:'wzhang@hotmail.com',employer:'SAIC',income:'$150K-$200K',score:731,debt:87200,accounts:8,derogs:0,inquiries:4,foreignConn:true,countries:'CN,HK',fociFlag:true,travel:true,chinaFlag:true,clearance:'None',notes:'Family in Shenzhen. HK bank account. Loan from China Merchants Bank. FOCI high.'},
+  {id:'I005',first:'Patricia',middle:'A.',last:'Monroe',dob:'1965-11-15',ssn:'***-**-5543',gender:'F',addr:'221 Maple Lane',city:'Vienna',state:'VA',zip:'22180',phone:'(703) 555-0671',email:'pmonroe@aol.com',employer:'DXC Technology',income:'$75K-$100K',score:801,debt:34100,accounts:6,derogs:0,inquiries:1,foreignConn:false,countries:'',fociFlag:false,travel:false,chinaFlag:false,clearance:'Public Trust',notes:'Excellent credit. Clean profile.'},
+  {id:'I006',first:'Marcus',middle:'T.',last:'Williams',dob:'1982-03-07',ssn:'***-**-2287',gender:'M',addr:'1100 Penn Ave NW',city:'Washington',state:'DC',zip:'20004',phone:'(202) 555-0543',email:'m.williams@dod.gov',employer:'Dept of Defense',income:'$100K-$125K',score:756,debt:61500,accounts:7,derogs:0,inquiries:2,foreignConn:false,countries:'',fociFlag:false,travel:false,chinaFlag:false,clearance:'TS',notes:'Federal employee. Clean.'},
+  {id:'I007',first:'Yuki',middle:'',last:'Tanaka',dob:'1988-12-01',ssn:'***-**-8831',gender:'F',addr:'900 Sunrise Blvd',city:'Bethesda',state:'MD',zip:'20814',phone:'(301) 555-0994',email:'ytanaka@research.org',employer:'Johns Hopkins APL',income:'$125K-$150K',score:769,debt:42300,accounts:9,derogs:0,inquiries:2,foreignConn:false,countries:'JP',fociFlag:false,travel:false,chinaFlag:false,clearance:'Secret',notes:'Japanese national origin. No adverse indicators.'},
+  {id:'I008',first:'David',middle:'L.',last:'Nguyen',dob:'1975-06-18',ssn:'***-**-4409',gender:'M',addr:'45 River Road',city:'McLean',state:'VA',zip:'22101',phone:'(703) 555-0182',email:'dnguyen@leidos.com',employer:'Leidos',income:'$200K+',score:788,debt:445000,accounts:16,derogs:0,inquiries:3,foreignConn:false,countries:'VN',fociFlag:false,travel:false,chinaFlag:false,clearance:'TS/SCI',notes:'High earner, high mortgage. Vietnam origin, no adverse.'},
+  {id:'I009',first:'Elena',middle:'K.',last:'Sorokina',dob:'1993-08-22',ssn:'***-**-7721',gender:'F',addr:'2201 Connecticut Ave',city:'Washington',state:'DC',zip:'20008',phone:'(202) 555-0344',email:'esorokina@thinktank.org',employer:'Think Tank Research',income:'$75K-$100K',score:641,debt:29800,accounts:5,derogs:3,inquiries:6,foreignConn:true,countries:'RU',fociFlag:true,travel:false,chinaFlag:false,clearance:'None',notes:'Russian national. 3 derogs. Multiple foreign inquiries. FOCI elevated.'},
+  {id:'I010',first:'Thomas',middle:'B.',last:'Anderson',dob:'1968-01-30',ssn:'***-**-6614',gender:'M',addr:'56 Colonial Dr',city:'Reston',state:'VA',zip:'20191',phone:'(703) 555-0727',email:'tanderson@raytheon.com',employer:'Raytheon',income:'$150K-$200K',score:822,debt:118000,accounts:12,derogs:0,inquiries:1,foreignConn:false,countries:'',fociFlag:false,travel:false,chinaFlag:false,clearance:'TS',notes:'Clean. Long-time defense contractor.'},
+  {id:'I011',first:'Ming',middle:'',last:'Liu',dob:'1987-05-14',ssn:'***-**-3398',gender:'M',addr:'817 Jade Garden Ct',city:'Chantilly',state:'VA',zip:'20151',phone:'(703) 555-0261',email:'ming.liu88@gmail.com',employer:'Huawei Technologies US',income:'$125K-$150K',score:698,debt:156000,accounts:10,derogs:1,inquiries:4,foreignConn:true,countries:'CN',fociFlag:true,travel:true,chinaFlag:true,clearance:'None',notes:'Employed by Huawei US. PRC national. China travel quarterly. ICBC account. HIGH FOCI RISK.'},
+  {id:'I012',first:'Sarah',middle:'J.',last:'Murphy',dob:'1979-10-08',ssn:'***-**-8854',gender:'F',addr:'333 Forest Hill Rd',city:'Falls Church',state:'VA',zip:'22046',phone:'(703) 555-0443',email:'smurphy@mitre.org',employer:'MITRE Corp',income:'$125K-$150K',score:777,debt:89200,accounts:9,derogs:0,inquiries:2,foreignConn:false,countries:'',fociFlag:false,travel:false,chinaFlag:false,clearance:'TS/SCI',notes:'Cleared. Clean record.'},
+  {id:'I013',first:'Carlos',middle:'E.',last:'Reyes',dob:'1991-03-25',ssn:'***-**-5571',gender:'M',addr:'1543 Palm Dr',city:'Arlington',state:'VA',zip:'22201',phone:'(703) 555-0889',email:'creyes@gdit.com',employer:'GDIT',income:'$75K-$100K',score:714,debt:54800,accounts:7,derogs:0,inquiries:3,foreignConn:false,countries:'MX',fociFlag:false,travel:false,chinaFlag:false,clearance:'Secret',notes:'Mexico origin. No adverse indicators.'},
+  {id:'I014',first:'Fang',middle:'',last:'Wu',dob:'1984-11-19',ssn:'***-**-2243',gender:'F',addr:'6602 Silk Road Ave',city:'Fairfax',state:'VA',zip:'22030',phone:'(571) 555-0137',email:'fwu@consulting.com',employer:'Self-employed consultant',income:'$100K-$125K',score:661,debt:48200,accounts:6,derogs:2,inquiries:7,foreignConn:true,countries:'CN,HK,SG',fociFlag:true,travel:true,chinaFlag:true,clearance:'None',notes:'Self-employed. Bank accounts in HK, SG. Multiple PRC business trips. Shell LLC. HIGH FOCI.'},
+  {id:'I015',first:'Gregory',middle:'A.',last:'Patel',dob:'1973-07-11',ssn:'***-**-9987',gender:'M',addr:'2890 Innovation Blvd',city:'Herndon',state:'VA',zip:'20170',phone:'(703) 555-0568',email:'gpatel@microsoft.com',employer:'Microsoft',income:'$200K+',score:811,debt:387000,accounts:18,derogs:0,inquiries:2,foreignConn:false,countries:'IN',fociFlag:false,travel:false,chinaFlag:false,clearance:'None',notes:'India origin. No adverse indicators. High net worth.'},
+];
+
+var CO_DATA = [
+  {id:'C001',name:'Apex Defense Systems LLC',addr:'1001 Defense Way',city:'Herndon',state:'VA',zip:'20170',ein:'54-1234567',duns:'12-345-6789',founded:'2008',sic:'7372',industry:'Defense Software',revenue:'$10M-$50M',employees:'50-100',bscore:74,debt:1200000,tradeLines:12,uccLiens:2,foreignDebt:false,foreignCountries:'',prcConn:false,shellFlag:false,clearance:'DoD Cleared Facility',notes:'Clean. Active DoD contracts.'},
+  {id:'C002',name:'Pacific Bridge Technologies Inc',addr:'8800 Sunset Blvd',city:'McLean',state:'VA',zip:'22102',ein:'20-9876543',duns:'98-765-4321',founded:'2015',sic:'7379',industry:'IT Consulting',revenue:'$1M-$10M',employees:'10-50',bscore:61,debt:2800000,tradeLines:8,uccLiens:3,foreignDebt:true,foreignCountries:'CN,HK',prcConn:true,shellFlag:true,clearance:'None',notes:'CDB term loan $580K. BVI shell ownership traces to Shenzhen. HIGH FOCI.'},
+  {id:'C003',name:'Clearwater Analytics Group',addr:'500 Water St',city:'Annapolis',state:'MD',zip:'21401',ein:'52-3456789',duns:'23-456-7890',founded:'2001',sic:'7372',industry:'Analytics',revenue:'$10M-$50M',employees:'100-250',bscore:82,debt:850000,tradeLines:16,uccLiens:1,foreignDebt:false,foreignCountries:'',prcConn:false,shellFlag:false,clearance:'Public Trust',notes:'Clean record. US lenders only.'},
+  {id:'C004',name:'Sino-Tech Innovations LLC',addr:'4400 China Basin Dr',city:'Vienna',state:'VA',zip:'22182',ein:'81-7654321',duns:'87-654-3210',founded:'2019',sic:'7371',industry:'Software Development',revenue:'$1M-$10M',employees:'10-50',bscore:52,debt:3400000,tradeLines:5,uccLiens:4,foreignDebt:true,foreignCountries:'CN',prcConn:true,shellFlag:true,clearance:'None',notes:'Majority PRC ownership. ICBC + CDB financing. Multiple BVI entities. EXTREME FOCI RISK.'},
+  {id:'C005',name:'Atlantic Logistics Partners',addr:'200 Harbor St',city:'Baltimore',state:'MD',zip:'21202',ein:'52-1122334',duns:'11-223-3445',founded:'1998',sic:'4731',industry:'Logistics',revenue:'$50M-$100M',employees:'250-500',bscore:78,debt:4200000,tradeLines:22,uccLiens:5,foreignDebt:false,foreignCountries:'',prcConn:false,shellFlag:false,clearance:'None',notes:'Large established company. Clean.'},
+  {id:'C006',name:'Dragon Gate Capital LLC',addr:'1 Mezzanine Plaza',city:'Washington',state:'DC',zip:'20036',ein:'47-8899001',duns:'88-990-0112',founded:'2017',sic:'6726',industry:'Investment Holding',revenue:'$1M-$10M',employees:'1-10',bscore:44,debt:12000000,tradeLines:4,uccLiens:6,foreignDebt:true,foreignCountries:'CN,KY,BVI',prcConn:true,shellFlag:true,clearance:'None',notes:'Cayman Islands + BVI holding structure. PRC state fund investor. High debt. EXTREME FOCI.'},
+  {id:'C007',name:'Keystone Federal Systems',addr:'900 Pentagon Blvd',city:'Arlington',state:'VA',zip:'22202',ein:'54-4455667',duns:'44-556-6778',founded:'1985',sic:'7372',industry:'Federal IT',revenue:'$100M+',employees:'500+',bscore:91,debt:8800000,tradeLines:28,uccLiens:2,foreignDebt:false,foreignCountries:'',prcConn:false,shellFlag:false,clearance:'DoD Top Secret Facility',notes:'Long-standing cleared contractor. Excellent.'},
+  {id:'C008',name:'Meridian Research Associates',addr:'7200 Wisconsin Ave',city:'Bethesda',state:'MD',zip:'20814',ein:'52-6677889',duns:'66-778-8990',founded:'2003',sic:'8742',industry:'Management Consulting',revenue:'$10M-$50M',employees:'50-100',bscore:77,debt:920000,tradeLines:11,uccLiens:1,foreignDebt:false,foreignCountries:'UK',prcConn:false,shellFlag:false,clearance:'Secret',notes:'UK partner relationship. No adverse.'},
+  {id:'C009',name:'Bright Star Trading Co',addr:'2200 Pacific Rim Way',city:'Rockville',state:'MD',zip:'20850',ein:'61-2233445',duns:'22-334-4556',founded:'2013',sic:'5065',industry:'Electronics Trade',revenue:'$1M-$10M',employees:'10-50',bscore:49,debt:1800000,tradeLines:6,uccLiens:3,foreignDebt:true,foreignCountries:'CN,TW,KR',prcConn:true,shellFlag:false,clearance:'None',notes:'Electronics importer. Primary supplier in Shenzhen. Bank of China credit line. PRC flag.'},
+  {id:'C010',name:'Potomac Defense Consulting',addr:'1650 Tysons Blvd',city:'Tysons',state:'VA',zip:'22102',ein:'54-9988776',duns:'99-887-7665',founded:'2010',sic:'8742',industry:'Defense Consulting',revenue:'$10M-$50M',employees:'50-100',bscore:83,debt:1100000,tradeLines:14,uccLiens:1,foreignDebt:false,foreignCountries:'',prcConn:false,shellFlag:false,clearance:'TS/SCI Facility',notes:'Cleared consulting firm. Clean.'},
+  {id:'C011',name:'Blue Lotus Technologies LLC',addr:'5500 Lotus Garden Pkwy',city:'Chantilly',state:'VA',zip:'20151',ein:'82-4455123',duns:'44-551-2345',founded:'2016',sic:'7371',industry:'Software/AI',revenue:'$1M-$10M',employees:'10-50',bscore:58,debt:2200000,tradeLines:7,uccLiens:2,foreignDebt:true,foreignCountries:'CN,HK',prcConn:true,shellFlag:true,clearance:'None',notes:'Founders from PRC. Zhongguancun Science Park connection. Huawei partnership. HIGH FOCI.'},
+  {id:'C012',name:'Chesapeake Data Solutions',addr:'410 Bay Bridge Way',city:'Annapolis',state:'MD',zip:'21403',ein:'52-8877665',duns:'88-776-6554',founded:'2005',sic:'7374',industry:'Data Services',revenue:'$10M-$50M',employees:'100-250',bscore:79,debt:2100000,tradeLines:18,uccLiens:2,foreignDebt:false,foreignCountries:'',prcConn:false,shellFlag:false,clearance:'Public Trust',notes:'Data center services. Clean profile.'},
+];
+
+// ── FILTER STATE ──────────────────────────────
+var currentTab='ind';
+var currentFilters={};
+var selectedId=null;
+var sortCol=null,sortDir=1;
+
+// ── TAB SWITCH ────────────────────────────────
+function switchTab(t){
+  currentTab=t;
+  document.getElementById('tab-ind').className='stab'+(t==='ind'?' active':'');
+  document.getElementById('tab-co').className='stab'+(t==='co'?' active':'');
+  closeDetail();
+  renderFilters();
+  runQuery();
+}
+
+// ── FILTER PANELS ─────────────────────────────
+var IND_FILTERS=[
+  {group:'IDENTITY',fields:[
+    {id:'q_first',label:'First Name',type:'text',key:'first'},
+    {id:'q_last',label:'Last Name',type:'text',key:'last'},
+    {id:'q_ssn',label:'SSN (last 4)',type:'text',key:'ssn'},
+    {id:'q_dob_from',label:'DOB From',type:'date',key:'dob_from'},
+    {id:'q_dob_to',label:'DOB To',type:'date',key:'dob_to'},
+    {id:'q_gender',label:'Gender',type:'select',key:'gender',opts:[['','Any'],['M','Male'],['F','Female']]},
+  ]},
+  {group:'CONTACT',fields:[
+    {id:'q_city',label:'City',type:'text',key:'city'},
+    {id:'q_state',label:'State',type:'text',key:'state'},
+    {id:'q_zip',label:'ZIP',type:'text',key:'zip'},
+    {id:'q_phone',label:'Phone',type:'text',key:'phone'},
+    {id:'q_email',label:'Email',type:'text',key:'email'},
+  ]},
+  {group:'EMPLOYMENT',fields:[
+    {id:'q_employer',label:'Employer',type:'text',key:'employer'},
+    {id:'q_income',label:'Income Range',type:'select',key:'income',opts:[['','Any'],['$75K-$100K','$75K-$100K'],['$100K-$125K','$100K-$125K'],['$125K-$150K','$125K-$150K'],['$150K-$200K','$150K-$200K'],['$200K+','$200K+']]},
+    {id:'q_clearance',label:'Clearance',type:'text',key:'clearance'},
+  ]},
+  {group:'CREDIT',fields:[
+    {id:'q_score_min',label:'Min Credit Score',type:'number',key:'score_min',placeholder:'e.g. 700'},
+    {id:'q_score_max',label:'Max Credit Score',type:'number',key:'score_max',placeholder:'e.g. 850'},
+    {id:'q_debt_max',label:'Max Total Debt ($)',type:'number',key:'debt_max',placeholder:'e.g. 200000'},
+    {id:'q_derogs',label:'Has Derog Marks',type:'select',key:'derogs',opts:[['','Any'],['yes','Yes'],['no','No']]},
+  ]},
+  {group:'FOREIGN / FOCI',fields:[
+    {id:'q_foreignConn',label:'Foreign Connection',type:'select',key:'foreignConn',opts:[['','Any'],['yes','Yes'],['no','No']]},
+    {id:'q_countries',label:'Country Code',type:'text',key:'countries',placeholder:'e.g. CN, RU, IR'},
+    {id:'q_fociFlag',label:'FOCI Flag',type:'select',key:'fociFlag',opts:[['','Any'],['yes','Yes'],['no','No']]},
+    {id:'q_chinaFlag',label:'China Connection',type:'select',key:'chinaFlag',opts:[['','Any'],['yes','Yes'],['no','No']]},
+    {id:'q_travel',label:'Foreign Travel',type:'select',key:'travel',opts:[['','Any'],['yes','Yes'],['no','No']]},
+  ]},
+];
+
+var CO_FILTERS=[
+  {group:'IDENTITY',fields:[
+    {id:'q_cname',label:'Company Name',type:'text',key:'name'},
+    {id:'q_ein',label:'EIN',type:'text',key:'ein'},
+    {id:'q_duns',label:'DUNS',type:'text',key:'duns'},
+    {id:'q_sic',label:'SIC Code',type:'text',key:'sic'},
+    {id:'q_industry',label:'Industry',type:'text',key:'industry'},
+  ]},
+  {group:'LOCATION',fields:[
+    {id:'q_ccity',label:'City',type:'text',key:'city'},
+    {id:'q_cstate',label:'State',type:'text',key:'state'},
+    {id:'q_czip',label:'ZIP',type:'text',key:'zip'},
+  ]},
+  {group:'BUSINESS',fields:[
+    {id:'q_founded_from',label:'Founded From',type:'number',key:'founded_from',placeholder:'e.g. 2010'},
+    {id:'q_founded_to',label:'Founded To',type:'number',key:'founded_to',placeholder:'e.g. 2024'},
+    {id:'q_revenue',label:'Revenue Range',type:'select',key:'revenue',opts:[['','Any'],['$1M-$10M','$1M-$10M'],['$10M-$50M','$10M-$50M'],['$50M-$100M','$50M-$100M'],['$100M+','$100M+']]},
+    {id:'q_employees',label:'Employees',type:'select',key:'employees',opts:[['','Any'],['1-10','1-10'],['10-50','10-50'],['50-100','50-100'],['100-250','100-250'],['250-500','250-500'],['500+','500+']]},
+    {id:'q_clearance_c',label:'Clearance Level',type:'text',key:'clearance'},
+  ]},
+  {group:'CREDIT',fields:[
+    {id:'q_bscore_min',label:'Min Biz Credit Score',type:'number',key:'bscore_min',placeholder:'e.g. 70'},
+    {id:'q_debt_max_c',label:'Max Total Debt ($)',type:'number',key:'debt_max',placeholder:'e.g. 5000000'},
+    {id:'q_ucc',label:'Has UCC Liens',type:'select',key:'ucc',opts:[['','Any'],['yes','Yes'],['no','No']]},
+  ]},
+  {group:'FOREIGN / FOCI',fields:[
+    {id:'q_foreignDebt',label:'Foreign Debt',type:'select',key:'foreignDebt',opts:[['','Any'],['yes','Yes'],['no','No']]},
+    {id:'q_cCountries',label:'Country Code',type:'text',key:'foreignCountries',placeholder:'e.g. CN, HK, KY'},
+    {id:'q_prcConn',label:'PRC Connection',type:'select',key:'prcConn',opts:[['','Any'],['yes','Yes'],['no','No']]},
+    {id:'q_shell',label:'Shell Company Flag',type:'select',key:'shellFlag',opts:[['','Any'],['yes','Yes'],['no','No']]},
+  ]},
+];
+
+function renderFilters(){
+  var defs=currentTab==='ind'?IND_FILTERS:CO_FILTERS;
+  var html='';
+  defs.forEach(function(g){
+    html+='<div class="filter-group"><div class="fg-title">'+g.group+'</div>';
+    g.fields.forEach(function(f){
+      html+='<div class="fld"><label>'+f.label+'</label>';
+      if(f.type==='select'){
+        html+='<select id="'+f.id+'" onchange="runQuery()">';
+        f.opts.forEach(function(o){html+='<option value="'+o[0]+'">'+o[1]+'</option>';});
+        html+='</select>';
+      }else{
+        html+='<input type="'+f.type+'" id="'+f.id+'" '+(f.placeholder?'placeholder="'+f.placeholder+'"':'')+' oninput="runQuery()" '+(f.type==='number'?'min="0"':'')+' autocomplete="off">';
+      }
+      html+='</div>';
+    });
+    html+='</div>';
+  });
+  html+='<button class="btn-query" onclick="runQuery()">🔍 Query</button>';
+  html+='<button class="btn-clear-f" onclick="clearFilters()">Clear Filters</button>';
+  document.getElementById('filter-panel').innerHTML=html;
+}
+
+function getFilters(){
+  var defs=currentTab==='ind'?IND_FILTERS:CO_FILTERS;
+  var f={};
+  defs.forEach(function(g){g.fields.forEach(function(fd){var el=document.getElementById(fd.id);if(el)f[fd.key]=el.value.trim();});});
+  return f;
+}
+
+function clearFilters(){
+  var defs=currentTab==='ind'?IND_FILTERS:CO_FILTERS;
+  defs.forEach(function(g){g.fields.forEach(function(fd){var el=document.getElementById(fd.id);if(el)el.value='';});});
+  runQuery();
+}
+
+// ── FILTER LOGIC ──────────────────────────────
+function matchInd(r,f){
+  if(f.first&&!r.first.toLowerCase().includes(f.first.toLowerCase()))return false;
+  if(f.last&&!r.last.toLowerCase().includes(f.last.toLowerCase()))return false;
+  if(f.ssn&&!r.ssn.includes(f.ssn))return false;
+  if(f.gender&&r.gender!==f.gender)return false;
+  if(f.dob_from&&r.dob<f.dob_from)return false;
+  if(f.dob_to&&r.dob>f.dob_to)return false;
+  if(f.city&&!r.city.toLowerCase().includes(f.city.toLowerCase()))return false;
+  if(f.state&&!r.state.toLowerCase().includes(f.state.toLowerCase()))return false;
+  if(f.zip&&!r.zip.includes(f.zip))return false;
+  if(f.phone&&!r.phone.includes(f.phone))return false;
+  if(f.email&&!r.email.toLowerCase().includes(f.email.toLowerCase()))return false;
+  if(f.employer&&!r.employer.toLowerCase().includes(f.employer.toLowerCase()))return false;
+  if(f.income&&r.income!==f.income)return false;
+  if(f.clearance&&!r.clearance.toLowerCase().includes(f.clearance.toLowerCase()))return false;
+  if(f.score_min&&r.score<parseInt(f.score_min))return false;
+  if(f.score_max&&r.score>parseInt(f.score_max))return false;
+  if(f.debt_max&&r.debt>parseInt(f.debt_max))return false;
+  if(f.derogs==='yes'&&r.derogs===0)return false;
+  if(f.derogs==='no'&&r.derogs>0)return false;
+  if(f.foreignConn==='yes'&&!r.foreignConn)return false;
+  if(f.foreignConn==='no'&&r.foreignConn)return false;
+  if(f.countries&&!r.countries.toUpperCase().includes(f.countries.toUpperCase()))return false;
+  if(f.fociFlag==='yes'&&!r.fociFlag)return false;
+  if(f.fociFlag==='no'&&r.fociFlag)return false;
+  if(f.chinaFlag==='yes'&&!r.chinaFlag)return false;
+  if(f.chinaFlag==='no'&&r.chinaFlag)return false;
+  if(f.travel==='yes'&&!r.travel)return false;
+  if(f.travel==='no'&&r.travel)return false;
+  return true;
+}
+function matchCo(r,f){
+  if(f.name&&!r.name.toLowerCase().includes(f.name.toLowerCase()))return false;
+  if(f.ein&&!r.ein.includes(f.ein))return false;
+  if(f.duns&&!r.duns.includes(f.duns))return false;
+  if(f.sic&&!r.sic.includes(f.sic))return false;
+  if(f.industry&&!r.industry.toLowerCase().includes(f.industry.toLowerCase()))return false;
+  if(f.city&&!r.city.toLowerCase().includes(f.city.toLowerCase()))return false;
+  if(f.state&&!r.state.toLowerCase().includes(f.state.toLowerCase()))return false;
+  if(f.zip&&!r.zip.includes(f.zip))return false;
+  if(f.founded_from&&parseInt(r.founded)<parseInt(f.founded_from))return false;
+  if(f.founded_to&&parseInt(r.founded)>parseInt(f.founded_to))return false;
+  if(f.revenue&&r.revenue!==f.revenue)return false;
+  if(f.employees&&r.employees!==f.employees)return false;
+  if(f.clearance&&!r.clearance.toLowerCase().includes(f.clearance.toLowerCase()))return false;
+  if(f.bscore_min&&r.bscore<parseInt(f.bscore_min))return false;
+  if(f.debt_max&&r.debt>parseInt(f.debt_max))return false;
+  if(f.ucc==='yes'&&r.uccLiens===0)return false;
+  if(f.ucc==='no'&&r.uccLiens>0)return false;
+  if(f.foreignDebt==='yes'&&!r.foreignDebt)return false;
+  if(f.foreignDebt==='no'&&r.foreignDebt)return false;
+  if(f.foreignCountries&&!r.foreignCountries.toUpperCase().includes(f.foreignCountries.toUpperCase()))return false;
+  if(f.prcConn==='yes'&&!r.prcConn)return false;
+  if(f.prcConn==='no'&&r.prcConn)return false;
+  if(f.shellFlag==='yes'&&!r.shellFlag)return false;
+  if(f.shellFlag==='no'&&r.shellFlag)return false;
+  return true;
+}
+
+// ── QUERY + RENDER TABLE ──────────────────────
+var currentResults=[];
+function runQuery(){
+  var f=getFilters();
+  var data=currentTab==='ind'?IND_DATA:CO_DATA;
+  var fn=currentTab==='ind'?matchInd:matchCo;
+  currentResults=data.filter(function(r){return fn(r,f);});
+  if(sortCol){
+    currentResults.sort(function(a,b){
+      var av=a[sortCol],bv=b[sortCol];
+      if(typeof av==='string')av=av.toLowerCase();
+      if(typeof bv==='string')bv=bv.toLowerCase();
+      return av<bv?-sortDir:av>bv?sortDir:0;
+    });
+  }
+  renderTable();
+}
+
+function renderTable(){
+  var r=currentResults;
+  document.getElementById('res-num').textContent=r.length;
+  var chinaCount=r.filter(function(x){return x.chinaFlag||x.prcConn;}).length;
+  var fociCount=r.filter(function(x){return x.fociFlag||x.prcConn;}).length;
+  var fs='';
+  if(chinaCount)fs+='<span class="fsumm china">🇨🇳 '+chinaCount+' China</span>';
+  if(fociCount)fs+='<span class="fsumm foci">⚠ '+fociCount+' FOCI</span>';
+  document.getElementById('flag-summary').innerHTML=fs;
+
+  if(!r.length){
+    document.getElementById('table-wrap').innerHTML='<div class="no-results"><div class="nr-icon">🔍</div><div class="nr-txt">No records match the current filters</div></div>';
+    return;
+  }
+
+  var html='<table><thead><tr>';
+  if(currentTab==='ind'){
+    var cols=[['id','ID'],['last','Last'],['first','First'],['dob','DOB'],['ssn','SSN'],['city','City'],['state','ST'],['employer','Employer'],['score','Score'],['debt','Debt'],['clearance','Clearance'],['fociFlag','FOCI'],['chinaFlag','🇨🇳'],['countries','Countries']];
+    cols.forEach(function(c){html+='<th onclick="sortBy(''+c[0]+'')">'+c[1]+(sortCol===c[0]?(sortDir>0?' ↑':' ↓'):'')+'</th>';});
+    html+='</tr></thead><tbody>';
+    r.forEach(function(rec){
+      var rowCls=rec.chinaFlag?'china-rec':rec.fociFlag?'foci-rec':'';
+      html+='<tr class="'+rowCls+(selectedId===rec.id?' selected':'')+'" onclick="showDetail(''+rec.id+'')">';
+      html+='<td style="color:var(--muted);font-size:11px">'+rec.id+'</td>';
+      html+='<td style="font-weight:600">'+rec.last+'</td>';
+      html+='<td>'+rec.first+'</td>';
+      html+='<td style="color:var(--muted)">'+rec.dob+'</td>';
+      html+='<td style="color:var(--muted)">'+rec.ssn+'</td>';
+      html+='<td>'+rec.city+'</td>';
+      html+='<td>'+rec.state+'</td>';
+      html+='<td style="max-width:140px;overflow:hidden;text-overflow:ellipsis">'+rec.employer+'</td>';
+      var sc=rec.score>=760?'pass':rec.score>=680?'warn':'fail';
+      html+='<td><span class="badge '+sc+'">'+rec.score+'</span></td>';
+      html+='<td style="color:var(--muted)">$'+Number(rec.debt).toLocaleString()+'</td>';
+      html+='<td style="font-size:11px;max-width:100px;overflow:hidden;text-overflow:ellipsis">'+rec.clearance+'</td>';
+      html+='<td>'+(rec.fociFlag?'<span class="badge fail">YES</span>':'<span class="badge neutral">No</span>')+'</td>';
+      html+='<td>'+(rec.chinaFlag?'<span class="badge china">🇨🇳</span>':'-')+'</td>';
+      html+='<td style="color:'+(rec.countries.includes('CN')?'#ff8080':'var(--muted)')+'">'+( rec.countries||'—')+'</td>';
+      html+='</tr>';
+    });
+  }else{
+    var cols=[['id','ID'],['name','Company'],['city','City'],['state','ST'],['industry','Industry'],['bscore','Score'],['debt','Debt'],['uccLiens','UCC'],['clearance','Clearance'],['foreignDebt','For.Debt'],['prcConn','🇨🇳 PRC'],['shellFlag','Shell']];
+    cols.forEach(function(c){html+='<th onclick="sortBy(''+c[0]+'')">'+c[1]+(sortCol===c[0]?(sortDir>0?' ↑':' ↓'):'')+'</th>';});
+    html+='</tr></thead><tbody>';
+    r.forEach(function(rec){
+      var rowCls=rec.prcConn?'china-rec':rec.foreignDebt?'foci-rec':'';
+      html+='<tr class="'+rowCls+(selectedId===rec.id?' selected':'')+'" onclick="showDetail(''+rec.id+'')">';
+      html+='<td style="color:var(--muted);font-size:11px">'+rec.id+'</td>';
+      html+='<td style="font-weight:600;max-width:180px;overflow:hidden;text-overflow:ellipsis">'+rec.name+'</td>';
+      html+='<td>'+rec.city+'</td>';
+      html+='<td>'+rec.state+'</td>';
+      html+='<td style="max-width:120px;overflow:hidden;text-overflow:ellipsis;color:var(--muted)">'+rec.industry+'</td>';
+      var sc=rec.bscore>=80?'pass':rec.bscore>=60?'warn':'fail';
+      html+='<td><span class="badge '+sc+'">'+rec.bscore+'</span></td>';
+      html+='<td style="color:var(--muted)">$'+Number(rec.debt).toLocaleString()+'</td>';
+      html+='<td style="color:'+(rec.uccLiens>2?'var(--yellow)':'var(--muted)')+'">'+rec.uccLiens+'</td>';
+      html+='<td style="font-size:11px;max-width:100px;overflow:hidden;text-overflow:ellipsis">'+rec.clearance+'</td>';
+      html+='<td>'+(rec.foreignDebt?'<span class="badge warn">YES</span>':'<span class="badge neutral">No</span>')+'</td>';
+      html+='<td>'+(rec.prcConn?'<span class="badge china">🇨🇳 YES</span>':'<span class="badge neutral">No</span>')+'</td>';
+      html+='<td>'+(rec.shellFlag?'<span class="badge fail">⚠ YES</span>':'-')+'</td>';
+      html+='</tr>';
+    });
+  }
+  html+='</tbody></table>';
+  document.getElementById('table-wrap').innerHTML=html;
+}
+
+function sortBy(col){
+  if(sortCol===col)sortDir*=-1;else{sortCol=col;sortDir=1;}
+  runQuery();
+}
+
+// ── RECORD DETAIL ─────────────────────────────
+function showDetail(id){
+  selectedId=id;
+  var rec=null;
+  if(currentTab==='ind') IND_DATA.forEach(function(r){if(r.id===id)rec=r;});
+  else CO_DATA.forEach(function(r){if(r.id===id)rec=r;});
+  if(!rec)return;
+  renderTable();
+  var panel=document.getElementById('detail-panel');
+  panel.className='detail-panel open';
+  document.getElementById('dp-title').textContent=currentTab==='ind'?(rec.first+' '+rec.last):rec.name;
+  var html='';
+  if(currentTab==='ind'){
+    if(rec.chinaFlag||rec.fociFlag){
+      html+='<div style="background:rgba(255,0,0,.1);border:1px solid rgba(255,68,68,.35);border-radius:6px;padding:8px 12px;margin-bottom:10px;font-size:11px;color:#ff8080">'+
+      (rec.chinaFlag?'🇨🇳 CHINA CONNECTION DETECTED  ':'')+(rec.fociFlag?'⚠ FOCI FLAG ACTIVE':'')+'</div>';
+    }
+    function kv(k,v,cls){return'<div class="kv"><span class="kv-k">'+k+'</span><span class="kv-v'+(cls?' '+cls:'')+'">'+v+'</span></div>';}
+    html+='<div class="dp-section"><div class="dp-section-title ind">PERSONAL</div>'+kv('Name',rec.first+' '+rec.middle+' '+rec.last)+kv('DOB',rec.dob)+kv('SSN',rec.ssn)+kv('Gender',rec.gender==='M'?'Male':'Female')+'</div>';
+    html+='<div class="dp-section"><div class="dp-section-title ind">CONTACT</div>'+kv('Address',rec.addr)+kv('City/State/ZIP',rec.city+', '+rec.state+' '+rec.zip)+kv('Phone',rec.phone)+kv('Email',rec.email)+'</div>';
+    html+='<div class="dp-section"><div class="dp-section-title ind">EMPLOYMENT</div>'+kv('Employer',rec.employer)+kv('Income',rec.income)+kv('Clearance',rec.clearance)+'</div>';
+    html+='<div class="dp-section"><div class="dp-section-title ind">CREDIT</div>'+kv('Credit Score',rec.score)+kv('Total Debt','$'+Number(rec.debt).toLocaleString())+kv('Accounts',rec.accounts)+kv('Derog Marks',rec.derogs)+kv('Hard Inquiries',rec.inquiries)+'</div>';
+    html+='<div class="dp-section"><div class="dp-section-title '+(rec.fociFlag||rec.chinaFlag?'flag':'ind')+'">FOREIGN / FOCI</div>'+kv('Foreign Connection',rec.foreignConn?'Yes':'No',rec.foreignConn?'flag':'ok')+kv('Countries',rec.countries||'None',rec.countries.includes('CN')?'china':'')+kv('FOCI Flag',rec.fociFlag?'YES':'No',rec.fociFlag?'flag':'ok')+kv('China Flag',rec.chinaFlag?'🇨🇳 YES':'No',rec.chinaFlag?'china':'ok')+kv('Foreign Travel',rec.travel?'Yes':'No',rec.travel&&rec.chinaFlag?'china':'')+'</div>';
+    html+='<div class="dp-section"><div class="dp-section-title">NOTES</div><div style="font-size:12px;color:'+(rec.fociFlag?'#ffb0b0':'var(--muted)')+';line-height:1.5;padding:6px 0">'+rec.notes+'</div></div>';
+  }else{
+    if(rec.prcConn||rec.shellFlag){
+      html+='<div style="background:rgba(255,0,0,.1);border:1px solid rgba(255,68,68,.35);border-radius:6px;padding:8px 12px;margin-bottom:10px;font-size:11px;color:#ff8080">'+
+      (rec.prcConn?'🇨🇳 PRC CONNECTION DETECTED  ':'')+(rec.shellFlag?'⚠ SHELL FLAG ACTIVE':'')+'</div>';
+    }
+    function kv(k,v,cls){return'<div class="kv"><span class="kv-k">'+k+'</span><span class="kv-v'+(cls?' '+cls:'')+'">'+v+'</span></div>';}
+    html+='<div class="dp-section"><div class="dp-section-title ind">IDENTITY</div>'+kv('EIN',rec.ein)+kv('DUNS',rec.duns)+kv('SIC',rec.sic)+kv('Industry',rec.industry)+kv('Founded',rec.founded)+'</div>';
+    html+='<div class="dp-section"><div class="dp-section-title ind">LOCATION</div>'+kv('Address',rec.addr)+kv('City/State/ZIP',rec.city+', '+rec.state+' '+rec.zip)+'</div>';
+    html+='<div class="dp-section"><div class="dp-section-title ind">BUSINESS</div>'+kv('Revenue',rec.revenue)+kv('Employees',rec.employees)+kv('Clearance',rec.clearance)+'</div>';
+    html+='<div class="dp-section"><div class="dp-section-title ind">CREDIT</div>'+kv('Biz Credit Score',rec.bscore)+kv('Total Debt','$'+Number(rec.debt).toLocaleString())+kv('Trade Lines',rec.tradeLines)+kv('UCC Liens',rec.uccLiens)+'</div>';
+    html+='<div class="dp-section"><div class="dp-section-title '+(rec.prcConn||rec.shellFlag?'flag':'ind')+'">FOREIGN / FOCI</div>'+kv('Foreign Debt',rec.foreignDebt?'Yes':'No',rec.foreignDebt?'flag':'ok')+kv('Countries',rec.foreignCountries||'None',rec.foreignCountries.includes('CN')?'china':'')+kv('PRC Connection',rec.prcConn?'🇨🇳 YES':'No',rec.prcConn?'china':'ok')+kv('Shell Flag',rec.shellFlag?'⚠ YES':'No',rec.shellFlag?'flag':'ok')+'</div>';
+    html+='<div class="dp-section"><div class="dp-section-title">NOTES</div><div style="font-size:12px;color:'+(rec.prcConn?'#ffb0b0':'var(--muted)')+';line-height:1.5;padding:6px 0">'+rec.notes+'</div></div>';
+  }
+  document.getElementById('dp-body').innerHTML=html;
+}
+
+function closeDetail(){selectedId=null;document.getElementById('detail-panel').className='detail-panel';renderTable();}
+
+// ── EXPORT CSV ────────────────────────────────
+function exportCSV(){
+  if(!currentResults.length)return;
+  var rows=[Object.keys(currentResults[0]).join(',')];
+  currentResults.forEach(function(r){rows.push(Object.values(r).map(function(v){return'"'+String(v).replace(/"/g,'""')+'"';}).join(','));});
+  var csv=rows.join('
+');
+  var a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  a.download='tu-analysis-'+(currentTab==='ind'?'individual':'company')+'-'+Date.now()+'.csv';a.click();
+}
+
+// ── INIT ──────────────────────────────────────
+renderFilters();
+runQuery();
+</script>
+</body>
+</html>

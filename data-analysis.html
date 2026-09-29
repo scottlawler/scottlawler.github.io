@@ -3,14 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TransNexus — Data Analysis</title>
+<title>TransNexus — TruLookup Data Analysis</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#0a0e1a;--card:#1a2235;--border:#2a3652;--text:#e8edf5;
-  --muted:#6b7a99;--blue:#3b82f6;--green:#22c55e;--yellow:#f59e0b;
-  --red:#ef4444;--accent:#60a5fa;--china:#ff4444;--hover:#1f2d47;
-}
+:root{--bg:#0a0e1a;--card:#1a2235;--border:#2a3652;--text:#e8edf5;--muted:#6b7a99;--blue:#3b82f6;--green:#22c55e;--yellow:#f59e0b;--red:#ef4444;--accent:#60a5fa;--hover:#1f2d47;--tu:#00a3e0}
 html,body{height:100%;overflow:hidden}
 body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,sans-serif;font-size:13px;display:flex;flex-direction:column}
 
@@ -19,114 +15,113 @@ body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,
 .logo{display:flex;align-items:center;gap:10px}
 .logo-icon{width:30px;height:30px;background:var(--blue);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:15px}
 .logo-name{font-size:1rem;font-weight:700}.logo-name span{color:var(--accent)}
-.htitle{font-size:.95rem;font-weight:700;color:var(--accent);letter-spacing:.5px;text-transform:uppercase}
+.htitle{font-size:.9rem;font-weight:700;color:var(--accent);letter-spacing:.5px;text-transform:uppercase}
 .header-right{display:flex;align-items:center;gap:12px}
-.hbadge{background:rgba(59,130,246,.15);border:1px solid rgba(59,130,246,.3);color:var(--accent);font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px}
+.hbadge{background:rgba(0,163,224,.15);border:1px solid rgba(0,163,224,.3);color:var(--tu);font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px}
+.hver{font-size:10px;color:var(--muted)}
 .hlink{color:var(--muted);font-size:12px;text-decoration:none}.hlink:hover{color:var(--accent)}
 
 /* 3-COLUMN LAYOUT */
-.layout{flex:1;display:grid;grid-template-columns:240px 1fr 300px;overflow:hidden}
+.layout{flex:1;display:grid;grid-template-columns:260px 1fr 320px;overflow:hidden;min-height:0}
 
-/* LEFT — FIELD LIST */
+/* ─── LEFT: FIELD LIST ─── */
 .field-list{background:var(--card);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
-.fl-head{padding:10px 12px;border-bottom:1px solid var(--border);flex-shrink:0}
+.fl-search-wrap{padding:8px 10px;border-bottom:1px solid var(--border);flex-shrink:0}
 .fl-search{width:100%;background:#0d1525;border:1px solid var(--border);border-radius:5px;padding:6px 9px;color:var(--text);font-size:12px;outline:none}
 .fl-search:focus{border-color:var(--blue)}
 .fl-search::placeholder{color:#3a4a6a}
 .fl-body{flex:1;overflow-y:auto}
 .fl-body::-webkit-scrollbar{width:3px}
 .fl-body::-webkit-scrollbar-thumb{background:#333}
-.fl-group{border-bottom:1px solid var(--border)}
-.fl-group-title{padding:8px 12px 4px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);background:#0d1525;position:sticky;top:0;z-index:1}
-.fl-item{padding:7px 12px;cursor:pointer;font-size:12px;color:var(--text);border-left:2px solid transparent;display:flex;align-items:center;justify-content:space-between;gap:6px;transition:all .15s}
+.fl-group-hdr{padding:7px 10px 3px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);background:#0d1525;position:sticky;top:0;z-index:1;border-bottom:1px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:space-between;user-select:none}
+.fl-group-hdr:hover{color:var(--accent)}
+.fl-group-hdr .arrow{font-size:9px;transition:transform .2s}
+.fl-group-hdr.collapsed .arrow{transform:rotate(-90deg)}
+.fl-group-items{}
+.fl-item{padding:6px 10px 6px 14px;cursor:pointer;font-size:12px;color:var(--text);border-left:2px solid transparent;display:flex;align-items:center;justify-content:space-between;gap:6px;transition:all .12s}
 .fl-item:hover{background:var(--hover);border-left-color:var(--border)}
 .fl-item.active{background:rgba(59,130,246,.1);border-left-color:var(--blue);color:var(--accent);font-weight:600}
 .fl-item.hidden{display:none}
-.fl-type-badge{font-size:9px;color:var(--muted);background:#0d1525;border:1px solid var(--border);border-radius:3px;padding:1px 4px;flex-shrink:0;white-space:nowrap}
-.fl-item.active .fl-type-badge{border-color:rgba(59,130,246,.3);color:var(--accent)}
-.tab-row{display:flex;border-bottom:1px solid var(--border);flex-shrink:0}
-.tab{flex:1;padding:8px 0;text-align:center;font-size:11px;font-weight:600;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;transition:all .15s}
-.tab.active{color:var(--accent);border-bottom-color:var(--blue);background:rgba(59,130,246,.05)}
+.fl-dtype{font-size:9px;color:var(--muted);background:#0d1525;border:1px solid var(--border);border-radius:3px;padding:1px 4px;flex-shrink:0;white-space:nowrap;font-family:monospace}
+.fl-item.active .fl-dtype{border-color:rgba(59,130,246,.3);color:var(--accent)}
+.fl-count{font-size:9px;color:var(--muted);margin-left:2px}
 
-/* MIDDLE — QUERY */
-.query-col{display:flex;flex-direction:column;overflow:hidden}
-.query-top{padding:16px;border-bottom:1px solid var(--border);flex-shrink:0;background:rgba(10,14,26,.6)}
-.field-selected-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);margin-bottom:8px}
-.field-selected-name{font-size:16px;font-weight:700;color:var(--accent);margin-bottom:12px}
+/* ─── MIDDLE: QUERY ─── */
+.query-col{display:flex;flex-direction:column;overflow:hidden;min-height:0}
+.query-top{padding:14px 16px;border-bottom:1px solid var(--border);flex-shrink:0;background:rgba(10,14,26,.7)}
+.qs-row{display:flex;align-items:baseline;gap:8px;margin-bottom:10px}
+.qs-group-tag{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);background:#0d1525;border:1px solid var(--border);border-radius:3px;padding:2px 6px}
+.qs-field-name{font-size:15px;font-weight:700;color:var(--accent)}
+.qs-api-key{font-size:11px;color:var(--muted);font-family:monospace}
 .query-input-row{display:flex;gap:8px;align-items:center}
-.query-input{flex:1;background:#0d1525;border:1px solid var(--border);border-radius:6px;padding:9px 12px;color:var(--text);font-size:13px;font-family:inherit;outline:none;transition:border-color .15s}
+.query-input{flex:1;background:#0d1525;border:1px solid var(--border);border-radius:6px;padding:8px 12px;color:var(--text);font-size:13px;font-family:inherit;outline:none;transition:border-color .15s}
 .query-input:focus{border-color:var(--blue)}
 .query-input::placeholder{color:#3a4a6a}
-.btn-run{background:linear-gradient(135deg,#1d4ed8,var(--blue));color:#fff;border:none;border-radius:6px;padding:9px 20px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap}
+.query-input:disabled{opacity:.4;cursor:not-allowed}
+.btn-run{background:linear-gradient(135deg,#1d4ed8,var(--blue));color:#fff;border:none;border-radius:6px;padding:8px 18px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;transition:opacity .15s}
 .btn-run:hover{opacity:.88}
-.btn-run:disabled{opacity:.4;cursor:not-allowed}
-.query-op-row{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
-.op-btn{background:#0d1525;border:1px solid var(--border);color:var(--muted);border-radius:4px;padding:3px 9px;font-size:11px;cursor:pointer;transition:all .15s}
+.btn-run:disabled{opacity:.35;cursor:not-allowed}
+.op-row{display:flex;gap:5px;margin-top:7px;flex-wrap:wrap;align-items:center}
+.op-lbl{font-size:10px;color:var(--muted)}
+.op-btn{background:#0d1525;border:1px solid var(--border);color:var(--muted);border-radius:4px;padding:3px 8px;font-size:11px;cursor:pointer;transition:all .12s}
 .op-btn.active{background:rgba(59,130,246,.15);border-color:var(--blue);color:var(--accent);font-weight:600}
 .op-btn:hover{border-color:var(--accent);color:var(--accent)}
-.query-hint{font-size:11px;color:var(--muted);margin-top:6px}
-
-/* RESULTS */
-.results-area{flex:1;overflow:hidden;display:flex;flex-direction:column}
-.results-bar{padding:8px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:rgba(10,14,26,.5)}
+.q-hint{font-size:11px;color:var(--muted);margin-top:5px}
+/* results */
+.results-area{flex:1;overflow:hidden;display:flex;flex-direction:column;min-height:0}
+.results-bar{padding:7px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:rgba(10,14,26,.5)}
 .res-info{font-size:12px;color:var(--muted)}.res-info strong{color:var(--text)}
-.btn-export{background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:4px;padding:4px 10px;font-size:11px;cursor:pointer}
-.btn-export:hover{border-color:var(--accent);color:var(--accent)}
-.table-wrap{flex:1;overflow:auto}
+.res-actions{display:flex;gap:6px}
+.btn-sm{background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:4px;padding:3px 9px;font-size:11px;cursor:pointer;transition:all .2s}
+.btn-sm:hover{border-color:var(--accent);color:var(--accent)}
+.table-wrap{flex:1;overflow:auto;min-height:0}
 .table-wrap::-webkit-scrollbar{width:4px;height:4px}
 .table-wrap::-webkit-scrollbar-thumb{background:#333}
 table{width:100%;border-collapse:collapse;font-size:12px}
 thead{position:sticky;top:0;z-index:2}
-th{background:#0f1a2e;color:var(--muted);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.4px;padding:7px 11px;text-align:left;border-bottom:2px solid var(--border);white-space:nowrap;cursor:pointer}
+th{background:#0f1a2e;color:var(--muted);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.4px;padding:7px 10px;text-align:left;border-bottom:2px solid var(--border);white-space:nowrap;cursor:pointer;user-select:none}
 th:hover{color:var(--accent)}
-td{padding:7px 11px;border-bottom:1px solid rgba(255,255,255,.04);white-space:nowrap}
+td{padding:7px 10px;border-bottom:1px solid rgba(255,255,255,.04);white-space:nowrap}
 tr:hover td{background:var(--hover);cursor:pointer}
-tr.china-row td{background:rgba(255,0,0,.05)}
-tr.china-row td:first-child{border-left:2px solid var(--china)}
-tr.foci-row td{background:rgba(239,68,68,.04)}
-tr.foci-row td:first-child{border-left:2px solid var(--red)}
-.badge{display:inline-block;font-size:9px;font-weight:700;padding:1px 6px;border-radius:8px;text-transform:uppercase;letter-spacing:.3px}
-.badge.pass{background:rgba(34,197,94,.12);color:var(--green);border:1px solid rgba(34,197,94,.2)}
-.badge.warn{background:rgba(245,158,11,.12);color:var(--yellow);border:1px solid rgba(245,158,11,.2)}
-.badge.fail{background:rgba(239,68,68,.1);color:var(--red);border:1px solid rgba(239,68,68,.2)}
-.badge.china{background:rgba(255,68,68,.15);color:#ff8080;border:1px solid rgba(255,68,68,.35)}
-.badge.neutral{background:rgba(107,122,153,.1);color:var(--muted);border:1px solid var(--border)}
-.empty-state{padding:60px 24px;text-align:center;color:var(--muted)}
-.empty-icon{font-size:40px;margin-bottom:12px}
-.empty-txt{font-size:14px;margin-bottom:6px;color:var(--text)}
-.empty-sub{font-size:12px}
+.empty-state{padding:60px;text-align:center;color:var(--muted)}
+.empty-icon{font-size:36px;margin-bottom:10px}
+.empty-txt{font-size:14px;color:var(--text);margin-bottom:5px}
 
-/* RIGHT — FIELD DEFINITION */
-.field-def{background:var(--card);border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
-.fd-head{padding:12px 16px;border-bottom:1px solid var(--border);flex-shrink:0;background:linear-gradient(135deg,#1e3a5f,#162d4a)}
-.fd-head-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);margin-bottom:4px}
+/* ─── RIGHT: FIELD DEF ─── */
+.field-def{background:var(--card);border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;min-height:0}
+.fd-head{padding:11px 14px;border-bottom:1px solid var(--border);flex-shrink:0;background:linear-gradient(135deg,#1e3a5f,#162d4a)}
+.fd-head-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);margin-bottom:3px}
 .fd-head-name{font-size:14px;font-weight:700;color:var(--accent)}
-.fd-body{flex:1;overflow-y:auto;padding:14px}
+.fd-head-api{font-size:11px;color:var(--muted);font-family:monospace;margin-top:2px}
+.fd-body{flex:1;overflow-y:auto;padding:12px}
 .fd-body::-webkit-scrollbar{width:3px}
 .fd-body::-webkit-scrollbar-thumb{background:#333}
-.fd-row{margin-bottom:14px}
-.fd-row-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin-bottom:5px;padding-bottom:3px;border-bottom:1px solid var(--border)}
-.fd-row-val{font-size:13px;color:var(--text);line-height:1.5}
-.fd-chip{display:inline-block;background:#0d1525;border:1px solid var(--border);border-radius:4px;padding:3px 8px;font-size:11px;color:var(--text);margin:2px 2px 2px 0;font-family:'Courier New',monospace}
-.fd-chip.range{border-color:rgba(59,130,246,.3);color:var(--accent)}
-.fd-chip.example{border-color:rgba(34,197,94,.25);color:var(--green)}
-.fd-chip.warn{border-color:rgba(245,158,11,.3);color:var(--yellow)}
-.fd-note{font-size:11px;color:var(--muted);background:#0d1525;border:1px solid var(--border);border-radius:5px;padding:8px 10px;margin-top:10px;line-height:1.5}
+.fd-section{margin-bottom:13px}
+.fd-section-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin-bottom:5px;padding-bottom:3px;border-bottom:1px solid var(--border)}
+.fd-val{font-size:13px;color:var(--text);line-height:1.5}
+.chip{display:inline-block;border-radius:4px;padding:2px 7px;font-size:11px;margin:2px 2px 2px 0}
+.chip.type{background:rgba(96,165,250,.12);border:1px solid rgba(96,165,250,.25);color:var(--accent)}
+.chip.range{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2);color:var(--green)}
+.chip.enum{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);color:var(--yellow);font-family:monospace}
+.chip.example{background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2);color:#86efac;font-family:monospace}
+.chip.warn{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:var(--red)}
+.fd-note{font-size:11px;color:var(--muted);background:#0d1525;border:1px solid var(--border);border-radius:5px;padding:8px 10px;margin-top:8px;line-height:1.6}
+.fd-note strong{color:var(--text)}
 .fd-placeholder{padding:40px 16px;text-align:center;color:var(--muted)}
-.fd-placeholder-icon{font-size:32px;margin-bottom:10px}
-.fd-placeholder-txt{font-size:13px}
+.fd-placeholder-icon{font-size:30px;margin-bottom:8px}
+.fd-placeholder-txt{font-size:12px;line-height:1.6}
 </style>
 </head>
 <body>
-
 <div class="header">
   <div class="logo">
     <div class="logo-icon">🔗</div>
     <div><div class="logo-name">Trans<span>Nexus</span></div></div>
   </div>
-  <div class="htitle">Data Analysis</div>
+  <div class="htitle">TruLookup Data Analysis</div>
   <div class="header-right">
-    <span class="hbadge">SIMULATION MODE</span>
+    <span class="hbadge">TruLookup API v6.10.14</span>
+    <span class="hver">May 2026</span>
     <a href="transnexus.html" class="hlink">← Verification</a>
     <a href="/" class="hlink">← Demos</a>
   </div>
@@ -136,11 +131,7 @@ tr.foci-row td:first-child{border-left:2px solid var(--red)}
 
   <!-- LEFT: FIELD LIST -->
   <div class="field-list">
-    <div class="tab-row">
-      <div class="tab active" id="tab-ind" onclick="switchTab('ind')">👤 Individual</div>
-      <div class="tab" id="tab-co" onclick="switchTab('co')">🏢 Company</div>
-    </div>
-    <div class="fl-head">
+    <div class="fl-search-wrap">
       <input class="fl-search" id="fl-search" type="text" placeholder="Search fields…" oninput="filterFields(this.value)" autocomplete="off">
     </div>
     <div class="fl-body" id="fl-body"></div>
@@ -149,29 +140,35 @@ tr.foci-row td:first-child{border-left:2px solid var(--red)}
   <!-- MIDDLE: QUERY -->
   <div class="query-col">
     <div class="query-top">
-      <div class="field-selected-label">Selected Field</div>
-      <div class="field-selected-name" id="sel-name">— select a field —</div>
+      <div class="qs-row">
+        <span class="qs-group-tag" id="qs-group">—</span>
+        <span class="qs-field-name" id="qs-fname">Select a field</span>
+        <span class="qs-api-key" id="qs-apikey"></span>
+      </div>
       <div class="query-input-row">
-        <input class="query-input" id="query-input" placeholder="Select a field from the left to query…" disabled autocomplete="off" onkeydown="if(event.key==='Enter')runQuery()">
+        <input class="query-input" id="query-input" placeholder="Select a field from the left to begin…" disabled autocomplete="off" onkeydown="if(event.key==='Enter')runQuery()">
         <button class="btn-run" id="btn-run" onclick="runQuery()" disabled>Search</button>
       </div>
-      <div class="query-op-row" id="op-row">
-        <span style="font-size:11px;color:var(--muted)">Operator:</span>
+      <div class="op-row">
+        <span class="op-lbl">Operator:</span>
         <button class="op-btn active" id="op-eq" onclick="setOp('eq')">= Equals</button>
         <button class="op-btn" id="op-contains" onclick="setOp('contains')">≈ Contains</button>
         <button class="op-btn" id="op-starts" onclick="setOp('starts')">^ Starts with</button>
-        <button class="op-btn" id="op-gte" onclick="setOp('gte')">≥ ≥ Min</button>
-        <button class="op-btn" id="op-lte" onclick="setOp('lte')">≤ Max</button>
+        <button class="op-btn" id="op-gte" onclick="setOp('gte')" style="display:none">≥ Min</button>
+        <button class="op-btn" id="op-lte" onclick="setOp('lte')" style="display:none">≤ Max</button>
       </div>
-      <div class="query-hint" id="query-hint"></div>
+      <div class="q-hint" id="q-hint"></div>
     </div>
     <div class="results-area">
       <div class="results-bar">
-        <div class="res-info"><strong id="res-count">0</strong> records &nbsp;|&nbsp; <span id="res-field" style="color:var(--accent)">no query</span></div>
-        <button class="btn-export" onclick="exportCSV()">⬇ CSV</button>
+        <div class="res-info"><strong id="res-count">0</strong> records &nbsp;·&nbsp; <span id="res-label" style="color:var(--accent)">no query</span></div>
+        <div class="res-actions">
+          <button class="btn-sm" onclick="exportCSV()">⬇ CSV</button>
+          <button class="btn-sm" onclick="clearQ()">✕ Clear</button>
+        </div>
       </div>
       <div class="table-wrap" id="table-wrap">
-        <div class="empty-state"><div class="empty-icon">🔍</div><div class="empty-txt">Select a field and enter a value to query</div><div class="empty-sub">Results appear here</div></div>
+        <div class="empty-state"><div class="empty-icon">🔍</div><div class="empty-txt">Select a field, enter a value, click Search</div><div style="font-size:12px;margin-top:4px">Results display here</div></div>
       </div>
     </div>
   </div>
@@ -179,375 +176,369 @@ tr.foci-row td:first-child{border-left:2px solid var(--red)}
   <!-- RIGHT: FIELD DEFINITION -->
   <div class="field-def">
     <div class="fd-head">
-      <div class="fd-head-label">Field Definition</div>
+      <div class="fd-head-lbl">TruLookup Field Definition</div>
       <div class="fd-head-name" id="fd-name">Select a field</div>
+      <div class="fd-head-api" id="fd-api"></div>
     </div>
     <div class="fd-body" id="fd-body">
-      <div class="fd-placeholder"><div class="fd-placeholder-icon">📋</div><div class="fd-placeholder-txt">Click any field name on the left to see its definition, data type, and expected input format.</div></div>
+      <div class="fd-placeholder">
+        <div class="fd-placeholder-icon">📋</div>
+        <div class="fd-placeholder-txt">Click any field name on the left to see its TruLookup API definition — data type, format specification, length and value constraints, allowed enum values, and usage notes from the TransUnion API Guide v6.10.14.</div>
+      </div>
     </div>
   </div>
 
 </div>
 
 <script>
-// ── FIELD SCHEMA ──────────────────────────────
-// dtype: alpha|numeric|alphanumeric|date|boolean|enum|phone|email|ssn|ein
-var FIELDS = {
-  ind: [
-    { group:'PERSONAL IDENTITY', fields:[
-      { key:'first_name',    label:'First Name',         dtype:'alpha',         minLen:1, maxLen:50,  format:'Alpha characters',             examples:['John','Mary','James'],       note:'Legal first name as it appears on government-issued ID.' },
-      { key:'middle_name',   label:'Middle Name',        dtype:'alpha',         minLen:1, maxLen:50,  format:'Alpha characters',             examples:['Robert','A.','Lee'],         note:'Middle name or initial. Optional field.' },
-      { key:'last_name',     label:'Last Name',          dtype:'alpha',         minLen:1, maxLen:50,  format:'Alpha characters',             examples:['Smith','Johnson','Chen'],    note:'Legal surname. Hyphenated names accepted.' },
-      { key:'name_suffix',   label:'Name Suffix',        dtype:'enum',          minLen:0, maxLen:10,  format:'Enum: Jr, Sr, II, III, IV, V', examples:['Jr.','Sr.','II'],            note:'Generational suffix only.' },
-      { key:'dob',           label:'Date of Birth',      dtype:'date',          minLen:8, maxLen:10,  format:'YYYY-MM-DD or MM/DD/YYYY',      examples:['1985-04-22','1970-11-01'],   note:'Full date of birth required. Age 18–120 validated.' },
-      { key:'age',           label:'Age',                dtype:'numeric',       minVal:1, maxVal:120, format:'Numeric 1–120',                 examples:['35','52','67'],              note:'Derived from DOB. Integer years.' },
-      { key:'gender',        label:'Gender',             dtype:'enum',          minLen:1, maxLen:1,   format:'Enum: M, F',                   examples:['M','F'],                     note:'Single character. M = Male, F = Female.' },
-      { key:'ssn',           label:'SSN',                dtype:'ssn',           minLen:9, maxLen:11,  format:'Numeric 9 digits / XXX-XX-XXXX',examples:['123-45-6789','987654321'],  note:'Social Security Number. Stored encrypted. Full or last-4 accepted.' },
-      { key:'ssn_last4',     label:'SSN Last 4',         dtype:'numeric',       minLen:4, maxVal:4,   format:'Numeric exactly 4 digits',      examples:['4821','0037','9912'],        note:'Last 4 digits of SSN for partial match.' },
-    ]},
-    { group:'CONTACT — ADDRESS', fields:[
-      { key:'address1',      label:'Street Address',     dtype:'alphanumeric',  minLen:3, maxLen:100, format:'Alphanumeric 3–100 characters', examples:['123 Main St','1402 Chesapeake Dr'], note:'Primary street address line.' },
-      { key:'address2',      label:'Address Line 2',     dtype:'alphanumeric',  minLen:0, maxLen:50,  format:'Alphanumeric 0–50 characters', examples:['Apt 4B','Suite 200'],        note:'Apartment, suite, unit. Optional.' },
-      { key:'city',          label:'City',               dtype:'alpha',         minLen:2, maxLen:50,  format:'Alpha characters 2–50',        examples:['Annapolis','McLean','Bethesda'], note:'City name. No abbreviations.' },
-      { key:'state',         label:'State',              dtype:'alpha',         minLen:2, maxLen:2,   format:'Alpha 2-char state code',      examples:['MD','VA','DC'],              note:'US state abbreviation. 2 uppercase characters.' },
-      { key:'zip',           label:'ZIP Code',           dtype:'numeric',       minLen:5, maxLen:5,   format:'Numeric exactly 5 digits',     examples:['21401','22102','20814'],     note:'5-digit US ZIP code.' },
-      { key:'zip4',          label:'ZIP+4',              dtype:'numeric',       minLen:4, maxLen:4,   format:'Numeric exactly 4 digits',     examples:['1234','0087'],              note:'ZIP+4 extension. 4 digits only (no hyphen).' },
-      { key:'county',        label:'County',             dtype:'alpha',         minLen:2, maxLen:50,  format:'Alpha characters 2–50',        examples:['Anne Arundel','Fairfax'],    note:'County name.' },
-      { key:'addr_type',     label:'Address Type',       dtype:'enum',          minLen:0, maxLen:20,  format:'Enum: Current, Prior, Mailing',examples:['Current','Prior'],           note:'Relationship of address to subject.' },
-      { key:'addr_reported', label:'Address First Reported',dtype:'date',       minLen:8, maxLen:10,  format:'YYYY-MM-DD',                   examples:['2018-06-01'],               note:'Date address first appeared in TU records.' },
-    ]},
-    { group:'CONTACT — PHONE', fields:[
-      { key:'phone',         label:'Phone Number',       dtype:'phone',         minLen:10,maxLen:10,  format:'Numeric 10 digits (no dashes)', examples:['4105550192','7035550447'],  note:'10-digit US phone. Include area code. No formatting.' },
-      { key:'phone_type',    label:'Phone Type',         dtype:'enum',          minLen:0, maxLen:10,  format:'Enum: Mobile, Landline, VOIP',  examples:['Mobile','Landline','VOIP'], note:'Line type classification.' },
-      { key:'phone_carrier', label:'Carrier',            dtype:'alpha',         minLen:1, maxLen:50,  format:'Alpha characters 1–50',        examples:['Verizon','AT&T','T-Mobile'],note:'Telephone carrier name.' },
-      { key:'phone_status',  label:'Phone Status',       dtype:'enum',          minLen:0, maxLen:15,  format:'Enum: Active, Disconnected',    examples:['Active','Disconnected'],    note:'Current connectivity status.' },
-    ]},
-    { group:'CONTACT — EMAIL', fields:[
-      { key:'email',         label:'Email Address',      dtype:'email',         minLen:5, maxLen:254, format:'Valid email format user@domain.tld',examples:['john@gmail.com'],         note:'RFC 5321 compliant email address.' },
-      { key:'email_domain',  label:'Email Domain',       dtype:'alpha',         minLen:3, maxLen:100, format:'Alpha/dot 3–100 characters',   examples:['gmail.com','outlook.com'],   note:'Domain portion of email for bulk domain queries.' },
-    ]},
-    { group:'EMPLOYMENT', fields:[
-      { key:'employer',      label:'Employer Name',      dtype:'alphanumeric',  minLen:1, maxLen:100, format:'Alphanumeric 1–100 characters', examples:['Northrop Grumman','MITRE'], note:'Current or most recent employer.' },
-      { key:'job_title',     label:'Job Title',          dtype:'alphanumeric',  minLen:1, maxLen:100, format:'Alphanumeric 1–100 characters', examples:['Software Engineer','Analyst'],note:'Occupational title.' },
-      { key:'income_range',  label:'Income Range',       dtype:'enum',          minLen:0, maxLen:20,  format:'Enum: <$50K, $50K-$75K, $75K-$100K, $100K-$125K, $125K-$150K, $150K-$200K, $200K+',examples:['$100K-$125K'],note:'Estimated annual income band.' },
-    ]},
-    { group:'CREDIT & FINANCIAL', fields:[
-      { key:'credit_score',  label:'Credit Score',       dtype:'numeric',       minVal:300,maxVal:850,format:'Numeric 300–850',               examples:['712','801','641'],           note:'VantageScore 3.0 or FICO. Integer value.' },
-      { key:'total_debt',    label:'Total Debt ($)',      dtype:'numeric',       minVal:0, maxVal:9999999,format:'Numeric 0–9,999,999',        examples:['98400','214000'],           note:'Total outstanding consumer debt in USD.' },
-      { key:'open_accounts', label:'Open Accounts',      dtype:'numeric',       minVal:0, maxVal:99,  format:'Numeric 0–99',                  examples:['8','14'],                   note:'Count of open revolving/installment accounts.' },
-      { key:'derogatories',  label:'Derogatory Marks',   dtype:'numeric',       minVal:0, maxVal:99,  format:'Numeric 0–99',                  examples:['0','2'],                    note:'Count of negative credit items (chargeoffs, collections).' },
-      { key:'hard_inquiries',label:'Hard Inquiries',     dtype:'numeric',       minVal:0, maxVal:99,  format:'Numeric 0–99 (12-month window)', examples:['2','5'],                   note:'Hard credit pull count in trailing 12 months.' },
-      { key:'bankruptcy',    label:'Bankruptcy Flag',    dtype:'boolean',       minLen:1, maxLen:3,   format:'Boolean: Y or N',              examples:['Y','N'],                     note:'Any bankruptcy filing on record.' },
-      { key:'lien_amount',   label:'Lien Amount ($)',     dtype:'numeric',       minVal:0, maxVal:9999999,format:'Numeric 0–9,999,999',        examples:['50000','125000'],           note:'Total dollar value of tax or judgment liens.' },
-    ]},
-    { group:'SECURITY CLEARANCE', fields:[
-      { key:'clearance',     label:'Clearance Level',    dtype:'enum',          minLen:0, maxLen:20,  format:'Enum: None, Public Trust, Secret, TS, TS/SCI',examples:['Secret','TS/SCI'],note:'Highest adjudicated DoD clearance level.' },
-    ]},
-    { group:'FOREIGN / FOCI', fields:[
-      { key:'foreign_conn',  label:'Foreign Connection', dtype:'boolean',       minLen:1, maxLen:3,   format:'Boolean: Y or N',              examples:['Y','N'],                     note:'Any foreign financial, travel, or family connection on record.' },
-      { key:'countries',     label:'Country Codes',      dtype:'alpha',         minLen:2, maxLen:2,   format:'ISO 3166-1 alpha-2 (2 chars)',  examples:['CN','RU','IR','HK'],        note:'ISO country code. Query one code at a time.' },
-      { key:'foci_flag',     label:'FOCI Flag',          dtype:'boolean',       minLen:1, maxLen:3,   format:'Boolean: Y or N',              examples:['Y','N'],                     note:'Foreign Ownership, Control, or Influence indicator active.' },
-      { key:'china_flag',    label:'China Connection',   dtype:'boolean',       minLen:1, maxLen:3,   format:'Boolean: Y or N',              examples:['Y','N'],                     note:'PRC-specific FOCI indicator. Includes financial, travel, and relationship vectors.' },
-      { key:'foreign_travel',label:'Foreign Travel',     dtype:'boolean',       minLen:1, maxLen:3,   format:'Boolean: Y or N',              examples:['Y','N'],                     note:'Foreign travel indicator in TU identity graph.' },
-      { key:'travel_country',label:'Travel Country',     dtype:'alpha',         minLen:2, maxLen:2,   format:'ISO 3166-1 alpha-2 (2 chars)',  examples:['CN','RU'],                  note:'Specific country visited. ISO 2-letter code.' },
-    ]},
-  ],
-  co: [
-    { group:'COMPANY IDENTITY', fields:[
-      { key:'company_name',  label:'Company Name',       dtype:'alphanumeric',  minLen:1, maxLen:150, format:'Alphanumeric 1–150 characters', examples:['Acme Corp LLC','Pacific Bridge Technologies'], note:'Legal registered business name.' },
-      { key:'dba_name',      label:'DBA / Trade Name',   dtype:'alphanumeric',  minLen:1, maxLen:150, format:'Alphanumeric 1–150 characters', examples:['Acme Solutions'],           note:'Doing-business-as or trade name if different from legal name.' },
-      { key:'ein',           label:'EIN',                dtype:'ein',           minLen:9, maxLen:10,  format:'Numeric 9 digits / XX-XXXXXXX', examples:['54-1234567','20-9876543'],  note:'IRS Employer Identification Number.' },
-      { key:'duns',          label:'DUNS Number',        dtype:'numeric',       minLen:9, maxLen:9,   format:'Numeric exactly 9 digits',      examples:['123456789','987654321'],    note:'Dun & Bradstreet Data Universal Numbering System identifier.' },
-      { key:'entity_type',   label:'Entity Type',        dtype:'enum',          minLen:0, maxLen:20,  format:'Enum: LLC, Inc, Corp, LP, LLP, Sole Prop, Partnership',examples:['LLC','Inc'],note:'Legal entity classification.' },
-      { key:'state_of_inc',  label:'State of Incorporation',dtype:'alpha',      minLen:2, maxLen:2,   format:'Alpha 2-char state code',      examples:['MD','VA','DE','KY'],        note:'State where entity is registered. DE/WY/NV common for shells.' },
-      { key:'sic_code',      label:'SIC Code',           dtype:'numeric',       minLen:4, maxLen:4,   format:'Numeric exactly 4 digits',      examples:['7372','4731','6726'],       note:'Standard Industrial Classification code.' },
-      { key:'industry',      label:'Industry Description',dtype:'alphanumeric', minLen:1, maxLen:100, format:'Alphanumeric 1–100 characters', examples:['Defense Software','Logistics'],note:'Human-readable industry classification.' },
-      { key:'date_founded',  label:'Date Founded',       dtype:'numeric',       minVal:1800,maxVal:2026,format:'Numeric year 1800–2026',      examples:['2008','2015','1998'],       note:'Year company was established/incorporated.' },
-    ]},
-    { group:'COMPANY LOCATION', fields:[
-      { key:'biz_address',   label:'Business Address',   dtype:'alphanumeric',  minLen:3, maxLen:100, format:'Alphanumeric 3–100 characters', examples:['500 Corporate Blvd, Suite 200'], note:'Primary business address.' },
-      { key:'biz_city',      label:'City',               dtype:'alpha',         minLen:2, maxLen:50,  format:'Alpha characters 2–50',        examples:['McLean','Annapolis'],        note:'City of principal business location.' },
-      { key:'biz_state',     label:'State',              dtype:'alpha',         minLen:2, maxLen:2,   format:'Alpha 2-char state code',      examples:['VA','MD','DC'],              note:'State of principal business location.' },
-      { key:'biz_zip',       label:'ZIP Code',           dtype:'numeric',       minLen:5, maxLen:5,   format:'Numeric exactly 5 digits',     examples:['22102','21401'],             note:'5-digit US ZIP code.' },
-    ]},
-    { group:'BUSINESS PROFILE', fields:[
-      { key:'revenue_range', label:'Revenue Range',      dtype:'enum',          minLen:0, maxLen:20,  format:'Enum: <$1M, $1M-$10M, $10M-$50M, $50M-$100M, $100M+',examples:['$10M-$50M'],note:'Annual revenue band.' },
-      { key:'employee_range',label:'Employee Count',     dtype:'enum',          minLen:0, maxLen:10,  format:'Enum: 1-10, 10-50, 50-100, 100-250, 250-500, 500+',examples:['50-100'],  note:'Full-time equivalent headcount band.' },
-      { key:'years_in_biz',  label:'Years in Business',  dtype:'numeric',       minVal:0, maxVal:200, format:'Numeric 0–200',                 examples:['12','25'],                  note:'Years since founding. Derived from date_founded.' },
-      { key:'clearance_fac', label:'Facility Clearance', dtype:'enum',          minLen:0, maxLen:30,  format:'Enum: None, Public Trust, Secret, TS, TS/SCI Facility',examples:['DoD Cleared Facility'],note:'Highest facility security clearance.' },
-    ]},
-    { group:'BUSINESS CREDIT', fields:[
-      { key:'biz_credit_score',label:'Business Credit Score',dtype:'numeric',  minVal:1, maxVal:100, format:'Numeric 1–100',                  examples:['74','82','52'],             note:'TU commercial credit score. Higher = better.' },
-      { key:'total_biz_debt', label:'Total Business Debt ($)',dtype:'numeric',  minVal:0, maxVal:999999999,format:'Numeric 0–999,999,999',    examples:['1200000','2800000'],        note:'Total outstanding commercial obligations in USD.' },
-      { key:'trade_lines',   label:'Trade Lines',        dtype:'numeric',       minVal:0, maxVal:999, format:'Numeric 0–999',                  examples:['12','22'],                 note:'Count of active commercial trade lines.' },
-      { key:'ucc_liens',     label:'UCC Liens',          dtype:'numeric',       minVal:0, maxVal:99,  format:'Numeric 0–99',                   examples:['2','5'],                   note:'Count of Uniform Commercial Code filings.' },
-      { key:'biz_bankruptcy',label:'Bankruptcy Flag',    dtype:'boolean',       minLen:1, maxLen:3,   format:'Boolean: Y or N',               examples:['Y','N'],                   note:'Any business bankruptcy filing on record.' },
-    ]},
-    { group:'OFFICERS & OWNERSHIP', fields:[
-      { key:'officer_name',  label:'Officer Name',       dtype:'alphanumeric',  minLen:1, maxLen:100, format:'Alphanumeric 1–100 characters', examples:['John Smith'],               note:'Name of principal officer, director, or registered agent.' },
-      { key:'officer_title', label:'Officer Title',      dtype:'alphanumeric',  minLen:1, maxLen:50,  format:'Alphanumeric 1–50 characters',  examples:['CEO','President','Member'], note:'Title of the officer.' },
-      { key:'owner_ssn',     label:'Owner SSN Last 4',   dtype:'numeric',       minLen:4, maxLen:4,   format:'Numeric exactly 4 digits',      examples:['4821','7734'],              note:'Last 4 SSN of principal beneficial owner.' },
-    ]},
-    { group:'FOREIGN / FOCI', fields:[
-      { key:'foreign_debt',  label:'Foreign Debt',       dtype:'boolean',       minLen:1, maxLen:3,   format:'Boolean: Y or N',               examples:['Y','N'],                   note:'Any debt obligation to a foreign-domiciled lender.' },
-      { key:'foreign_countries',label:'Foreign Countries',dtype:'alpha',        minLen:2, maxLen:2,   format:'ISO 3166-1 alpha-2 (2 chars)',   examples:['CN','HK','KY'],            note:'ISO country code of foreign financial connection.' },
-      { key:'prc_conn',      label:'PRC Connection',     dtype:'boolean',       minLen:1, maxLen:3,   format:'Boolean: Y or N',               examples:['Y','N'],                   note:'People's Republic of China financial or ownership connection.' },
-      { key:'shell_flag',    label:'Shell Company Flag',  dtype:'boolean',       minLen:1, maxLen:3,   format:'Boolean: Y or N',               examples:['Y','N'],                   note:'Offshore shell vehicle indicator (BVI, Cayman, etc.).' },
-      { key:'foreign_owner', label:'Foreign Ownership %', dtype:'numeric',      minVal:0, maxVal:100, format:'Numeric 0–100 (percent)',        examples:['51','100','25'],           note:'Estimated percentage of foreign beneficial ownership.' },
-      { key:'foci_flag_co',  label:'FOCI Flag',          dtype:'boolean',       minLen:1, maxLen:3,   format:'Boolean: Y or N',               examples:['Y','N'],                   note:'Company-level FOCI indicator active.' },
-    ]},
-  ]
-};
-
-// ── DATASET ───────────────────────────────────
-var IND_RECORDS = [
-  {id:'I001',first_name:'James',middle_name:'R.',last_name:'Harrison',dob:'1978-04-12',age:48,gender:'M',ssn:'***-**-4821',ssn_last4:'4821',address1:'1402 Chesapeake Dr',city:'Annapolis',state:'MD',zip:'21401',phone:'4105550192',phone_type:'Mobile',phone_carrier:'Verizon',phone_status:'Active',email:'j.harrison@gmail.com',email_domain:'gmail.com',employer:'Northrop Grumman',job_title:'Senior Engineer',income_range:'$125K-$150K',credit_score:748,total_debt:98400,open_accounts:9,derogatories:0,hard_inquiries:2,bankruptcy:'N',lien_amount:0,clearance:'Secret',foreign_conn:'N',countries:'',foci_flag:'N',china_flag:'N',foreign_travel:'N',travel_country:''},
-  {id:'I002',first_name:'Linda',middle_name:'M.',last_name:'Chen',dob:'1985-09-23',age:40,gender:'F',ssn:'***-**-7734',ssn_last4:'7734',address1:'3821 Blossom Way',city:'Rockville',state:'MD',zip:'20850',phone:'3015550447',phone_type:'Mobile',phone_carrier:'AT&T',phone_status:'Active',email:'l.chen@outlook.com',email_domain:'outlook.com',employer:'MITRE Corp',job_title:'Principal Scientist',income_range:'$150K-$200K',credit_score:712,total_debt:124800,open_accounts:11,derogatories:1,hard_inquiries:3,bankruptcy:'N',lien_amount:0,clearance:'TS/SCI',foreign_conn:'Y',countries:'CN',foci_flag:'Y',china_flag:'Y',foreign_travel:'Y',travel_country:'CN'},
-  {id:'I003',first_name:'Robert',middle_name:'',last_name:'Kowalski',dob:'1970-02-28',age:56,gender:'M',ssn:'***-**-3356',ssn_last4:'3356',address1:'88 Oak Street',city:'Baltimore',state:'MD',zip:'21202',phone:'4435550812',phone_type:'Landline',phone_carrier:'Comcast',phone_status:'Active',email:'rkowalski@comcast.net',email_domain:'comcast.net',employer:'Booz Allen Hamilton',job_title:'Senior Consultant',income_range:'$100K-$125K',credit_score:690,total_debt:214000,open_accounts:14,derogatories:2,hard_inquiries:5,bankruptcy:'N',lien_amount:12000,clearance:'Secret',foreign_conn:'N',countries:'',foci_flag:'N',china_flag:'N',foreign_travel:'N',travel_country:''},
-  {id:'I004',first_name:'Wei',middle_name:'',last_name:'Zhang',dob:'1990-07-04',age:36,gender:'M',ssn:'***-**-9912',ssn_last4:'9912',address1:'507 Harbor View',city:'Alexandria',state:'VA',zip:'22314',phone:'7035550328',phone_type:'Mobile',phone_carrier:'T-Mobile',phone_status:'Active',email:'wzhang@hotmail.com',email_domain:'hotmail.com',employer:'SAIC',job_title:'Systems Analyst',income_range:'$150K-$200K',credit_score:731,total_debt:87200,open_accounts:8,derogatories:0,hard_inquiries:4,bankruptcy:'N',lien_amount:0,clearance:'None',foreign_conn:'Y',countries:'CN,HK',foci_flag:'Y',china_flag:'Y',foreign_travel:'Y',travel_country:'CN'},
-  {id:'I005',first_name:'Patricia',middle_name:'A.',last_name:'Monroe',dob:'1965-11-15',age:60,gender:'F',ssn:'***-**-5543',ssn_last4:'5543',address1:'221 Maple Lane',city:'Vienna',state:'VA',zip:'22180',phone:'7035550671',phone_type:'Landline',phone_carrier:'Cox',phone_status:'Active',email:'pmonroe@aol.com',email_domain:'aol.com',employer:'DXC Technology',job_title:'Program Manager',income_range:'$75K-$100K',credit_score:801,total_debt:34100,open_accounts:6,derogatories:0,hard_inquiries:1,bankruptcy:'N',lien_amount:0,clearance:'Public Trust',foreign_conn:'N',countries:'',foci_flag:'N',china_flag:'N',foreign_travel:'N',travel_country:''},
-  {id:'I006',first_name:'Marcus',middle_name:'T.',last_name:'Williams',dob:'1982-03-07',age:44,gender:'M',ssn:'***-**-2287',ssn_last4:'2287',address1:'1100 Penn Ave NW',city:'Washington',state:'DC',zip:'20004',phone:'2025550543',phone_type:'Mobile',phone_carrier:'Verizon',phone_status:'Active',email:'m.williams@dod.gov',email_domain:'dod.gov',employer:'Dept of Defense',job_title:'GS-14 Analyst',income_range:'$100K-$125K',credit_score:756,total_debt:61500,open_accounts:7,derogatories:0,hard_inquiries:2,bankruptcy:'N',lien_amount:0,clearance:'TS',foreign_conn:'N',countries:'',foci_flag:'N',china_flag:'N',foreign_travel:'N',travel_country:''},
-  {id:'I007',first_name:'Yuki',middle_name:'',last_name:'Tanaka',dob:'1988-12-01',age:37,gender:'F',ssn:'***-**-8831',ssn_last4:'8831',address1:'900 Sunrise Blvd',city:'Bethesda',state:'MD',zip:'20814',phone:'3015550994',phone_type:'Mobile',phone_carrier:'AT&T',phone_status:'Active',email:'ytanaka@research.org',email_domain:'research.org',employer:'Johns Hopkins APL',job_title:'Research Scientist',income_range:'$125K-$150K',credit_score:769,total_debt:42300,open_accounts:9,derogatories:0,hard_inquiries:2,bankruptcy:'N',lien_amount:0,clearance:'Secret',foreign_conn:'Y',countries:'JP',foci_flag:'N',china_flag:'N',foreign_travel:'N',travel_country:'JP'},
-  {id:'I008',first_name:'Elena',middle_name:'K.',last_name:'Sorokina',dob:'1993-08-22',age:33,gender:'F',ssn:'***-**-7721',ssn_last4:'7721',address1:'2201 Connecticut Ave',city:'Washington',state:'DC',zip:'20008',phone:'2025550344',phone_type:'VOIP',phone_carrier:'Unknown',phone_status:'Active',email:'esorokina@thinktank.org',email_domain:'thinktank.org',employer:'Think Tank Research',job_title:'Policy Analyst',income_range:'$75K-$100K',credit_score:641,total_debt:29800,open_accounts:5,derogatories:3,hard_inquiries:6,bankruptcy:'N',lien_amount:0,clearance:'None',foreign_conn:'Y',countries:'RU',foci_flag:'Y',china_flag:'N',foreign_travel:'N',travel_country:'RU'},
-  {id:'I009',first_name:'Ming',middle_name:'',last_name:'Liu',dob:'1987-05-14',age:39,gender:'M',ssn:'***-**-3398',ssn_last4:'3398',address1:'817 Jade Garden Ct',city:'Chantilly',state:'VA',zip:'20151',phone:'7035550261',phone_type:'Mobile',phone_carrier:'Cricket',phone_status:'Active',email:'ming.liu88@gmail.com',email_domain:'gmail.com',employer:'Huawei Technologies US',job_title:'Network Engineer',income_range:'$125K-$150K',credit_score:698,total_debt:156000,open_accounts:10,derogatories:1,hard_inquiries:4,bankruptcy:'N',lien_amount:0,clearance:'None',foreign_conn:'Y',countries:'CN',foci_flag:'Y',china_flag:'Y',foreign_travel:'Y',travel_country:'CN'},
-  {id:'I010',first_name:'Fang',middle_name:'',last_name:'Wu',dob:'1984-11-19',age:41,gender:'F',ssn:'***-**-2243',ssn_last4:'2243',address1:'6602 Silk Road Ave',city:'Fairfax',state:'VA',zip:'22030',phone:'5715550137',phone_type:'Mobile',phone_carrier:'Boost',phone_status:'Active',email:'fwu@consulting.com',email_domain:'consulting.com',employer:'Self-employed',job_title:'Consultant',income_range:'$100K-$125K',credit_score:661,total_debt:48200,open_accounts:6,derogatories:2,hard_inquiries:7,bankruptcy:'N',lien_amount:5000,clearance:'None',foreign_conn:'Y',countries:'CN,HK,SG',foci_flag:'Y',china_flag:'Y',foreign_travel:'Y',travel_country:'CN'},
-  {id:'I011',first_name:'Thomas',middle_name:'B.',last_name:'Anderson',dob:'1968-01-30',age:58,gender:'M',ssn:'***-**-6614',ssn_last4:'6614',address1:'56 Colonial Dr',city:'Reston',state:'VA',zip:'20191',phone:'7035550727',phone_type:'Mobile',phone_carrier:'Verizon',phone_status:'Active',email:'tanderson@raytheon.com',email_domain:'raytheon.com',employer:'Raytheon',job_title:'Program Director',income_range:'$150K-$200K',credit_score:822,total_debt:118000,open_accounts:12,derogatories:0,hard_inquiries:1,bankruptcy:'N',lien_amount:0,clearance:'TS',foreign_conn:'N',countries:'',foci_flag:'N',china_flag:'N',foreign_travel:'N',travel_country:''},
-  {id:'I012',first_name:'Sarah',middle_name:'J.',last_name:'Murphy',dob:'1979-10-08',age:46,gender:'F',ssn:'***-**-8854',ssn_last4:'8854',address1:'333 Forest Hill Rd',city:'Falls Church',state:'VA',zip:'22046',phone:'7035550443',phone_type:'Mobile',phone_carrier:'AT&T',phone_status:'Active',email:'smurphy@mitre.org',email_domain:'mitre.org',employer:'MITRE Corp',job_title:'Lead Analyst',income_range:'$125K-$150K',credit_score:777,total_debt:89200,open_accounts:9,derogatories:0,hard_inquiries:2,bankruptcy:'N',lien_amount:0,clearance:'TS/SCI',foreign_conn:'N',countries:'',foci_flag:'N',china_flag:'N',foreign_travel:'N',travel_country:''},
+// ── TLO FIELD SCHEMA ──────────────────────────
+// From TruLookup API Guide v6.10.14, May 2026
+// dtype: String | Integer | Date | Enum | Phone | SSN | Email | YesNo | Boolean
+var SCHEMA = [
+  { group:'PERSON SEARCH', icon:'👤', fields:[
+    { key:'first_name',    label:'First Name',          dtype:'String',  format:'Alpha characters only',         minLen:1,  maxLen:25,  required:false, examples:['John','Mary'],          note:'Alpha only. Part of Name complex type. Used in: BasicPersonSearch, PersonSearch, ComprehensivePerson, LocateReport, DeathMaster, Criminal, Incarceration, Voter, Eviction, WatchList, PersonalJudgment.' },
+    { key:'middle_name',   label:'Middle Name',         dtype:'String',  format:'Alpha characters only',         minLen:1,  maxLen:25,  required:false, examples:['Robert','A'],           note:'Alpha only. Optional. Part of BasicName / NameBase complex type.' },
+    { key:'last_name',     label:'Last Name',           dtype:'String',  format:'Alpha characters only',         minLen:1,  maxLen:25,  required:false, examples:['Smith','Chen'],         note:'Alpha only. Part of Name complex type. Commonly required together with first_name.' },
+    { key:'name_suffix',   label:'Name Suffix',         dtype:'Enum',    format:'Jr | Sr | II | III | IV | V | VI', minLen:2, maxLen:5, required:false, enumVals:['Jr','Sr','II','III','IV','V','VI'], examples:['Jr','II'],note:'Generational suffix. Part of NameBase type. Optional.' },
+    { key:'dob',           label:'Date of Birth',       dtype:'Date',    format:'YYYYMMDD (8 digits)',           minLen:8,  maxLen:8,   required:false, examples:['19850922','19701128'], note:'Full 8-digit date: YYYYMMDD. Used in: PersonSearch, BasicPersonSearch, Criminal, DeathMaster, DriverLicense, Incarceration, WatchList, Voter. Stored in BasicDateOfBirthRecord / DateOfBirthRecord types.' },
+    { key:'dob_year',      label:'DOB Year',            dtype:'Integer', format:'4-digit year',                 minVal:1900,maxVal:2026,required:false, examples:['1985','1970'],          note:'4-digit birth year. Can be used alone or with dob_month/dob_day for partial DOB matching.' },
+    { key:'dob_month',     label:'DOB Month',           dtype:'Integer', format:'Numeric 1–12',                 minVal:1,  maxVal:12,  required:false, examples:['4','11'],               note:'Numeric month without leading zero required.' },
+    { key:'dob_day',       label:'DOB Day',             dtype:'Integer', format:'Numeric 1–31',                 minVal:1,  maxVal:31,  required:false, examples:['22','1'],               note:'Day of month. Validates against month.' },
+    { key:'age_from',      label:'Age From',            dtype:'Integer', format:'Numeric 0–120',                minVal:0,  maxVal:120, required:false, examples:['30','50'],              note:'Minimum age filter. Used in age range queries. Integer years.' },
+    { key:'age_to',        label:'Age To',              dtype:'Integer', format:'Numeric 0–120',                minVal:0,  maxVal:120, required:false, examples:['40','65'],              note:'Maximum age filter. Must be >= age_from when both provided.' },
+    { key:'ssn',           label:'SSN / ITIN',          dtype:'SSN',     format:'###-##-#### or 9 digits',      minLen:9,  maxLen:11,  required:false, examples:['123-45-6789','987654321'], note:'Social Security Number or Individual Taxpayer ID. 9 numeric digits. Dashes optional. Stored in BasicSSNRecord / SSNRecord type. Sensitive: returned masked.' },
+    { key:'gender',        label:'Gender',              dtype:'Enum',    format:'M | F | U',                   minLen:1,  maxLen:1,   required:false, enumVals:['M','F','U'],            examples:['M','F'],note:'Single character. M=Male, F=Female, U=Unknown. From Parsed String Gender type.' },
+  ]},
+  { group:'PERSON — CONTACT', icon:'📍', fields:[
+    { key:'addr_street1',  label:'Street Address',      dtype:'String',  format:'Alphanumeric, max 100 chars',  minLen:1,  maxLen:100, required:false, examples:['123 Main St','1402 Chesapeake Dr'], note:'Primary address line. Part of BasicAddress / AddressBase complex type. Used across Person, Address, Household, Eviction, Voter, Foreclosure searches.' },
+    { key:'addr_street2',  label:'Address Line 2',      dtype:'String',  format:'Alphanumeric, max 50 chars',   minLen:0,  maxLen:50,  required:false, examples:['Apt 4B','Suite 200'],   note:'Secondary address line. Optional. Part of Address type.' },
+    { key:'addr_city',     label:'City',                dtype:'String',  format:'Alpha only, max 50 chars',     minLen:2,  maxLen:50,  required:false, examples:['Annapolis','McLean'],    note:'City name. Alpha only, no abbreviations. Part of BasicAddress type.' },
+    { key:'addr_state',    label:'State',               dtype:'String',  format:'2-char US state code',         minLen:2,  maxLen:2,   required:false, examples:['MD','VA','DC'],         note:'US state abbreviation — exactly 2 uppercase chars. Part of AddressBase type.' },
+    { key:'addr_zip',      label:'ZIP Code',            dtype:'String',  format:'Numeric, exactly 5 digits',    minLen:5,  maxLen:5,   required:false, examples:['21401','22102'],        note:'US 5-digit postal code. Numeric only. Part of ParsedAddress type.' },
+    { key:'addr_zip4',     label:'ZIP+4',               dtype:'String',  format:'Numeric, exactly 4 digits',    minLen:4,  maxLen:4,   required:false, examples:['1234','0087'],          note:'4-digit ZIP extension. Do not include hyphen. Optional.' },
+    { key:'county',        label:'County',              dtype:'String',  format:'Alpha, max 50 chars',          minLen:2,  maxLen:50,  required:false, examples:['Anne Arundel','Fairfax'], note:'County name. Used in property, lien, judgment, and UCC searches. Part of ParsedAddress type.' },
+    { key:'phone',         label:'Phone Number',        dtype:'Phone',   format:'Numeric, exactly 10 digits',   minLen:10, maxLen:10,  required:false, examples:['4105550192','7035550447'], note:'NPA-NXX-XXXX format, no dashes or spaces. From Parsed Phone type. Used in PhoneSearch, SuperReversePhone, Person, Business searches.' },
+    { key:'email',         label:'Email Address',       dtype:'Email',   format:'user@domain.tld',              minLen:5,  maxLen:254, required:false, examples:['john@gmail.com'],       note:'RFC 5321 compliant. From Parsed E-mail Address type. Used in Email Search. Stored in EmailRecord / EmailAddressRecord types.' },
+    { key:'ip_address',    label:'IP Address',          dtype:'String',  format:'IPv4: xxx.xxx.xxx.xxx',        minLen:7,  maxLen:15,  required:false, examples:['192.168.1.100'],        note:'IPv4 format only. From Parsed IP Address type. Used in Email Search correlation.' },
+  ]},
+  { group:'PERSON — LEGAL & RECORDS', icon:'⚖️', fields:[
+    { key:'dl_number',     label:'Driver License Number',dtype:'String', format:'Alphanumeric, 1–20 chars',     minLen:1,  maxLen:20,  required:false, examples:['S123456789'],           note:'State-issued DL number. Part of DriversLicenseBase / TLODriversLicense type. Used in DriverLicense Search.' },
+    { key:'dl_state',      label:'DL Issuing State',    dtype:'String',  format:'2-char US state code',         minLen:2,  maxLen:2,   required:false, examples:['MD','VA'],              note:'State that issued the driver's license. 2-char code.' },
+    { key:'criminal_state',label:'Criminal State',      dtype:'String',  format:'2-char US state code',         minLen:2,  maxLen:2,   required:false, examples:['MD','VA','FL'],         note:'Jurisdiction state for Criminal Search. Part of TLOCriminalSearchInput.' },
+    { key:'case_number',   label:'Case Number',         dtype:'String',  format:'Alphanumeric, 1–30 chars',     minLen:1,  maxLen:30,  required:false, examples:['2023CR001234'],         note:'Court case identifier. Used in Criminal, Eviction, Judgment searches.' },
+    { key:'pro_lic_num',   label:'Professional Lic #',  dtype:'String',  format:'Alphanumeric, 1–20 chars',     minLen:1,  maxLen:20,  required:false, examples:['MD12345'],              note:'License number for ProfessionalLicense Search. Part of ProfessionalLicenseBase type.' },
+    { key:'pro_lic_state', label:'Professional Lic State',dtype:'String',format:'2-char US state code',         minLen:2,  maxLen:2,   required:false, examples:['MD','VA'],              note:'Issuing state for professional license.' },
+    { key:'pro_lic_type',  label:'License Type',        dtype:'String',  format:'Alpha, max 50 chars',          minLen:2,  maxLen:50,  required:false, examples:['Medical','Law','CPA'],  note:'Category of professional license. Part of ProfessionalLicenseBase.' },
+    { key:'voter_state',   label:'Voter State',         dtype:'String',  format:'2-char US state code',         minLen:2,  maxLen:2,   required:false, examples:['MD','VA','PA'],         note:'State for Voter Registration Search. Part of TLOVoterRegistration type.' },
+    { key:'incarceration_state',label:'Incarceration State',dtype:'String',format:'2-char US state code',      minLen:2,  maxLen:2,   required:false, examples:['MD','TX'],              note:'Jurisdiction for Incarceration Search. Part of TLOIncarcerationPersonSearchInput.' },
+  ]},
+  { group:'BUSINESS SEARCH', icon:'🏢', fields:[
+    { key:'business_name', label:'Business Name',       dtype:'String',  format:'Alphanumeric, max 100 chars',  minLen:1,  maxLen:100, required:false, examples:['Acme Corp LLC','Pacific Bridge Tech'], note:'Legal registered name. Part of BusinessRecord / BusinessRecordBase type. Used in BusinessSearch, BusinessCombo, ComprehensiveBusiness, CorporateFiling, BusinessJudgment, BusinessLien, UCC.' },
+    { key:'dba_name',      label:'DBA / Trade Name',    dtype:'String',  format:'Alphanumeric, max 100 chars',  minLen:1,  maxLen:100, required:false, examples:['Acme Solutions'],       note:'Doing-business-as name. Optional. Part of BusinessRecord.' },
+    { key:'fein',          label:'FEIN / EIN',          dtype:'String',  format:'XX-XXXXXXX or 9 digits',       minLen:9,  maxLen:10,  required:false, examples:['54-1234567','201234567'],note:'Federal Employer Identification Number. 9 numeric digits. Dashes optional. Part of BusinessRecord type.' },
+    { key:'biz_state',     label:'State of Inc.',       dtype:'String',  format:'2-char US state code',         minLen:2,  maxLen:2,   required:false, examples:['VA','DE','MD'],         note:'State of incorporation or registration. Part of CorporateFiling / CorporateIdentity type.' },
+    { key:'biz_addr_street1',label:'Business Address',  dtype:'String',  format:'Alphanumeric, max 100 chars',  minLen:1,  maxLen:100, required:false, examples:['1001 Defense Way'],     note:'Business primary address line. Part of BusinessAddressRecord.' },
+    { key:'biz_city',      label:'Business City',       dtype:'String',  format:'Alpha only, max 50 chars',     minLen:2,  maxLen:50,  required:false, examples:['McLean','Annapolis'],    note:'City of principal business location.' },
+    { key:'biz_state_addr',label:'Business State',      dtype:'String',  format:'2-char US state code',         minLen:2,  maxLen:2,   required:false, examples:['VA','MD'],              note:'State of principal business location.' },
+    { key:'biz_zip',       label:'Business ZIP',        dtype:'String',  format:'Numeric, exactly 5 digits',    minLen:5,  maxLen:5,   required:false, examples:['22102','21401'],        note:'Business 5-digit ZIP code.' },
+    { key:'biz_phone',     label:'Business Phone',      dtype:'Phone',   format:'Numeric, exactly 10 digits',   minLen:10, maxLen:10,  required:false, examples:['7035551234'],           note:'Business phone. 10-digit numeric. Used in BusinessPhone Search.' },
+    { key:'sic_code',      label:'SIC Code',            dtype:'String',  format:'Numeric, exactly 4 digits',    minLen:4,  maxLen:4,   required:false, examples:['7372','4731','6726'],   note:'Standard Industrial Classification code. 4-digit numeric. Part of BusinessRecord.' },
+    { key:'officer_name',  label:'Officer Name',        dtype:'String',  format:'Alpha, max 100 chars',         minLen:1,  maxLen:100, required:false, examples:['John Smith'],           note:'Name of principal, officer, or registered agent. Part of BusinessRole / BusinessContact type.' },
+  ]},
+  { group:'VEHICLE SEARCH', icon:'🚗', fields:[
+    { key:'vin',           label:'VIN',                 dtype:'String',  format:'Alphanumeric, exactly 17 chars',minLen:17, maxLen:17, required:false, examples:['1HGBH41JXMN109186'],   note:'Vehicle Identification Number. Exactly 17 alphanumeric characters. Part of TLOVehicle type. Used in VehicleSearch.' },
+    { key:'plate',         label:'License Plate',       dtype:'String',  format:'Alphanumeric, 1–10 chars',     minLen:1,  maxLen:10,  required:false, examples:['ABC1234','XYZ789'],     note:'License plate number. Alphanumeric. Used with plate_state.' },
+    { key:'plate_state',   label:'Plate State',         dtype:'String',  format:'2-char US state code',         minLen:2,  maxLen:2,   required:false, examples:['MD','VA','PA'],         note:'State that issued the license plate. 2-char code.' },
+    { key:'veh_year_from', label:'Vehicle Year (From)', dtype:'Integer', format:'4-digit year, 1900–2026',      minVal:1900,maxVal:2026,required:false, examples:['2018','2020'],          note:'Minimum model year. Part of TLOVehicleSearchInput.' },
+    { key:'veh_year_to',   label:'Vehicle Year (To)',   dtype:'Integer', format:'4-digit year, 1900–2026',      minVal:1900,maxVal:2026,required:false, examples:['2022','2024'],          note:'Maximum model year. Must be >= veh_year_from.' },
+    { key:'make',          label:'Vehicle Make',        dtype:'String',  format:'Alpha, max 30 chars',          minLen:1,  maxLen:30,  required:false, examples:['Toyota','Ford','BMW'],  note:'Manufacturer name. Part of VehicleBase / TLOVehicle type.' },
+    { key:'model',         label:'Vehicle Model',       dtype:'String',  format:'Alphanumeric, max 30 chars',   minLen:1,  maxLen:30,  required:false, examples:['Camry','F-150'],        note:'Vehicle model. Part of VehicleBase type.' },
+    { key:'color',         label:'Vehicle Color',       dtype:'String',  format:'Alpha, max 20 chars',          minLen:1,  maxLen:20,  required:false, examples:['Black','White','Blue'],  note:'Primary exterior color. Alpha only. Part of TLOVehicle.' },
+  ]},
+  { group:'PROPERTY SEARCH', icon:'🏠', fields:[
+    { key:'prop_street1',  label:'Property Address',    dtype:'String',  format:'Alphanumeric, max 100 chars',  minLen:1,  maxLen:100, required:false, examples:['123 Oak Street'],        note:'Property street address. Part of Property / PropertyAssessment / PropertyDeed types. Used in PropertySearch, PropertyDeed, PropertyTax, Foreclosure.' },
+    { key:'prop_city',     label:'Property City',       dtype:'String',  format:'Alpha, max 50 chars',          minLen:2,  maxLen:50,  required:false, examples:['Annapolis','Baltimore'], note:'City of the property.' },
+    { key:'prop_state',    label:'Property State',      dtype:'String',  format:'2-char US state code',         minLen:2,  maxLen:2,   required:false, examples:['MD','VA'],              note:'State where property is located.' },
+    { key:'prop_zip',      label:'Property ZIP',        dtype:'String',  format:'Numeric, exactly 5 digits',    minLen:5,  maxLen:5,   required:false, examples:['21401','22102'],        note:'5-digit ZIP of the property.' },
+    { key:'prop_county',   label:'Property County',     dtype:'String',  format:'Alpha, max 50 chars',          minLen:2,  maxLen:50,  required:false, examples:['Anne Arundel','Prince Georges'], note:'County where property is located. Part of PropertyAssessmentBase.' },
+    { key:'apn',           label:'Assessor Parcel #',   dtype:'String',  format:'Alphanumeric, 1–25 chars',     minLen:1,  maxLen:25,  required:false, examples:['02-009876-00'],         note:'Assessor Parcel Number. County/state-specific format. Part of PropertyAssessmentBase type.' },
+    { key:'prop_owner',    label:'Property Owner',      dtype:'String',  format:'Alpha, max 100 chars',         minLen:1,  maxLen:100, required:false, examples:['James Harrison'],        note:'Owner name. Part of PropertyOwner / PropertyOwnership types.' },
+  ]},
+  { group:'FINANCIAL RECORDS', icon:'💳', fields:[
+    { key:'bankruptcy_state',label:'Bankruptcy State',  dtype:'String',  format:'2-char US state code',         minLen:2,  maxLen:2,   required:false, examples:['MD','VA','DC'],         note:'Filing jurisdiction. Used in Bankruptcy, BusinessBankruptcy search. Part of TLOBankruptcySearchInput / BankruptcyBase.' },
+    { key:'case_type',     label:'Bankruptcy Type',     dtype:'Enum',    format:'Chapter 7 | Chapter 11 | Chapter 13', minLen:1,maxLen:15,required:false, enumVals:['Chapter 7','Chapter 11','Chapter 13','Chapter 12'], examples:['Chapter 7','Chapter 13'], note:'Bankruptcy chapter type. Part of TLOBankruptcyFiling / BankruptcyFilingBase type.' },
+    { key:'lien_state',    label:'Lien State',          dtype:'String',  format:'2-char US state code',         minLen:2,  maxLen:2,   required:false, examples:['MD','VA'],              note:'State where lien was filed. Used in PersonalLien, BusinessLien searches. Part of TLOLienFiling / LienFilingBase type.' },
+    { key:'lien_county',   label:'Lien County',         dtype:'String',  format:'Alpha, max 50 chars',          minLen:2,  maxLen:50,  required:false, examples:['Fairfax','Montgomery'], note:'County of lien filing. Part of LienFilingBase type.' },
+    { key:'judgment_state',label:'Judgment State',      dtype:'String',  format:'2-char US state code',         minLen:2,  maxLen:2,   required:false, examples:['MD','VA'],              note:'State of judgment filing. Used in PersonalJudgment, BusinessJudgment. Part of JudgmentFilingBase type.' },
+    { key:'ucc_state',     label:'UCC Filing State',    dtype:'String',  format:'2-char US state code',         minLen:2,  maxLen:2,   required:false, examples:['DE','VA','MD'],         note:'State where UCC-1 was filed. Used in UCC Search. Part of TLOUCCFiling type.' },
+    { key:'ucc_debtor',    label:'UCC Debtor Name',     dtype:'String',  format:'Alpha, max 100 chars',         minLen:1,  maxLen:100, required:false, examples:['Pacific Bridge Technologies'], note:'Debtor name in UCC filing. Part of TLOUCCEntity / UCCEntityBase type.' },
+    { key:'secured_party', label:'UCC Secured Party',   dtype:'String',  format:'Alphanumeric, max 100 chars',  minLen:1,  maxLen:100, required:false, examples:['Bank of America'],      note:'Secured party / lender name. Part of TLOUCCSecuredParty type.' },
+    { key:'eviction_state',label:'Eviction State',      dtype:'String',  format:'2-char US state code',         minLen:2,  maxLen:2,   required:false, examples:['MD','VA'],              note:'Jurisdiction for Eviction Search. Part of TLOEviction / EvictionBase type.' },
+    { key:'foreclosure_state',label:'Foreclosure State',dtype:'String',  format:'2-char US state code',         minLen:2,  maxLen:2,   required:false, examples:['MD','FL','TX'],         note:'Jurisdiction for Foreclosure Search. Part of PropertyForeclosureBase type.' },
+  ]},
+  { group:'PHONE & EMAIL', icon:'📞', fields:[
+    { key:'phone_search',  label:'Phone (Search)',       dtype:'Phone',   format:'Numeric, exactly 10 digits',   minLen:10, maxLen:10,  required:true,  examples:['4105550192','7035550447'], note:'Primary input for PhoneSearch Plus and SuperReversePhone. NPA-NXX-XXXX, no formatting. From Parsed Phone type.' },
+    { key:'phone_type',    label:'Phone Type Filter',    dtype:'Enum',    format:'Mobile | Landline | VOIP | Unknown | TollFree',minLen:4,maxLen:10,required:false, enumVals:['Mobile','Landline','VOIP','Unknown','TollFree'], examples:['Mobile','Landline'], note:'Filter by line type. From PhoneTypes enumerated string. Part of PhoneListing / BasicPhoneListing type.' },
+    { key:'listing_type',  label:'Listing Type',         dtype:'Enum',    format:'Listed | Unlisted | NonPublished',minLen:6,maxLen:12,required:false, enumVals:['Listed','Unlisted','NonPublished'], examples:['Listed'],note:'Phone listing status. From ListingTypes enumerated string. Part of PhoneBookEntry type.' },
+    { key:'email_search',  label:'Email (Search)',        dtype:'Email',   format:'user@domain.tld',              minLen:5,  maxLen:254, required:true,  examples:['john@gmail.com'],       note:'Primary input for Email Search. RFC 5321 compliant. Stored in EmailRecord / TLOEmailRecord type.' },
+    { key:'email_domain',  label:'Email Domain',          dtype:'String',  format:'Alphanumeric with dots, max 100',minLen:3, maxLen:100,required:false, examples:['gmail.com','raytheon.com'], note:'Domain portion only. Used for bulk domain-level queries.' },
+    { key:'ip_addr_search',label:'IP Address (Search)',   dtype:'String',  format:'IPv4: xxx.xxx.xxx.xxx',        minLen:7,  maxLen:15,  required:false, examples:['192.168.1.1'],          note:'From Parsed IP Address type. Used in Email Search correlation context.' },
+  ]},
+  { group:'IDENTITY & WATCH LIST', icon:'🔍', fields:[
+    { key:'watchlist_name',label:'Watch List Name',       dtype:'String',  format:'Alpha, max 100 chars',         minLen:1,  maxLen:100, required:false, examples:['John Smith'],           note:'Name to check against government and sanctions watch lists. Part of TLOWatchListSearchInput. Returns OFAC, terrorist, sex offender list matches.' },
+    { key:'watchlist_ssn', label:'Watch List SSN',        dtype:'SSN',     format:'###-##-#### or 9 digits',      minLen:9,  maxLen:11,  required:false, examples:['123-45-6789'],          note:'SSN for watch list cross-reference. From BasicSSNRecord type.' },
+    { key:'watchlist_dob', label:'Watch List DOB',        dtype:'Date',    format:'YYYYMMDD (8 digits)',           minLen:8,  maxLen:8,   required:false, examples:['19870514'],             note:'DOB for watch list matching. From DateOfBirthRecord type.' },
+    { key:'death_ssn',     label:'Death Master SSN',      dtype:'SSN',     format:'###-##-#### or 9 digits',      minLen:9,  maxLen:11,  required:true,  examples:['123-45-6789'],          note:'Primary key for Death Master File search. SSN or combination of name+DOB required. Part of DeathMasterSearch.' },
+    { key:'rel_graph_ssn', label:'Relationship Graph SSN',dtype:'SSN',     format:'###-##-#### or 9 digits',      minLen:9,  maxLen:11,  required:true,  examples:['123-45-6789'],          note:'SSN of subject for relationship graph traversal. Returns associates, relatives, neighbors. Part of TLORelationshipGraphInput / TLORelationship type.' },
+    { key:'rel_type',      label:'Relationship Type',     dtype:'Enum',    format:'Spouse | Associate | Neighbor | Relative | Friend | Unknown',minLen:4,maxLen:10,required:false, enumVals:['Spouse','Associate','Neighbor','Relative','Friend','Unknown'], examples:['Associate','Relative'], note:'Filter relationship type in graph output. From RelationshipType enumerated string. Part of PersonSearchRelative / PersonSynopsis.' },
+    { key:'household_addr',label:'Household Address',     dtype:'String',  format:'Alphanumeric, max 100 chars',  minLen:1,  maxLen:100, required:true,  examples:['123 Main St'],          note:'Required input for HouseholdSearch. Returns all known residents. Part of TLOHouseholdSearchInput / TLOHHAddress type.' },
+    { key:'household_zip', label:'Household ZIP',         dtype:'String',  format:'Numeric, exactly 5 digits',    minLen:5,  maxLen:5,   required:false, examples:['21401'],                note:'ZIP code for household search disambiguation.' },
+  ]},
+  { group:'REQUEST CREDENTIALS', icon:'🔐', fields:[
+    { key:'username',      label:'Username',              dtype:'String',  format:'Alphanumeric, max 50 chars',   minLen:1,  maxLen:50,  required:true,  examples:['api_user_001'],         note:'API account username. Part of RequestCredentials / RequestIdentification type in TLORequestInput. Required for all requests.' },
+    { key:'password',      label:'Password',              dtype:'String',  format:'Alphanumeric, max 50 chars',   minLen:1,  maxLen:50,  required:true,  examples:['—masked—'],             note:'API account password. Part of RequestCredentials. mTLS certificate authentication preferred over password per v6.10.14 guide.' },
+    { key:'referenceNo',   label:'Reference Number',      dtype:'String',  format:'Alphanumeric, max 50 chars',   minLen:0,  maxLen:50,  required:false, examples:['TXN-20260929-001'],     note:'Customer-supplied transaction reference. Part of RequestIdentification. Echoed back in response for tracking.' },
+    { key:'permissible_use',label:'Permissible Use Code', dtype:'String',  format:'Numeric code (see DPPA/GLBA)',  minLen:1,  maxLen:3,   required:true,  examples:['D1','G2'],              note:'DPPA / GLBA permitted use code. Required. See DPPA and GLBA sections (page 33–35) of API guide for full code table. Part of EndUserIdentification type.' },
+    { key:'end_user_name', label:'End User Name',         dtype:'String',  format:'Alpha, max 100 chars',         minLen:1,  maxLen:100, required:true,  examples:['Jane Doe'],             note:'Name of individual end user initiating request. Part of EndUserIdentification type. Required for compliance.' },
+    { key:'end_user_ssn',  label:'End User SSN',          dtype:'SSN',     format:'###-##-#### or 9 digits',      minLen:9,  maxLen:11,  required:false, examples:['123-45-6789'],          note:'End user SSN for identity verification purposes. Part of EndUserIdentification type.' },
+    { key:'api_version',   label:'API Version',           dtype:'Integer', format:'Integer version number',        minVal:1,  maxVal:999, required:false, examples:['73','74'],              note:'TLO API version selector. Part of TLOAPIVersionLookupInput. MatchIndicatorAnalysis available from Version 73+.' },
+  ]},
 ];
 
-var CO_RECORDS = [
-  {id:'C001',company_name:'Apex Defense Systems LLC',dba_name:'',ein:'54-1234567',duns:'123456789',entity_type:'LLC',state_of_inc:'VA',sic_code:'7372',industry:'Defense Software',date_founded:2008,biz_address:'1001 Defense Way',biz_city:'Herndon',biz_state:'VA',biz_zip:'20170',revenue_range:'$10M-$50M',employee_range:'50-100',years_in_biz:18,clearance_fac:'DoD Cleared Facility',biz_credit_score:74,total_biz_debt:1200000,trade_lines:12,ucc_liens:2,biz_bankruptcy:'N',officer_name:'James Harrison',officer_title:'CEO',foreign_debt:'N',foreign_countries:'',prc_conn:'N',shell_flag:'N',foreign_owner:0,foci_flag_co:'N'},
-  {id:'C002',company_name:'Pacific Bridge Technologies Inc',dba_name:'PBT',ein:'20-9876543',duns:'987654321',entity_type:'Inc',state_of_inc:'DE',sic_code:'7379',industry:'IT Consulting',date_founded:2015,biz_address:'8800 Sunset Blvd',biz_city:'McLean',biz_state:'VA',biz_zip:'22102',revenue_range:'$1M-$10M',employee_range:'10-50',years_in_biz:11,clearance_fac:'None',biz_credit_score:61,total_biz_debt:2800000,trade_lines:8,ucc_liens:3,biz_bankruptcy:'N',officer_name:'Wei Zhang',officer_title:'President',foreign_debt:'Y',foreign_countries:'CN,HK',prc_conn:'Y',shell_flag:'Y',foreign_owner:75,foci_flag_co:'Y'},
-  {id:'C003',company_name:'Clearwater Analytics Group',dba_name:'',ein:'52-3456789',duns:'234567890',entity_type:'Corp',state_of_inc:'MD',sic_code:'7372',industry:'Analytics',date_founded:2001,biz_address:'500 Water St',biz_city:'Annapolis',biz_state:'MD',biz_zip:'21401',revenue_range:'$10M-$50M',employee_range:'100-250',years_in_biz:25,clearance_fac:'Public Trust',biz_credit_score:82,total_biz_debt:850000,trade_lines:16,ucc_liens:1,biz_bankruptcy:'N',officer_name:'Patricia Monroe',officer_title:'CEO',foreign_debt:'N',foreign_countries:'',prc_conn:'N',shell_flag:'N',foreign_owner:0,foci_flag_co:'N'},
-  {id:'C004',company_name:'Sino-Tech Innovations LLC',dba_name:'STI',ein:'81-7654321',duns:'876543210',entity_type:'LLC',state_of_inc:'DE',sic_code:'7371',industry:'Software Development',date_founded:2019,biz_address:'4400 China Basin Dr',biz_city:'Vienna',biz_state:'VA',biz_zip:'22182',revenue_range:'$1M-$10M',employee_range:'10-50',years_in_biz:7,clearance_fac:'None',biz_credit_score:52,total_biz_debt:3400000,trade_lines:5,ucc_liens:4,biz_bankruptcy:'N',officer_name:'Ming Liu',officer_title:'Manager',foreign_debt:'Y',foreign_countries:'CN',prc_conn:'Y',shell_flag:'Y',foreign_owner:100,foci_flag_co:'Y'},
-  {id:'C005',company_name:'Atlantic Logistics Partners',dba_name:'ALP',ein:'52-1122334',duns:'112233445',entity_type:'Corp',state_of_inc:'MD',sic_code:'4731',industry:'Logistics',date_founded:1998,biz_address:'200 Harbor St',biz_city:'Baltimore',biz_state:'MD',biz_zip:'21202',revenue_range:'$50M-$100M',employee_range:'250-500',years_in_biz:28,clearance_fac:'None',biz_credit_score:78,total_biz_debt:4200000,trade_lines:22,ucc_liens:5,biz_bankruptcy:'N',officer_name:'Robert Kowalski',officer_title:'President',foreign_debt:'N',foreign_countries:'',prc_conn:'N',shell_flag:'N',foreign_owner:0,foci_flag_co:'N'},
-  {id:'C006',company_name:'Dragon Gate Capital LLC',dba_name:'',ein:'47-8899001',duns:'889900112',entity_type:'LLC',state_of_inc:'KY',sic_code:'6726',industry:'Investment Holding',date_founded:2017,biz_address:'1 Mezzanine Plaza',biz_city:'Washington',biz_state:'DC',biz_zip:'20036',revenue_range:'$1M-$10M',employee_range:'1-10',years_in_biz:9,clearance_fac:'None',biz_credit_score:44,total_biz_debt:12000000,trade_lines:4,ucc_liens:6,biz_bankruptcy:'N',officer_name:'Fang Wu',officer_title:'Managing Member',foreign_debt:'Y',foreign_countries:'CN,KY,BVI',prc_conn:'Y',shell_flag:'Y',foreign_owner:90,foci_flag_co:'Y'},
-  {id:'C007',company_name:'Keystone Federal Systems',dba_name:'KFS',ein:'54-4455667',duns:'445566778',entity_type:'Corp',state_of_inc:'VA',sic_code:'7372',industry:'Federal IT',date_founded:1985,biz_address:'900 Pentagon Blvd',biz_city:'Arlington',biz_state:'VA',biz_zip:'22202',revenue_range:'$100M+',employee_range:'500+',years_in_biz:41,clearance_fac:'DoD Top Secret Facility',biz_credit_score:91,total_biz_debt:8800000,trade_lines:28,ucc_liens:2,biz_bankruptcy:'N',officer_name:'Thomas Anderson',officer_title:'President & CEO',foreign_debt:'N',foreign_countries:'',prc_conn:'N',shell_flag:'N',foreign_owner:0,foci_flag_co:'N'},
-  {id:'C008',company_name:'Blue Lotus Technologies LLC',dba_name:'BLT',ein:'82-4455123',duns:'445512345',entity_type:'LLC',state_of_inc:'DE',sic_code:'7371',industry:'Software/AI',date_founded:2016,biz_address:'5500 Lotus Garden Pkwy',biz_city:'Chantilly',biz_state:'VA',biz_zip:'20151',revenue_range:'$1M-$10M',employee_range:'10-50',years_in_biz:10,clearance_fac:'None',biz_credit_score:58,total_biz_debt:2200000,trade_lines:7,ucc_liens:2,biz_bankruptcy:'N',officer_name:'Wei Zhang',officer_title:'CTO',foreign_debt:'Y',foreign_countries:'CN,HK',prc_conn:'Y',shell_flag:'Y',foreign_owner:60,foci_flag_co:'Y'},
+// ── FLAT FIELD INDEX ──────────────────────────
+var ALL_FIELDS = [];
+SCHEMA.forEach(function(g){
+  g.fields.forEach(function(f){
+    ALL_FIELDS.push({ group:g.group, icon:g.icon, field:f });
+  });
+});
+
+// ── SAMPLE DATASET ────────────────────────────
+var SAMPLE = [
+  {id:'P001',first_name:'James',last_name:'Harrison',dob:'19780412',ssn:'***-**-4821',gender:'M',addr_city:'Annapolis',addr_state:'MD',addr_zip:'21401',phone:'4105550192',email:'j.harrison@gmail.com',business_name:'',vin:'',plate:'',dl_number:'MD-S123456'},
+  {id:'P002',first_name:'Linda',last_name:'Chen',dob:'19850923',ssn:'***-**-7734',gender:'F',addr_city:'Rockville',addr_state:'MD',addr_zip:'20850',phone:'3015550447',email:'l.chen@outlook.com',business_name:'',vin:'',plate:'',dl_number:'MD-C987654'},
+  {id:'P003',first_name:'Wei',last_name:'Zhang',dob:'19900704',ssn:'***-**-9912',gender:'M',addr_city:'Alexandria',addr_state:'VA',addr_zip:'22314',phone:'7035550328',email:'wzhang@hotmail.com',business_name:'',vin:'',plate:'',dl_number:'VA-Z445512'},
+  {id:'P004',first_name:'Elena',last_name:'Sorokina',dob:'19930822',ssn:'***-**-7721',gender:'F',addr_city:'Washington',addr_state:'DC',addr_zip:'20008',phone:'2025550344',email:'esorokina@thinktank.org',business_name:'',vin:'',plate:'',dl_number:''},
+  {id:'P005',first_name:'Ming',last_name:'Liu',dob:'19870514',ssn:'***-**-3398',gender:'M',addr_city:'Chantilly',addr_state:'VA',addr_zip:'20151',phone:'7035550261',email:'ming.liu88@gmail.com',business_name:'',vin:'',plate:'',dl_number:'VA-L221834'},
+  {id:'P006',first_name:'Thomas',last_name:'Anderson',dob:'19680130',ssn:'***-**-6614',gender:'M',addr_city:'Reston',addr_state:'VA',addr_zip:'20191',phone:'7035550727',email:'tanderson@raytheon.com',business_name:'',vin:'',plate:'',dl_number:'VA-A009812'},
+  {id:'B001',first_name:'',last_name:'',dob:'',ssn:'',gender:'',addr_city:'Herndon',addr_state:'VA',addr_zip:'20170',phone:'7035559001',email:'',business_name:'Apex Defense Systems LLC',vin:'',plate:'',dl_number:'',fein:'54-1234567',biz_state:'VA',sic_code:'7372'},
+  {id:'B002',first_name:'',last_name:'',dob:'',ssn:'',gender:'',addr_city:'McLean',addr_state:'VA',addr_zip:'22102',phone:'7035559002',email:'',business_name:'Pacific Bridge Technologies Inc',vin:'',plate:'',dl_number:'',fein:'20-9876543',biz_state:'DE',sic_code:'7379'},
+  {id:'B003',first_name:'',last_name:'',dob:'',ssn:'',gender:'',addr_city:'Vienna',addr_state:'VA',addr_zip:'22182',phone:'7035559003',email:'',business_name:'Sino-Tech Innovations LLC',vin:'',plate:'',dl_number:'',fein:'81-7654321',biz_state:'DE',sic_code:'7371'},
+  {id:'V001',first_name:'James',last_name:'Harrison',dob:'',ssn:'',gender:'M',addr_city:'',addr_state:'MD',addr_zip:'',phone:'',email:'',business_name:'',vin:'1HGBH41JXMN109186',plate:'MD-ABC123',make:'Honda',model:'Accord',color:'Silver',veh_year:'2021'},
+  {id:'V002',first_name:'Wei',last_name:'Zhang',dob:'',ssn:'',gender:'M',addr_city:'',addr_state:'VA',addr_zip:'',phone:'',email:'',business_name:'',vin:'5YJ3E1EA1JF000001',plate:'VA-XYZ789',make:'Tesla',model:'Model 3',color:'Black',veh_year:'2020'},
 ];
 
 // ── STATE ─────────────────────────────────────
-var activeTab='ind';
-var activeField=null;
-var activeOp='eq';
-var currentResults=[];
-var sortCol=null,sortDir=1;
+var activeFieldKey = null;
+var activeOp = 'eq';
+var currentResults = [];
+var sortCol = null, sortDir = 1;
 
 // ── INIT ──────────────────────────────────────
-function init(){renderFieldList();selectFirstField();}
-
-function switchTab(t){
-  activeTab=t;activeField=null;currentResults=[];
-  document.getElementById('tab-ind').className='tab'+(t==='ind'?' active':'');
-  document.getElementById('tab-co').className='tab'+(t==='co'?' active':'');
-  document.getElementById('fl-search').value='';
-  renderFieldList();selectFirstField();
-  clearResults();
+function init() {
+  renderFieldList('');
+  // Select first field
+  var f = SCHEMA[0].fields[0];
+  selectField(SCHEMA[0].group, f);
 }
 
-function filterFields(q){
-  q=q.toLowerCase();
-  document.querySelectorAll('.fl-item').forEach(function(el){
-    el.classList.toggle('hidden',q&&!el.dataset.label.toLowerCase().includes(q));
+function filterFields(q) {
+  q = q.toLowerCase();
+  document.querySelectorAll('.fl-item').forEach(function(el) {
+    el.classList.toggle('hidden', q && !el.dataset.label.toLowerCase().includes(q) && !el.dataset.key.toLowerCase().includes(q));
+  });
+  document.querySelectorAll('.fl-group-hdr').forEach(function(el) {
+    if (!q) { el.classList.remove('collapsed'); el.nextElementSibling.style.display = ''; }
   });
 }
 
-function renderFieldList(){
-  var groups=FIELDS[activeTab];
-  var html='';
-  groups.forEach(function(g){
-    html+='<div class="fl-group"><div class="fl-group-title">'+g.group+'</div>';
-    g.fields.forEach(function(f){
-      html+='<div class="fl-item" id="fi-'+f.key+'" data-key="'+f.key+'" data-label="'+f.label+'" onclick="selectField(''+f.key+'')">'+
-        '<span>'+f.label+'</span>'+
-        '<span class="fl-type-badge">'+f.dtype+'</span>'+
-      '</div>';
+function renderFieldList(q) {
+  var html = '';
+  SCHEMA.forEach(function(g) {
+    var cnt = g.fields.length;
+    html += '<div class="fl-group">';
+    html += '<div class="fl-group-hdr" onclick="toggleGroup(this)">' + g.icon + ' ' + g.group + '<span class="fl-count">(' + cnt + ')</span><span class="arrow">▾</span></div>';
+    html += '<div class="fl-group-items">';
+    g.fields.forEach(function(f) {
+      html += '<div class="fl-item" id="fi-'+f.key+'" data-key="'+f.key+'" data-label="'+f.label+'" onclick="selectField(''+g.group+'',SCHEMA.filter(function(x){return x.group===''+g.group+''})[0].fields.filter(function(y){return y.key===''+f.key+''})[0])">'
+        + '<span>' + f.label + '</span>'
+        + '<span class="fl-dtype">' + f.dtype + '</span>'
+        + '</div>';
     });
-    html+='</div>';
+    html += '</div></div>';
   });
-  document.getElementById('fl-body').innerHTML=html;
+  document.getElementById('fl-body').innerHTML = html;
 }
 
-function selectFirstField(){
-  var groups=FIELDS[activeTab];
-  if(groups.length&&groups[0].fields.length){
-    selectField(groups[0].fields[0].key);
-  }
+function toggleGroup(hdr) {
+  hdr.classList.toggle('collapsed');
+  var items = hdr.nextElementSibling;
+  items.style.display = hdr.classList.contains('collapsed') ? 'none' : '';
 }
 
-function getFieldDef(key){
-  var groups=FIELDS[activeTab];
-  for(var i=0;i<groups.length;i++){
-    for(var j=0;j<groups[i].fields.length;j++){
-      if(groups[i].fields[j].key===key)return groups[i].fields[j];
-    }
-  }
-  return null;
-}
+function selectField(group, fieldDef) {
+  if (!fieldDef) return;
+  activeFieldKey = fieldDef.key;
 
-function selectField(key){
-  activeField=key;
-  var def=getFieldDef(key);
-  if(!def)return;
-  // Update left list
-  document.querySelectorAll('.fl-item').forEach(function(el){
-    el.classList.toggle('active',el.dataset.key===key);
-  });
-  // Update middle
-  document.getElementById('sel-name').textContent=def.label+' ('+def.key+')';
-  var inp=document.getElementById('query-input');
-  inp.disabled=false;inp.value='';
-  inp.placeholder='Enter '+def.dtype+' value…';
-  document.getElementById('btn-run').disabled=false;
-  // Set operator visibility
-  var isNum=(def.dtype==='numeric');
-  document.getElementById('op-gte').style.display=isNum?'':'none';
-  document.getElementById('op-lte').style.display=isNum?'':'none';
+  // Highlight left
+  document.querySelectorAll('.fl-item').forEach(function(el) { el.classList.remove('active'); });
+  var el = document.getElementById('fi-' + fieldDef.key);
+  if (el) { el.classList.add('active'); el.scrollIntoView({ block: 'nearest' }); }
+
+  // Middle header
+  document.getElementById('qs-group').textContent = group;
+  document.getElementById('qs-fname').textContent = fieldDef.label;
+  document.getElementById('qs-apikey').textContent = '· ' + fieldDef.key;
+
+  // Input
+  var inp = document.getElementById('query-input');
+  inp.disabled = false;
+  inp.value = '';
+  inp.placeholder = 'Enter ' + fieldDef.dtype + ' value' + (fieldDef.enumVals ? ' (' + fieldDef.enumVals.join(', ') + ')' : '') + '…';
+  document.getElementById('btn-run').disabled = false;
+
+  // Operator visibility
+  var isNum = (fieldDef.dtype === 'Integer');
+  document.getElementById('op-gte').style.display = isNum ? '' : 'none';
+  document.getElementById('op-lte').style.display = isNum ? '' : 'none';
+
   // Hint
-  var hint='Format: '+def.format;
-  if(def.minVal!==undefined)hint+=' &nbsp;|&nbsp; Range: '+def.minVal+'–'+def.maxVal;
-  if(def.minLen!==undefined&&def.maxLen!==undefined&&def.minLen!==def.maxLen)hint+=' &nbsp;|&nbsp; Length: '+def.minLen+'–'+def.maxLen+' chars';
-  if(def.minLen!==undefined&&def.maxLen!==undefined&&def.minLen===def.maxLen)hint+=' &nbsp;|&nbsp; Exact: '+def.minLen+' chars';
-  document.getElementById('query-hint').innerHTML=hint;
-  // Update right panel
-  renderFieldDef(def);
-  // Scroll field into view
-  var el=document.getElementById('fi-'+key);
-  if(el)el.scrollIntoView({block:'nearest'});
+  var hint = 'Format: <strong>' + fieldDef.format + '</strong>';
+  if (fieldDef.minLen !== undefined && fieldDef.maxLen !== undefined && fieldDef.dtype !== 'Integer') {
+    if (fieldDef.minLen === fieldDef.maxLen) hint += ' &nbsp;·&nbsp; Exact length: <strong>' + fieldDef.minLen + '</strong> chars';
+    else hint += ' &nbsp;·&nbsp; Length: <strong>' + fieldDef.minLen + '–' + fieldDef.maxLen + '</strong> chars';
+  }
+  if (fieldDef.minVal !== undefined) hint += ' &nbsp;·&nbsp; Range: <strong>' + fieldDef.minVal + '–' + fieldDef.maxVal + '</strong>';
+  if (fieldDef.required) hint += ' &nbsp;·&nbsp; <span style="color:var(--red)">Required field</span>';
+  document.getElementById('q-hint').innerHTML = hint;
+
+  // Right panel
+  renderFieldDef(fieldDef);
 }
 
-function setOp(op){
-  activeOp=op;
-  ['eq','contains','starts','gte','lte'].forEach(function(o){
-    var el=document.getElementById('op-'+o);
-    if(el)el.className='op-btn'+(o===op?' active':'');
-  });
-}
+function renderFieldDef(f) {
+  document.getElementById('fd-name').textContent = f.label;
+  document.getElementById('fd-api').textContent = f.key;
 
-function renderFieldDef(def){
-  document.getElementById('fd-name').textContent=def.label;
-  var dtype_color={
-    alpha:'color:var(--accent)',numeric:'color:var(--green)',alphanumeric:'color:var(--yellow)',
-    date:'color:#c084fc',boolean:'color:#fb923c',enum:'color:#67e8f9',
-    phone:'color:var(--green)',email:'color:var(--accent)',ssn:'color:var(--red)',ein:'color:var(--red)'
+  var dtypeColors = {
+    String:'color:var(--accent)', Integer:'color:var(--green)', Date:'color:#c084fc',
+    Enum:'color:var(--yellow)', Phone:'color:var(--green)', SSN:'color:var(--red)',
+    Email:'color:var(--accent)', YesNo:'color:#fb923c', Boolean:'color:#fb923c'
   };
-  var html='';
-  html+='<div class="fd-row"><div class="fd-row-label">Field Key</div><div class="fd-row-val" style="font-family:monospace;color:var(--accent)">'+def.key+'</div></div>';
-  html+='<div class="fd-row"><div class="fd-row-label">Data Type</div><div class="fd-row-val" style="font-weight:700;'+( dtype_color[def.dtype]||'')+'">'+(def.dtype.charAt(0).toUpperCase()+def.dtype.slice(1))+'</div></div>';
-  html+='<div class="fd-row"><div class="fd-row-label">Format / Input Pattern</div><div class="fd-row-val"><span class="fd-chip range">'+def.format+'</span></div></div>';
-  if(def.minVal!==undefined){
-    html+='<div class="fd-row"><div class="fd-row-label">Value Range</div><div class="fd-row-val"><span class="fd-chip range">Min: '+def.minVal+'</span> <span class="fd-chip range">Max: '+def.maxVal+'</span></div></div>';
+
+  var html = '';
+  html += '<div class="fd-section"><div class="fd-section-lbl">Data Type</div>';
+  html += '<div class="fd-val"><span class="chip type" style="'+( dtypeColors[f.dtype]||'')+';font-weight:700">' + f.dtype + '</span>';
+  if(f.required) html += ' <span class="chip warn">Required</span>';
+  html += '</div></div>';
+
+  html += '<div class="fd-section"><div class="fd-section-lbl">Format / Pattern</div>';
+  html += '<div class="fd-val"><span class="chip range">' + f.format + '</span></div></div>';
+
+  if (f.dtype !== 'Integer' && f.minLen !== undefined && f.maxLen !== undefined) {
+    html += '<div class="fd-section"><div class="fd-section-lbl">Character Length</div>';
+    html += '<div class="fd-val">';
+    if (f.minLen === f.maxLen) html += '<span class="chip range">Exactly: ' + f.minLen + ' chars</span>';
+    else html += '<span class="chip range">Min: ' + f.minLen + '</span> <span class="chip range">Max: ' + f.maxLen + '</span>';
+    html += '</div></div>';
   }
-  if(def.minLen!==undefined&&def.maxLen!==undefined){
-    html+='<div class="fd-row"><div class="fd-row-label">Character Length</div><div class="fd-row-val">';
-    if(def.minLen===def.maxLen){html+='<span class="fd-chip range">Exactly: '+def.minLen+' chars</span>';}
-    else{html+='<span class="fd-chip range">Min: '+def.minLen+'</span> <span class="fd-chip range">Max: '+def.maxLen+'</span>';}
-    html+='</div></div>';
+
+  if (f.minVal !== undefined) {
+    html += '<div class="fd-section"><div class="fd-section-lbl">Value Range</div>';
+    html += '<div class="fd-val"><span class="chip range">Min: ' + f.minVal + '</span> <span class="chip range">Max: ' + f.maxVal + '</span></div></div>';
   }
-  if(def.examples&&def.examples.length){
-    html+='<div class="fd-row"><div class="fd-row-label">Example Values</div><div class="fd-row-val">'+def.examples.map(function(e){return'<span class="fd-chip example">'+e+'</span>';}).join('')+'</div></div>';
+
+  if (f.enumVals && f.enumVals.length) {
+    html += '<div class="fd-section"><div class="fd-section-lbl">Allowed Values</div>';
+    html += '<div class="fd-val">' + f.enumVals.map(function(v){return'<span class="chip enum">'+v+'</span>';}).join('') + '</div></div>';
   }
-  if(def.note){
-    html+='<div class="fd-note">📋 '+def.note+'</div>';
+
+  if (f.examples && f.examples.length) {
+    html += '<div class="fd-section"><div class="fd-section-lbl">Examples</div>';
+    html += '<div class="fd-val">' + f.examples.map(function(e){return'<span class="chip example">'+e+'</span>';}).join('') + '</div></div>';
   }
-  document.getElementById('fd-body').innerHTML=html;
+
+  html += '<div class="fd-note">📋 ' + f.note + '</div>';
+
+  document.getElementById('fd-body').innerHTML = html;
+}
+
+// ── OPERATORS ─────────────────────────────────
+function setOp(op) {
+  activeOp = op;
+  ['eq','contains','starts','gte','lte'].forEach(function(o) {
+    var el = document.getElementById('op-' + o);
+    if (el) el.className = 'op-btn' + (o === op ? ' active' : '');
+  });
 }
 
 // ── QUERY ─────────────────────────────────────
-function runQuery(){
-  if(!activeField)return;
-  var val=document.getElementById('query-input').value.trim();
-  if(!val)return;
-  var def=getFieldDef(activeField);
-  var records=activeTab==='ind'?IND_RECORDS:CO_RECORDS;
-  currentResults=records.filter(function(r){
-    var rv=String(r[activeField]||'');
-    if(activeOp==='eq')return rv.toLowerCase()===val.toLowerCase();
-    if(activeOp==='contains')return rv.toLowerCase().includes(val.toLowerCase());
-    if(activeOp==='starts')return rv.toLowerCase().startsWith(val.toLowerCase());
-    if(activeOp==='gte')return parseFloat(rv)>=parseFloat(val);
-    if(activeOp==='lte')return parseFloat(rv)<=parseFloat(val);
+function runQuery() {
+  if (!activeFieldKey) return;
+  var val = document.getElementById('query-input').value.trim();
+  if (!val) return;
+  currentResults = SAMPLE.filter(function(r) {
+    var rv = String(r[activeFieldKey] || '');
+    if (activeOp === 'eq') return rv.toLowerCase() === val.toLowerCase();
+    if (activeOp === 'contains') return rv.toLowerCase().includes(val.toLowerCase());
+    if (activeOp === 'starts') return rv.toLowerCase().startsWith(val.toLowerCase());
+    if (activeOp === 'gte') return parseFloat(rv) >= parseFloat(val);
+    if (activeOp === 'lte') return parseFloat(rv) <= parseFloat(val);
     return false;
   });
-  sortCol=null;sortDir=1;
-  renderResults(def,val);
+  sortCol = null; sortDir = 1;
+  renderResults(val);
 }
 
-function clearResults(){
-  currentResults=[];
-  document.getElementById('res-count').textContent='0';
-  document.getElementById('res-field').textContent='no query';
-  document.getElementById('table-wrap').innerHTML='<div class="empty-state"><div class="empty-icon">🔍</div><div class="empty-txt">Select a field and enter a value to query</div><div class="empty-sub">Results appear here</div></div>';
+function clearQ() {
+  currentResults = [];
+  document.getElementById('query-input').value = '';
+  document.getElementById('res-count').textContent = '0';
+  document.getElementById('res-label').textContent = 'no query';
+  document.getElementById('table-wrap').innerHTML = '<div class="empty-state"><div class="empty-icon">🔍</div><div class="empty-txt">Enter a value and click Search</div></div>';
 }
 
-function renderResults(def,val){
-  var r=currentResults;
-  document.getElementById('res-count').textContent=r.length;
-  document.getElementById('res-field').textContent=def.label+' '+activeOp+' "'+val+'"';
-  if(!r.length){
-    document.getElementById('table-wrap').innerHTML='<div class="empty-state"><div class="empty-icon">🔎</div><div class="empty-txt">No records match</div><div class="empty-sub">Try a different value or operator</div></div>';
+function renderResults(val) {
+  document.getElementById('res-count').textContent = currentResults.length;
+  document.getElementById('res-label').textContent = activeFieldKey + ' ' + activeOp + ' "' + val + '"';
+  if (!currentResults.length) {
+    document.getElementById('table-wrap').innerHTML = '<div class="empty-state"><div class="empty-icon">🔎</div><div class="empty-txt">No matching records</div><div style="font-size:12px;margin-top:4px">Try a different value or operator</div></div>';
     return;
   }
-  var cols=activeTab==='ind'
-    ?[['id','ID'],['last_name','Last'],['first_name','First'],['dob','DOB'],['state','ST'],['employer','Employer'],['credit_score','Score'],['total_debt','Debt'],['clearance','Clearance'],['foci_flag','FOCI'],['china_flag','🇨🇳']]
-    :[['id','ID'],['company_name','Company'],['biz_state','ST'],['industry','Industry'],['biz_credit_score','Score'],['total_biz_debt','Debt'],['ucc_liens','UCC'],['clearance_fac','Clearance'],['foci_flag_co','FOCI'],['prc_conn','🇨🇳 PRC'],['shell_flag','Shell']];
-  var html='<table><thead><tr>';
-  cols.forEach(function(c){html+='<th onclick="sortResults(''+c[0]+'')">'+c[1]+(sortCol===c[0]?(sortDir>0?' ↑':' ↓'):'')+'</th>';});
-  html+='</tr></thead><tbody>';
-  r.forEach(function(rec){
-    var isChina=(rec.china_flag==='Y'||rec.prc_conn==='Y');
-    var isFoci=(rec.foci_flag==='Y'||rec.foci_flag_co==='Y')&&!isChina;
-    var rowCls=isChina?'china-row':isFoci?'foci-row':'';
-    // highlight matching field
-    var matchVal=String(rec[activeField]||'');
-    html+='<tr class="'+rowCls+'">';
-    cols.forEach(function(c){
-      var v=rec[c[0]];
-      var cell='';
-      if(c[0]==='credit_score'||c[0]==='biz_credit_score'){
-        var sc=v>=760||v>=80?'pass':v>=660||v>=60?'warn':'fail';
-        cell='<span class="badge '+sc+'">'+v+'</span>';
-      }else if(c[0]==='foci_flag'||c[0]==='foci_flag_co'){
-        cell=v==='Y'?'<span class="badge fail">YES</span>':'<span class="badge neutral">No</span>';
-      }else if(c[0]==='china_flag'||c[0]==='prc_conn'){
-        cell=v==='Y'?'<span class="badge china">🇨🇳</span>':'-';
-      }else if(c[0]==='shell_flag'){
-        cell=v==='Y'?'<span class="badge fail">⚠</span>':'-';
-      }else if(c[0]==='total_debt'||c[0]==='total_biz_debt'){
-        cell='$'+Number(v).toLocaleString();
-      }else{
-        var sv=String(v||'—');
-        if(c[0]===activeField){sv='<span style="background:rgba(96,165,250,.2);border-radius:3px;padding:0 3px;color:var(--accent)">'+sv+'</span>';}
-        cell=sv;
-      }
-      html+='<td style="'+(c[0]===activeField?'font-weight:600;':'')+'">'+cell+'</td>';
+  var keys = Object.keys(currentResults[0]).filter(function(k){ return k !== 'id'; });
+  var html = '<table><thead><tr><th onclick="sortRes('id')">#</th>';
+  keys.forEach(function(k){ if(currentResults.some(function(r){return r[k];})) html += '<th onclick="sortRes(''+k+'')">' + k + (sortCol===k?(sortDir>0?' ↑':' ↓'):'') + '</th>'; });
+  html += '</tr></thead><tbody>';
+  currentResults.forEach(function(rec) {
+    html += '<tr><td style="color:var(--muted);font-size:11px">'+rec.id+'</td>';
+    keys.forEach(function(k) {
+      if (!currentResults.some(function(r){return r[k];})) return;
+      var v = rec[k] || '—';
+      var hl = (k === activeFieldKey) ? 'style="background:rgba(96,165,250,.15);border-radius:3px;padding:0 3px;color:var(--accent);font-weight:600"' : '';
+      html += '<td><span '+hl+'>' + v + '</span></td>';
     });
-    html+='</tr>';
+    html += '</tr>';
   });
-  html+='</tbody></table>';
-  document.getElementById('table-wrap').innerHTML=html;
+  html += '</tbody></table>';
+  document.getElementById('table-wrap').innerHTML = html;
 }
 
-function sortResults(col){
-  if(sortCol===col)sortDir*=-1;else{sortCol=col;sortDir=1;}
+function sortRes(col) {
+  if (sortCol === col) sortDir *= -1; else { sortCol = col; sortDir = 1; }
   currentResults.sort(function(a,b){
-    var av=a[col],bv=b[col];
-    if(typeof av==='string')av=av.toLowerCase();
-    if(typeof bv==='string')bv=bv.toLowerCase();
+    var av=a[col]||'', bv=b[col]||'';
     return av<bv?-sortDir:av>bv?sortDir:0;
   });
-  var def=getFieldDef(activeField);
-  var val=document.getElementById('query-input').value;
-  renderResults(def,val);
+  renderResults(document.getElementById('query-input').value);
 }
 
-function exportCSV(){
-  if(!currentResults.length)return;
-  var rows=[Object.keys(currentResults[0]).join(',')];
-  currentResults.forEach(function(r){rows.push(Object.values(r).map(function(v){return'"'+String(v).replace(/"/g,'""')+'"';}).join(','));});
-  var a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(rows.join('
+function exportCSV() {
+  if (!currentResults.length) return;
+  var rows = [Object.keys(currentResults[0]).join(',')];
+  currentResults.forEach(function(r){ rows.push(Object.values(r).map(function(v){return '"'+String(v).replace(/"/g,'""')+'"';}).join(',')); });
+  var a = document.createElement('a'); a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(rows.join('
 '));
-  a.download='tu-query-'+activeTab+'-'+Date.now()+'.csv';a.click();
+  a.download = 'trulookup-query-' + Date.now() + '.csv'; a.click();
 }
 
 init();

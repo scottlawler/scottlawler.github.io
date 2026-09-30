@@ -300,6 +300,16 @@ function useExample(val) {
   runQ();
 }
 
+// Example chip clicks via delegation
+document.getElementById('qexchips').addEventListener('click', function(e) {
+  var chip=e.target.closest('.qex-chip');
+  if(chip) {
+    var vals=document.getElementById('qexchips')._vals;
+    var idx=parseInt(chip.dataset.ei);
+    if(vals && !isNaN(idx)) useExample(vals[idx]);
+  }
+});
+
 function buildList() {
   var html = '';
   for(var i=0;i<S.length;i++) {
@@ -357,9 +367,10 @@ function selF(g, f) {
   var exChips=document.getElementById('qexchips');
   if(fld.ex && fld.ex.length) {
     exWrap.style.display='block';
-    exChips.innerHTML=fld.ex.map(function(v){
-      return '<span class="qex-chip" onclick="useExample(''+v.replace(/'/g,"\'")+'')">' + v + '</span>';
+    exChips.innerHTML=fld.ex.map(function(v,i){
+      return '<span class="qex-chip" data-ei="'+i+'">'+v+'</span>';
     }).join('');
+    exChips._vals=fld.ex;
   } else {
     exWrap.style.display='none';
   }

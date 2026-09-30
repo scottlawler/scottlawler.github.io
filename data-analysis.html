@@ -83,6 +83,18 @@ tr:hover td{background:var(--hover);cursor:pointer}
 .cw{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:var(--red)}
 .fdnote{font-size:13px;color:var(--muted);background:#0d1525;border:1px solid var(--border);border-radius:5px;padding:8px 10px;margin-top:8px;line-height:1.6}
 .fdph{padding:40px 16px;text-align:center;color:var(--muted)}
+
+.qguide{margin-top:10px;border-top:1px solid var(--border);padding-top:8px}
+.qguide-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:6px}
+.qguide-rows{display:grid;grid-template-columns:auto 1fr;gap:3px 10px;font-size:12px}
+.qguide-op{color:var(--accent);font-weight:700;white-space:nowrap;font-family:monospace;background:rgba(59,130,246,.1);border-radius:3px;padding:1px 5px}
+.qguide-desc{color:var(--muted)}
+.qguide-note{font-size:11px;color:var(--muted);margin-top:6px;padding:5px 8px;background:#0d1525;border-radius:4px;border:1px solid var(--border)}
+.qexamples{margin-top:8px;border-top:1px solid var(--border);padding-top:8px;display:none}
+.qexamples-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:5px}
+.qex-chips{display:flex;flex-wrap:wrap;gap:4px}
+.qex-chip{background:#0d1525;border:1px solid #4a6a99;border-radius:4px;padding:3px 9px;font-size:12px;color:#93c5fd;cursor:pointer;font-family:monospace;transition:all .15s}
+.qex-chip:hover{background:rgba(59,130,246,.15);border-color:var(--blue);color:#fff}
 </style>
 </head>
 <body>
@@ -125,6 +137,21 @@ tr:hover td{background:var(--hover);cursor:pointer}
         <button class="op" id="ole" onclick="setOp('le')" style="display:none">Max &lt;=</button>
       </div>
       <div class="qhint" id="qh"></div>
+    <div class="qguide">
+      <div class="qguide-title">Search Operators — No Wildcard Characters Required</div>
+      <div class="qguide-rows">
+        <span class="qguide-op">= Equals</span><span class="qguide-desc">Exact match, case-insensitive &nbsp;&mdash;&nbsp; e.g. <code>MD</code> matches only <code>MD</code></span>
+        <span class="qguide-op">Contains</span><span class="qguide-desc">Substring anywhere in value &nbsp;&mdash;&nbsp; e.g. <code>smith</code> finds <code>Blacksmith</code>, <code>Smith</code></span>
+        <span class="qguide-op">Starts with</span><span class="qguide-desc">Prefix match &nbsp;&mdash;&nbsp; e.g. <code>Ann</code> finds <code>Annapolis</code>, <code>Annex</code></span>
+        <span class="qguide-op">Min &gt;=</span><span class="qguide-desc">Numeric: returns records at or above value &nbsp;&mdash;&nbsp; integers only</span>
+        <span class="qguide-op">Max &lt;=</span><span class="qguide-desc">Numeric: returns records at or below value &nbsp;&mdash;&nbsp; integers only</span>
+      </div>
+      <div class="qguide-note">No wildcard characters (<code>*</code> <code>?</code> <code>%</code>) — use <strong>Contains</strong> for partial matches instead.</div>
+    </div>
+    <div class="qexamples" id="qex">
+      <div class="qexamples-title">Typical values for this field — click to use:</div>
+      <div class="qex-chips" id="qexchips"></div>
+    </div>
     </div>
     <div class="rarea">
       <div class="rbar">
@@ -266,6 +293,13 @@ var SAMPLE = [
 
 var gi=-1, fi=-1, op='eq', results=[];
 
+function useExample(val) {
+  var qi=document.getElementById('qi');
+  qi.value=val;
+  qi.focus();
+  runQ();
+}
+
 function buildList() {
   var html = '';
   for(var i=0;i<S.length;i++) {
@@ -319,6 +353,16 @@ function selF(g, f) {
   if(fld.required) hint+=' | REQUIRED';
   document.getElementById('qh').innerHTML=hint;
   showDef(fld);
+  var exWrap=document.getElementById('qex');
+  var exChips=document.getElementById('qexchips');
+  if(fld.ex && fld.ex.length) {
+    exWrap.style.display='block';
+    exChips.innerHTML=fld.ex.map(function(v){
+      return '<span class="qex-chip" onclick="useExample(''+v.replace(/'/g,"\'")+'')">' + v + '</span>';
+    }).join('');
+  } else {
+    exWrap.style.display='none';
+  }
 }
 
 function showDef(fld) {

@@ -182,8 +182,82 @@ tr:last-child td{border:none}
 .footer a{color:var(--accent);text-decoration:none}
 .tu-note{font-size:10px;background:rgba(0,163,224,.07);border:1px solid rgba(0,163,224,.2);border-radius:5px;padding:4px 10px;color:#7dd3fc;display:inline-block;margin-left:8px}
 </style>
+<style id="ag-style">
+#auth-gate{display:flex;position:fixed;top:0;right:0;bottom:0;left:0;background:#0a0e1a;z-index:99999;align-items:center;justify-content:center;font-family:system-ui,-apple-system,sans-serif;}
+.ag-box{background:#1a2235;border:1px solid #2a3652;border-radius:12px;padding:40px;width:100%;max-width:380px;box-shadow:0 20px 60px rgba(0,0,0,.6);}
+.ag-logo{text-align:center;margin-bottom:28px;}
+.ag-logo-icon{width:48px;height:48px;background:#3b82f6;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 10px;}
+.ag-title{font-size:1.15rem;font-weight:700;color:#e8edf5;margin-bottom:3px;}
+.ag-sub{font-size:12px;color:#6b7a99;}
+.ag-field{margin-bottom:14px;}
+.ag-field label{display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:#6b7a99;margin-bottom:5px;}
+.ag-field input{width:100%;background:#0d1525;border:1px solid #2a3652;border-radius:7px;padding:10px 13px;color:#e8edf5;font-size:14px;font-family:inherit;outline:none;box-sizing:border-box;transition:border-color .15s;}
+.ag-field input:focus{border-color:#3b82f6;}
+.ag-err{color:#ef4444;font-size:12px;margin-bottom:12px;min-height:16px;text-align:center;}
+.ag-btn{width:100%;background:linear-gradient(135deg,#1d4ed8,#3b82f6);color:#fff;border:none;border-radius:8px;padding:12px;font-size:14px;font-weight:700;cursor:pointer;letter-spacing:.3px;transition:opacity .15s;}
+.ag-btn:hover{opacity:.88;}
+#page-content{display:none;}
+</style>
+<script>
+(function(){
+  var SK='tn_auth_ok';
+  if(sessionStorage.getItem(SK)==='1'){
+    document.addEventListener('DOMContentLoaded',function(){
+      var g=document.getElementById('auth-gate');if(g)g.remove();
+      var p=document.getElementById('page-content');if(p)p.style.display='block';
+    });
+  }
+})();
+</script>
 </head>
 <body>
+<!-- ===== AUTH GATE ===== -->
+<div id="auth-gate">
+  <div class="ag-box">
+    <div class="ag-logo">
+      <div class="ag-logo-icon">🔐</div>
+      <div class="ag-title">TransNexus</div>
+      <div class="ag-sub">Sign in to continue</div>
+    </div>
+    <div class="ag-field">
+      <label>Email</label>
+      <input type="email" id="ag-user" placeholder="you@transnexus.tech" autocomplete="username">
+    </div>
+    <div class="ag-field">
+      <label>Password</label>
+      <input type="password" id="ag-pass" placeholder="••••••••" autocomplete="current-password">
+    </div>
+    <div class="ag-err" id="ag-err"></div>
+    <button class="ag-btn" id="ag-submit">Sign In</button>
+  </div>
+</div>
+<script>
+(function(){
+  var SK='tn_auth_ok';
+  var USERS={'joemaidaiv@transnexus.tech':'TNTemp!','scott.lawler@transnexus.tech':'TNTemp!'};
+  function unlock(){
+    var g=document.getElementById('auth-gate');if(g)g.remove();
+    var p=document.getElementById('page-content');if(p)p.style.display='block';
+  }
+  function attempt(){
+    var u=document.getElementById('ag-user').value.trim().toLowerCase();
+    var p=document.getElementById('ag-pass').value;
+    if(USERS[u]&&USERS[u]===p){sessionStorage.setItem(SK,'1');unlock();}
+    else{
+      var el=document.getElementById('ag-err');
+      el.textContent='Invalid email or password.';
+      setTimeout(function(){el.textContent='';},3000);
+    }
+  }
+  document.getElementById('ag-submit').addEventListener('click',attempt);
+  document.getElementById('ag-pass').addEventListener('keydown',function(e){if(e.key==='Enter')attempt();});
+  document.getElementById('ag-user').addEventListener('keydown',function(e){if(e.key==='Enter')document.getElementById('ag-pass').focus();});
+  setTimeout(function(){document.getElementById('ag-user').focus();},100);
+})();
+</script>
+<!-- ===== END AUTH GATE ===== -->
+<div id="page-content" style="display:none">
+
 
 <div class="header">
   <div class="logo">
@@ -807,5 +881,6 @@ function downloadLog(t,txn){
   a.download='transnexus-'+t+'-'+txn+'.txt';a.click();
 }
 </script>
+</div>
 </body>
 </html>

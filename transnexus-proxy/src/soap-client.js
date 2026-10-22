@@ -1,92 +1,172 @@
 'use strict';
-const soap = require('node-soap');
-const fs   = require('fs');
+const https = require('https');
 
-let soapClient = null;
-let wsdlCachedAt = null;
-const WSDL_CACHE_MS = 23 * 60 * 60 * 1000; // refresh every 23h per API guide
+const ENDPOINT = () => process.env.TU_ENDPOINT || 'https://secureapi.tlo.com/TLOWebService.asmx';
+const NS = 'http://tlo.com/';
 
-async function getClient() {
-  const now = Date.now();
-  if (soapClient && wsdlCachedAt && (now - wsdlCachedAt) < WSDL_CACHE_MS) return soapClient;
-
-  const wsdlUrl = process.env.TU_WSDL;
-  if (!wsdlUrl) throw new Error('TU_WSDL not set in .env');
-
-  const options = { endpoint: process.env.TU_ENDPOINT };
-
-  // mTLS if certs are configured
-  if (process.env.TU_CERT_PATH && process.env.TU_KEY_PATH) {
-    options.wsdl_options = {
-      cert: fs.readFileSync(process.env.TU_CERT_PATH),
-      key:  fs.readFileSync(process.env.TU_KEY_PATH),
-      rejectUnauthorized: true,
-    };
-  }
-
-  soapClient = await soap.createClientAsync(wsdlUrl, options);
-
-  // Basic Auth header when not using mTLS
-  if (!(process.env.TU_CERT_PATH && process.env.TU_KEY_PATH)) {
-    const token = Buffer.from(`${process.env.TU_USERNAME}:${process.env.TU_PASSWORD}`).toString('base64');
-    soapClient.addHttpHeader('Authorization', `Basic ${token}`);
-  }
-
-  wsdlCachedAt = now;
-  console.log('SOAP client (re)initialised — WSDL cached');
-  return soapClient;
+// ── Minimal XML helpers ────────────────────────────────────────
+function esc(v) {
+  return String(v ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-// Base credentials block required on every request
-function creds(extras = {}) {
+function tag(name, value) {
+  if (value === undefined || value === null || value === '') return '';
+  if (typeof value === 'object') {
+    const inner = Object.entries(value).map(([k,v]) => tag(k, v)).join('');
+    return inner ? `<tlo:${name}>${inner}</tlo:${name}>` : '';
+  }
+  return `<tlo:${name}>${esc(value)}</tlo:${name}>`;
+}
+
+function buildEnvelope(method, inputTag, fields) {
+  const inner = Object.entries(fields).map(([k,v]) => tag(k, v)).join('\n        ');
+  return `<?xml version="1.0" encoding="utf-8"?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tlo="${NS}">
+  <soapenv:Header/>
+  <soapenv:Body>
+    <tlo:${method}>
+      <tlo:${inputTag}>
+        ${inner}
+      </tlo:${inputTag}>
+    </tlo:${method}>
+  </soapenv:Body>
+</soapenv:Envelope>`;
+}
+
+// Simple XML value extractor (handles nested single values)
+function xmlVal(xml, tag) {
+  const re = new RegExp(`<${tag}[^>]*>([\\s\\S]*?)</${tag}>`);
+  const m = xml.match(re);
+  return m ? m[1].trim() : null;
+}
+
+// Extracts all occurrences of a tag as array of inner XML strings
+function xmlAll(xml, tag) {
+  const re = new RegExp(`<${tag}[^>]*>([\\s\\S]*?)</${tag}>`, 'g');
+  const results = [];
+  let m;
+  while ((m = re.exec(xml)) !== null) results.push(m[1]);
+  return results;
+}
+
+// ── HTTP POST ──────────────────────────────────────────────────
+function post(soapBody, soapAction) {
+  return new Promise((resolve, reject) => {
+    const url = new URL(ENDPOINT());
+    const auth = Buffer.from(`${process.env.TU_USERNAME}:${process.env.TU_PASSWORD}`).toString('base64');
+    const opts = {
+      hostname: url.hostname,
+      port: 443,
+      path: url.pathname,
+      method: 'POST',
+      headers: {
+        'Content-Type': 'text/xml; charset=utf-8',
+        'SOAPAction': `"${NS}${soapAction}"`,
+        'Authorization': `Basic ${auth}`,
+        'Content-Length': Buffer.byteLength(soapBody, 'utf8'),
+      }
+    };
+    const req = https.request(opts, res => {
+      let data = '';
+      res.on('data', c => data += c);
+      res.on('end', () => resolve({ status: res.statusCode, body: data }));
+    });
+    req.on('error', reject);
+    req.write(soapBody);
+    req.end();
+  });
+}
+
+// ── Base credentials ───────────────────────────────────────────
+function baseCreds(extras = {}) {
   return {
-    Username:       process.env.TU_USERNAME,
-    Password:       process.env.TU_PASSWORD,
-    DPPAPurpose:    parseInt(process.env.TU_DPPA_PURPOSE || '0'),
-    GLBPurpose:     parseInt(process.env.TU_GLB_PURPOSE  || '0'),
-    NumberOfRecords: extras.numberOfRecords ?? 10,
-    StartingRecord:  extras.startingRecord  ?? 0,
-    ...extras,
+    Username:        process.env.TU_USERNAME,
+    Password:        process.env.TU_PASSWORD,
+    DPPAPurpose:     process.env.TU_DPPA_PURPOSE ?? '0',
+    GLBPurpose:      process.env.TU_GLB_PURPOSE  ?? '0',
+    NumberOfRecords: extras.NumberOfRecords ?? '10',
+    StartingRecord:  extras.StartingRecord  ?? '0',
   };
 }
 
-// EchoTest — connectivity check
+// Parse PersonSearch XML response into a structured object
+function parsePersonSearch(xml) {
+  const errCode = xmlVal(xml, 'ErrorCode');
+  const txnId   = xmlVal(xml, 'TransactionId');
+  const count   = xmlVal(xml, 'NumberOfRecordsFound');
+  const records = xmlAll(xml, 'TLOPersonSearchOutputRecord').map(rec => {
+    const name = xmlVal(rec, 'BasicName');
+    const addr = xmlVal(rec, 'BasicAddressRecord');
+    const dob  = xmlVal(rec, 'BasicDateOfBirthRecord');
+    const ssn  = xmlVal(rec, 'BasicSSNRecord');
+    const ph   = xmlVal(rec, 'BasicPhoneListing');
+    return {
+      Names: name ? {
+        BasicName: {
+          FirstName: xmlVal(name, 'FirstName'),
+          LastName:  xmlVal(name, 'LastName'),
+          MiddleName:xmlVal(name, 'MiddleName'),
+        }
+      } : null,
+      Addresses: addr ? {
+        BasicAddressRecord: {
+          Address: {
+            Line1:  xmlVal(addr, 'Line1'),
+            City:   xmlVal(addr, 'City'),
+            State:  xmlVal(addr, 'State'),
+            Zip:    xmlVal(addr, 'Zip'),
+          }
+        }
+      } : null,
+      DatesOfBirth: dob ? { BasicDateOfBirthRecord: { DOB: xmlVal(dob, 'DOB') } } : null,
+      SSNRecords:   ssn ? { BasicSSNRecord: { SSN: xmlVal(ssn, 'SSN') } } : null,
+      Phones:       ph  ? { BasicPhoneListing: { PhoneNumber: xmlVal(ph, 'PhoneNumber') } } : null,
+    };
+  });
+  return {
+    PersonSearchResult: {
+      TransactionId:   txnId,
+      ErrorCode:       errCode,
+      NumberOfRecordsFound: count,
+      PersonSearchOutputRecords: { TLOPersonSearchOutputRecord: records }
+    }
+  };
+}
+
+// ── Public API ─────────────────────────────────────────────────
 async function echoTest() {
-  const client = await getClient();
-  const [result] = await client.EchoTestAsync({
-    echoTestInput: creds({ NumberOfRecords: 0, StartingRecord: 0 }),
+  const body = buildEnvelope('EchoTest', 'echoTestInput', {
+    ...baseCreds({ NumberOfRecords: '0', StartingRecord: '0' })
   });
-  return result;
+  const { status, body: xml } = await post(body, 'EchoTest');
+  const errCode = xmlVal(xml, 'ErrorCode');
+  const txnId   = xmlVal(xml, 'TransactionId');
+  if (status !== 200) throw new Error(`SOAP HTTP ${status}`);
+  if (errCode && errCode !== '0') throw new Error(`TLO error ${errCode}`);
+  return { EchoTestResult: { ErrorCode: errCode, TransactionId: txnId } };
 }
 
-// PersonSearch — search by name / address / DOB / SSN / phone
 async function personSearch(params = {}) {
-  const client = await getClient();
-
-  const input = creds({
-    numberOfRecords: params.numberOfRecords,
-    startingRecord:  params.startingRecord,
-  });
-
+  const fields = { ...baseCreds() };
   if (params.firstName || params.lastName) {
-    input.Name = {};
-    if (params.firstName) input.Name.FirstName = params.firstName.toUpperCase().trim();
-    if (params.lastName)  input.Name.LastName  = params.lastName.toUpperCase().trim();
+    fields.Name = {};
+    if (params.firstName) fields.Name.FirstName = params.firstName.toUpperCase();
+    if (params.lastName)  fields.Name.LastName  = params.lastName.toUpperCase();
   }
-  if (params.dob) input.DOB = String(params.dob).replace(/\D/g, '').substring(0, 8);
-  if (params.ssn) input.SSN = String(params.ssn).replace(/\D/g, '').substring(0, 9);
-  if (params.phone) input.Phone = String(params.phone).replace(/\D/g, '').substring(0, 10);
-
+  if (params.dob)     fields.DOB   = String(params.dob).replace(/\D/g, '').substring(0, 8);
+  if (params.ssn)     fields.SSN   = String(params.ssn).replace(/\D/g, '').substring(0, 9);
+  if (params.phone)   fields.Phone = String(params.phone).replace(/\D/g, '').substring(0, 10);
   if (params.address || params.city || params.state || params.zip) {
-    input.Address = {};
-    if (params.address) input.Address.StreetAddress = params.address;
-    if (params.city)    input.Address.City  = params.city.toUpperCase();
-    if (params.state)   input.Address.State = params.state.toUpperCase();
-    if (params.zip)     input.Address.Zip   = params.zip;
+    fields.Address = {};
+    if (params.address) fields.Address.StreetAddress = params.address;
+    if (params.city)    fields.Address.City  = params.city.toUpperCase();
+    if (params.state)   fields.Address.State = params.state.toUpperCase();
+    if (params.zip)     fields.Address.Zip   = params.zip;
   }
-
-  const [result] = await client.PersonSearchAsync({ genericSearchInput: input });
-  return result;
+  const body = buildEnvelope('PersonSearch', 'genericSearchInput', fields);
+  const { status, body: xml } = await post(body, 'PersonSearch');
+  if (status !== 200) throw new Error(`SOAP HTTP ${status}: ${xml.substring(0, 200)}`);
+  return parsePersonSearch(xml);
 }
 
-module.exports = { personSearch, echoTest, getClient };
+module.exports = { echoTest, personSearch };

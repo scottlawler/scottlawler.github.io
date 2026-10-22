@@ -474,11 +474,21 @@ function setOp(o) {
   ['eq','co','sw','ge','le'].forEach(function(x){var el=document.getElementById('o'+x);if(el)el.className='op'+(x===o?' active':'');});
 }
 
-function runQ() {
+async function runQ() {
   if(gi<0||fi<0) return;
   var fld=S[gi].fields[fi];
   var val=document.getElementById('qi').value.trim();
   if(!val) return;
+  // Try live TU API for person/contact fields
+  var liveRows = await runTUQuery(fld.k, val);
+  if (liveRows && liveRows.length>0) {
+    results = liveRows;
+    document.getElementById('rc').textContent = results.length+' (TU Live)';
+    document.getElementById('rl').textContent = fld.k+' '+op+' "'+val+'"';
+    showTable(fld);
+    return;
+  }
+  // Fall back to SAMPLE data
   results=SAMPLE.filter(function(r){
     var rv=String(r[fld.k]||'');
     if(op==='eq') return rv.toLowerCase()===val.toLowerCase();
@@ -527,6 +537,76 @@ function doExport() {
   var a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(rows.join('\n'));
   a.download='trulookup-'+Date.now()+'.csv';a.click();
 }
+
+// ── TU PROXY ──────────────────────────────────────────────────
+var PROXY = (window.location.hostname==='localhost'||window.location.hostname==='127.0.0.1')
+  ? '' : 'http://localhost:3000';
+
+// Fields that map directly to PersonSearch params
+var FIELD_TO_API = {
+  first_name:'firstName', last_name:'lastName', dob:'dob', ssn:'ssn',
+  phone:'phone', phone_search:'phone',
+  addr_street1:'address', addr_city:'city', addr_state:'state', addr_zip:'zip'
+};
+
+(function checkProxy(){
+  fetch(PROXY+'/health').then(function(r){return r.json();})
+    .then(function(h){
+      var b=document.createElement('div');
+      b.style='position:fixed;bottom:10px;right:12px;font-size:11px;padding:5px 11px;border-radius:5px;z-index:9998;font-family:monospace;border:1px solid';
+      if(h.tu_connected){b.style.background='rgba(34,197,94,.12)';b.style.borderColor='rgba(34,197,94,.35)';b.style.color='#86efac';b.textContent='✓ TU API Live';}
+      else{b.style.background='rgba(245,158,11,.1)';b.style.borderColor='rgba(245,158,11,.3)';b.style.color='#fcd34d';b.textContent='⚠ Simulation — start proxy';}
+      document.body.appendChild(b);
+    }).catch(function(){
+      var b=document.createElement('div');
+      b.style='position:fixed;bottom:10px;right:12px;font-size:11px;padding:5px 11px;border-radius:5px;z-index:9998;font-family:monospace;border:1px solid rgba(245,158,11,.3);background:rgba(245,158,11,.08);color:#fcd34d';
+      b.textContent='⚠ Simulation — start proxy';
+      document.body.appendChild(b);
+    });
+})();
+
+async function runTUQuery(fldKey, val) {
+  var apiParam = FIELD_TO_API[fldKey];
+  if (!apiParam) return null;
+  var body = {};
+  body[apiParam] = val;
+  // PersonSearch requires at least firstName+lastName or lastName alone for name-based search
+  if (apiParam==='firstName' && !body.lastName) body.lastName = val;
+  try {
+    var resp = await fetch(PROXY+'/api/lookup', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(body)
+    });
+    if (!resp.ok) return null;
+    var json = await resp.json();
+    if (!json.success) return null;
+    // Map TLOPersonSearchOutputRecord array to display rows
+    var res = json.data && json.data.PersonSearchResult;
+    if (!res || parseInt(res.ErrorCode)!==0) return null;
+    var recs = res.PersonSearchOutputRecords && res.PersonSearchOutputRecords.TLOPersonSearchOutputRecord;
+    if (!recs) return [];
+    if (!Array.isArray(recs)) recs=[recs];
+    return recs.map(function(r){
+      var bn=r.Names&&r.Names.BasicName; var n=Array.isArray(bn)?bn[0]:bn;
+      var ba=r.Addresses&&r.Addresses.BasicAddressRecord; var a=Array.isArray(ba)?ba[0]:ba;
+      var bd=r.DatesOfBirth&&r.DatesOfBirth.BasicDateOfBirthRecord; var d=Array.isArray(bd)?bd[0]:bd;
+      var bp=r.Phones&&r.Phones.BasicPhoneListing; var p=Array.isArray(bp)?bp[0]:bp;
+      var bs=r.SSNRecords&&r.SSNRecords.BasicSSNRecord; var s=Array.isArray(bs)?bs[0]:bs;
+      return {
+        first_name: n&&n.FirstName||'', last_name: n&&n.LastName||'',
+        dob: d&&d.DOB||'',
+        ssn: s&&s.SSN?'***-**-'+String(s.SSN).slice(-4):'',
+        addr_street1: a&&a.Address&&a.Address.Line1||'',
+        addr_city: a&&a.Address&&a.Address.City||'',
+        addr_state: a&&a.Address&&a.Address.State||'',
+        addr_zip: a&&a.Address&&a.Address.Zip||'',
+        phone: p&&p.PhoneNumber||'',
+        _source:'TU Live'
+      };
+    }).filter(function(r){return r.first_name||r.last_name;});
+  } catch(e) { return null; }
+}
+
 
 buildList();
 selF(0,0);

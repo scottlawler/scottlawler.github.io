@@ -352,6 +352,98 @@ tr:last-child td{border:none}
 <div class="footer">TransNexus Identity Verification &mdash; Demo &mdash; <a href="https://transnexus.com" target="_blank">transnexus.com</a> &nbsp;·&nbsp; <a href="/">← Demos</a></div>
 
 <script>
+// ── TU PROXY ──────────────────────────────────────────────────
+var PROXY = (window.location.hostname==='localhost'||window.location.hostname==='127.0.0.1')
+  ? '' : 'http://localhost:3000';
+
+async function callTU(params) {
+  try {
+    var resp = await fetch(PROXY+'/api/lookup', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(params)
+    });
+    if (!resp.ok) throw new Error('HTTP '+resp.status);
+    return await resp.json();
+  } catch(e) {
+    console.warn('TU API unavailable (simulation mode):', e.message);
+    return { success:false, simMode:true, error:e.message };
+  }
+}
+
+// Check proxy connectivity on load and show banner
+(function checkProxy(){
+  fetch(PROXY+'/health').then(function(r){return r.json();})
+    .then(function(h){
+      if(h.tu_connected){
+        var b=document.createElement('div');
+        b.id='api-banner';
+        b.style='position:fixed;bottom:12px;right:12px;background:rgba(34,197,94,.15);border:1px solid rgba(34,197,94,.4);color:#86efac;font-size:11px;padding:6px 12px;border-radius:6px;z-index:9998;font-family:monospace';
+        b.textContent='✓ TU API Live';
+        document.body.appendChild(b);
+      }
+    }).catch(function(){
+      var b=document.createElement('div');
+      b.id='api-banner';
+      b.style='position:fixed;bottom:12px;right:12px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);color:#fcd34d;font-size:11px;padding:6px 12px;border-radius:6px;z-index:9998;font-family:monospace';
+      b.textContent='⚠ Simulation mode — start proxy for live data';
+      document.body.appendChild(b);
+    });
+})();
+
+// Extract a field value from TU PersonSearch result for deconfliction
+function tuField(key, entered, pm) {
+  if (!G.tuResult || G.tuResult.simMode || !G.tuResult.success) {
+    return simTURecord(entered, pm);
+  }
+  try {
+    var res  = G.tuResult.data && G.tuResult.data.PersonSearchResult;
+    if (!res || parseInt(res.ErrorCode) !== 0) return simTURecord(entered, pm);
+    var recs = res.PersonSearchOutputRecords && res.PersonSearchOutputRecords.TLOPersonSearchOutputRecord;
+    if (!recs) return {val:'—',status:'skip'};
+    var r = Array.isArray(recs) ? recs[0] : recs;
+    var tuVal = null;
+    if (key==='name') {
+      var bn = r.Names && r.Names.BasicName;
+      var n  = Array.isArray(bn) ? bn[0] : bn;
+      if (n) tuVal = ((n.FirstName||'')+' '+(n.LastName||'')).trim();
+    } else if (key==='dob') {
+      var bd = r.DatesOfBirth && r.DatesOfBirth.BasicDateOfBirthRecord;
+      var d  = Array.isArray(bd) ? bd[0] : bd;
+      if (d && d.DOB) tuVal = d.DOB;
+    } else if (key==='ssn') {
+      var bs = r.SSNRecords && r.SSNRecords.BasicSSNRecord;
+      var s  = Array.isArray(bs) ? bs[0] : bs;
+      if (s && s.SSN) tuVal = '***-**-'+String(s.SSN).slice(-4);
+    } else if (key==='address') {
+      var ba = r.Addresses && r.Addresses.BasicAddressRecord;
+      var a  = Array.isArray(ba) ? ba[0] : ba;
+      if (a && a.Address) tuVal = a.Address.Line1||'';
+    } else if (key==='city') {
+      var ba2= r.Addresses && r.Addresses.BasicAddressRecord;
+      var a2 = Array.isArray(ba2) ? ba2[0] : ba2;
+      if (a2 && a2.Address) tuVal = a2.Address.City||'';
+    } else if (key==='state') {
+      var ba3= r.Addresses && r.Addresses.BasicAddressRecord;
+      var a3 = Array.isArray(ba3) ? ba3[0] : ba3;
+      if (a3 && a3.Address) tuVal = a3.Address.State||'';
+    } else if (key==='phone') {
+      var bp = r.Phones && r.Phones.BasicPhoneListing;
+      var p  = Array.isArray(bp) ? bp[0] : bp;
+      if (p && p.PhoneNumber) tuVal = p.PhoneNumber;
+    }
+    if (!tuVal) return {val:'—',status:'skip'};
+    var en = String(entered||'').toLowerCase().replace(/\W/g,'');
+    var tv = String(tuVal).toLowerCase().replace(/\W/g,'');
+    if (!en || en==='—') return {val:tuVal,status:'skip'};
+    if (en===tv) return {val:tuVal,status:'match'};
+    if (tv.includes(en)||en.includes(tv)) return {val:tuVal,status:'partial'};
+    return {val:tuVal,status:'mismatch'};
+  } catch(e) {
+    return simTURecord(entered, pm);
+  }
+}
+
+
 // ── FORMATTERS ────────────────────────────────
 function fmtSSN(el){var v=el.value.replace(/\D/g,'').substring(0,9);if(v.length>5)v=v.substr(0,3)+'-'+v.substr(3,2)+'-'+v.substr(5);else if(v.length>3)v=v.substr(0,3)+'-'+v.substr(3);el.value=v;}
 function fmtEIN(el){var v=el.value.replace(/\D/g,'').substring(0,9);if(v.length>2)v=v.substr(0,2)+'-'+v.substr(2);el.value=v;}
@@ -401,6 +493,15 @@ function startVerify(e){
   G.ein=document.getElementById('ein').value.trim();
   G.duns=document.getElementById('duns').value.trim();
   G.ts=new Date();
+  // Fire real TU API call — result awaited when animation finishes
+  G.tuResult = null;
+  G.tuApiPromise = callTU({
+    firstName: G.fname, lastName: G.lname,
+    dob:  G.dob  ? G.dob.replace(/-/g,'')  : undefined,
+    ssn:  G.ssn  ? G.ssn.replace(/\D/g,'') : undefined,
+    address: G.addr||undefined, city: G.city||undefined,
+    state: G.state||undefined,  zip:  G.zip||undefined
+  });
 
   document.getElementById('sw').style.display='none';
   document.getElementById('pw').style.display='block';
@@ -415,7 +516,10 @@ function startVerify(e){
   TU_STEPS.forEach(function(s,i){
     (function(idx,ms){
       setTimeout(function(){document.getElementById('pr'+idx).className='pr running';document.getElementById('ps'+idx).className='pst running';document.getElementById('ps'+idx).innerHTML='<span class="spin">⟳</span> Running';},ms);
-      setTimeout(function(){document.getElementById('pr'+idx).className='pr done';document.getElementById('ps'+idx).className='pst done';document.getElementById('ps'+idx).textContent='✓ Done';if(idx===TU_STEPS.length-1)setTimeout(showDeconfliction,400);},ms+s.dur);
+      setTimeout(function(){document.getElementById('pr'+idx).className='pr done';document.getElementById('ps'+idx).className='pst done';document.getElementById('ps'+idx).textContent='✓ Done';if(idx===TU_STEPS.length-1){
+        G.tuApiPromise.then(function(r){G.tuResult=r;setTimeout(showDeconfliction,400);})
+          .catch(function(){G.tuResult={simMode:true};setTimeout(showDeconfliction,400);});
+      }},ms+s.dur);
     })(i,delay);
     delay+=s.dur+60;
   });
@@ -445,16 +549,16 @@ function showDeconfliction(){
   setStep(3);
   document.getElementById('dw').scrollIntoView({behavior:'smooth',block:'start'});
 
-  var pm=0.08; // 8% mismatch chance per field — expect ~90%+ match most runs
+  var pm=0.08;
   var iFields=[
-    {k:'Full Name',entered:(G.fname+' '+G.mname+' '+G.lname).trim(),tu:simTURecord((G.fname+' '+G.lname).trim(),pm)},
-    {k:'Date of Birth',entered:G.dob||'—',tu:simTURecord(G.dob,pm)},
-    {k:'SSN',entered:G.ssn||'—',tu:simTURecord(G.ssn,pm)},
-    {k:'Address',entered:G.addr||'—',tu:simTURecord(G.addr,pm)},
-    {k:'City',entered:G.city||'—',tu:simTURecord(G.city,pm)},
-    {k:'State',entered:G.state||'—',tu:simTURecord(G.state,pm)},
-    {k:'Phone',entered:G.phone||'—',tu:simTURecord(G.phone,pm)},
-    {k:'Email',entered:G.email||'—',tu:simTURecord(G.email,pm)},
+    {k:'Full Name',    entered:(G.fname+' '+G.mname+' '+G.lname).trim(), tu:tuField('name',   (G.fname+' '+G.lname).trim(),pm)},
+    {k:'Date of Birth',entered:G.dob||'—',                                tu:tuField('dob',    G.dob,pm)},
+    {k:'SSN',          entered:G.ssn||'—',                                tu:tuField('ssn',    G.ssn,pm)},
+    {k:'Address',      entered:G.addr||'—',                               tu:tuField('address',G.addr,pm)},
+    {k:'City',         entered:G.city||'—',                               tu:tuField('city',   G.city,pm)},
+    {k:'State',        entered:G.state||'—',                              tu:tuField('state',  G.state,pm)},
+    {k:'Phone',        entered:G.phone||'—',                              tu:tuField('phone',  G.phone,pm)},
+    {k:'Email',        entered:G.email||'—',                              tu:simTURecord(G.email,pm)},
   ];
   var cFields=[
     {k:'Company Name',entered:G.cname||'—',tu:simTURecord(G.cname,pm)},

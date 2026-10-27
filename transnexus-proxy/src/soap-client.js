@@ -53,7 +53,6 @@ function xmlAll(xml, tag) {
 function post(soapBody, soapAction) {
   return new Promise((resolve, reject) => {
     const url = new URL(ENDPOINT());
-    const auth = Buffer.from(`${process.env.TU_USERNAME}:${process.env.TU_PASSWORD}`).toString('base64');
     const opts = {
       hostname: url.hostname,
       port: 443,
@@ -62,7 +61,6 @@ function post(soapBody, soapAction) {
       headers: {
         'Content-Type': 'text/xml; charset=utf-8',
         'SOAPAction': `"${NS}${soapAction}"`,
-        'Authorization': `Basic ${auth}`,
         'Content-Length': Buffer.byteLength(soapBody, 'utf8'),
       }
     };

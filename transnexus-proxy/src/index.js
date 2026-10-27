@@ -74,6 +74,17 @@ app.post('/api/lookup', async (req, res) => {
   }
 });
 
+// ── Outbound IP check ───────────────────────────────────────
+app.get('/ip', async (req, res) => {
+  const https = require('https');
+  const ip = await new Promise((resolve) => {
+    https.get('https://api.ipify.org', r => {
+      let d = ''; r.on('data', c => d += c); r.on('end', () => resolve(d));
+    }).on('error', () => resolve('error'));
+  });
+  res.json({ outbound_ip: ip, ts: new Date().toISOString() });
+});
+
 // ── WSDL introspection (dev only) ────────────────────────────
 app.get('/api/methods', async (req, res) => {
   try {

@@ -165,7 +165,7 @@ async function personSearch(params = {}) {
   }
   const body = buildEnvelope('PersonSearch', 'genericSearchInput', fields);
   const { status, body: xml } = await post(body, 'PersonSearch');
-  if (status !== 200) throw new Error(`SOAP HTTP ${status}: ${xml.substring(0, 200)}`);
+  if (status !== 200) throw new Error(`SOAP HTTP ${status}: ${xml.substring(0, 500)}`);
   return parsePersonSearch(xml);
 }
 

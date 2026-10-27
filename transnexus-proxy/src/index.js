@@ -45,6 +45,8 @@ app.get('/health', async (req, res) => {
       status: 'degraded',
       tu_connected: false,
       error: err.message,
+      tu_response_status: err.responseStatus,
+      tu_response_body: err.responseBody ? err.responseBody.substring(0, 300) : null,
       ts: new Date().toISOString()
     });
   }

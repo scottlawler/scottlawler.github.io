@@ -4,6 +4,14 @@ const https = require('https');
 const ENDPOINT = () => process.env.TU_ENDPOINT || 'https://secureapi.tlo.com/TLOWebService.asmx';
 const NS = 'http://tlo.com/';
 
+// ── mTLS client certificate ────────────────────────────────────
+// TU_CERT and TU_KEY are stored in Azure App Settings (PEM strings, newlines as \n)
+function getMtlsOptions() {
+  const cert = process.env.TU_CERT ? process.env.TU_CERT.replace(/\\n/g, '\n') : undefined;
+  const key  = process.env.TU_KEY  ? process.env.TU_KEY.replace(/\\n/g,  '\n') : undefined;
+  return cert && key ? { cert, key } : {};
+}
+
 // ── Minimal XML helpers ────────────────────────────────────────
 function esc(v) {
   return String(v ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
@@ -49,7 +57,7 @@ function xmlAll(xml, tag) {
   return results;
 }
 
-// ── HTTP POST ──────────────────────────────────────────────────
+// ── HTTP POST with mTLS ────────────────────────────────────────
 function post(soapBody, soapAction) {
   return new Promise((resolve, reject) => {
     const url = new URL(ENDPOINT());
@@ -62,7 +70,8 @@ function post(soapBody, soapAction) {
         'Content-Type': 'text/xml; charset=utf-8',
         'SOAPAction': `"${NS}${soapAction}"`,
         'Content-Length': Buffer.byteLength(soapBody, 'utf8'),
-      }
+      },
+      ...getMtlsOptions(),
     };
     const req = https.request(opts, res => {
       let data = '';

@@ -147,9 +147,19 @@ async function echoTest() {
   });
   const { status, body: xml } = await post(body, 'EchoTest');
   const errCode = xmlVal(xml, 'ErrorCode');
+  const errMsg  = xmlVal(xml, 'ErrorMessage');
   const txnId   = xmlVal(xml, 'TransactionId');
-  if (status !== 200) throw new Error(`SOAP HTTP ${status}`);
-  if (errCode && errCode !== '0') throw new Error(`TLO error ${errCode}`);
+  if (status !== 200) {
+    const err = new Error(`SOAP HTTP ${status}`);
+    err.responseBody = xml.substring(0, 500);
+    err.responseStatus = status;
+    throw err;
+  }
+  if (errCode && errCode !== '0') {
+    const err = new Error(`TLO error ${errCode}: ${errMsg || 'no message'}`);
+    err.responseBody = xml.substring(0, 500);
+    throw err;
+  }
   return { EchoTestResult: { ErrorCode: errCode, TransactionId: txnId } };
 }
 

@@ -369,7 +369,7 @@ function showSimWarning(reason) {
       <div style="font-size:13px;color:#94a3b8;text-align:center;margin-bottom:20px">${reason||'The TransUnion API proxy is not reachable. Data shown is simulated — not real TransUnion records.'}</div>
       <div style="background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);border-radius:8px;padding:14px 16px;margin-bottom:20px">
         <div style="font-size:11px;font-weight:700;color:#fcd34d;text-transform:uppercase;letter-spacing:.7px;margin-bottom:8px">To enable live TransUnion data:</div>
-        <div style="font-size:12px;color:#94a3b8;line-height:1.8">The live proxy may be warming up after inactivity.<br><strong style="color:#fcd34d">Wait 15 seconds and try your search again.</strong></div>
+        <div style="font-size:12px;color:#94a3b8">The proxy may be warming up &mdash; <strong style="color:#fcd34d">wait 15 seconds and try again.</strong></div>
       </div>
       <button id="sim-dismiss" style="width:100%;background:linear-gradient(135deg,#92400e,#f59e0b);color:#fff;border:none;border-radius:8px;padding:11px;font-size:14px;font-weight:700;cursor:pointer">
         OK — Continue with Simulation
@@ -586,8 +586,7 @@ function showDeconfliction(){
   document.getElementById('dw').style.display='block';
   setStep(3);
   document.getElementById('dw').scrollIntoView({behavior:'smooth',block:'start'});
-  var r=G.tuResult;
-  var dhead=document.getElementById('dhead');
+  var r=G.tuResult; var dhead=document.getElementById('dhead');
   if(!r||!r.success){
     var ec=r&&r.errorCode;
     var msg=ec==='26'||ec===26?'Search too broad — add ZIP, State+First Name, DOB, SSN, or Phone.'
@@ -605,34 +604,85 @@ function showDeconfliction(){
   var count=parseInt(psr&&psr.NumberOfRecordsFound||'0');
   var recs=(psr&&psr.PersonSearchOutputRecords&&psr.PersonSearchOutputRecords.TLOPersonSearchOutputRecord)||[];
   if(!Array.isArray(recs)) recs=[recs];
+  G.allRecords=recs; G.txnId=psr&&psr.TransactionId||'—';
   dhead.className='dhead ok';
   document.getElementById('dicon').textContent=count>0?'✅':'⚠️';
-  document.getElementById('dtitle').textContent=count+' Matching Record'+(count!==1?'s':'')+' Found';
-  document.getElementById('dsub').textContent='TransUnion TruLookup PersonSearch';
+  document.getElementById('dtitle').textContent=count+' Matching Record'+(count!==1?'s':'')+' Found — click any row for full detail';
+  document.getElementById('dsub').textContent='TransUnion TruLookup PersonSearch · TxnID: '+(psr&&psr.TransactionId||'—');
   document.getElementById('dpct').textContent='';
   if(count===0||recs.length===0){
     document.getElementById('dbody').innerHTML='<div style="padding:16px;color:var(--muted);font-size:13px">No matching records found.</div>';
     return;
   }
-  function getFirst(v){return Array.isArray(v)?v[0]:v;}
-  function safe(v){return v?String(v):'—';}
-  function fmtDOB(d){return d?String(d).replace(/^(\d{4})(\d{2})(\d{2})$/,'$2/$3/$1'):'—';}
-  function fmtPhone(p){var s=String(p||'').replace(/\D/g,'');return s.length===10?'('+s.slice(0,3)+') '+s.slice(3,6)+'-'+s.slice(6):(p||'—');}
+  renderResultsTable();
+}
+
+function getFirst(v){return Array.isArray(v)?v[0]:v;}
+function safeTU(v){return v?String(v):'—';}
+function fmtDOB(d){return d?String(d).replace(/^(\d{4})(\d{2})(\d{2})$/,'$2/$3/$1'):'—';}
+function fmtPhone(p){var s=String(p||'').replace(/\D/g,'');return s.length===10?'('+s.slice(0,3)+') '+s.slice(3,6)+'-'+s.slice(6):(p||'—');}
+
+function renderResultsTable(){
+  var recs=G.allRecords;
   var rows=recs.map(function(rec,i){
     var bn=getFirst(rec.Names&&rec.Names.BasicName);
-    var first=bn?safe(bn.FirstName):'—', last=bn?safe(bn.LastName):'—', mid=bn&&bn.MiddleName?safe(bn.MiddleName):'';
+    var first=bn?safeTU(bn.FirstName):'—', last=bn?safeTU(bn.LastName):'—', mid=bn&&bn.MiddleName?safeTU(bn.MiddleName):'';
     var bd=getFirst(rec.DatesOfBirth&&rec.DatesOfBirth.BasicDateOfBirthRecord);
     var dob=fmtDOB(bd&&bd.DOB);
     var bs=getFirst(rec.SSNRecords&&rec.SSNRecords.BasicSSNRecord);
     var ssn=bs&&bs.SSN?'***-**-'+String(bs.SSN).slice(-4):'—';
     var ba=getFirst(rec.Addresses&&rec.Addresses.BasicAddressRecord);
     var addr='—',city='—',state='—',zip='—';
-    if(ba&&ba.Address){addr=safe(ba.Address.Line1);city=safe(ba.Address.City);state=safe(ba.Address.State);zip=safe(ba.Address.Zip);}
+    if(ba&&ba.Address){addr=safeTU(ba.Address.Line1);city=safeTU(ba.Address.City);state=safeTU(ba.Address.State);zip=safeTU(ba.Address.Zip);}
     var bp=getFirst(rec.Phones&&rec.Phones.BasicPhoneListing);
     var phone=fmtPhone(bp&&bp.PhoneNumber);
-    return '<tr><td style="color:var(--muted);font-size:11px">'+(i+1)+'</td><td style="font-weight:600">'+esc(last)+'</td><td>'+esc(first)+(mid?' '+esc(mid):'')+'</td><td>'+esc(dob)+'</td><td style="font-family:monospace">'+esc(ssn)+'</td><td>'+esc(addr)+'</td><td>'+esc(city)+', '+esc(state)+' '+esc(zip)+'</td><td>'+esc(phone)+'</td></tr>';
+    return '<tr class="clickable-row" data-idx="'+i+'"><td style="color:var(--muted);font-size:11px">'+(i+1)+'</td><td style="font-weight:600">'+esc(last)+'</td><td>'+esc(first)+(mid?' '+esc(mid):'')+'</td><td>'+esc(dob)+'</td><td style="font-family:monospace">'+esc(ssn)+'</td><td>'+esc(addr)+'</td><td>'+esc(city)+', '+esc(state)+' '+esc(zip)+'</td><td>'+esc(phone)+'</td><td style="color:var(--blue);font-size:11px;white-space:nowrap">View →</td></tr>';
   }).join('');
-  document.getElementById('dbody').innerHTML='<div style="overflow-x:auto"><table class="dtable"><thead><tr><th>#</th><th>Last Name</th><th>First Name</th><th>DOB</th><th>SSN</th><th>Street Address</th><th>City / State / ZIP</th><th>Phone</th></tr></thead><tbody>'+rows+'</tbody></table></div><div style="padding:8px 2px 4px;font-size:11px;color:var(--muted)">TransUnion TruLookup · '+count+' record'+(count!==1?'s':'')+' · TxnID: '+(psr&&psr.TransactionId||'—')+'<br>Note: Email is not returned by PersonSearch API.</div><div class="dact"><button class="btn-s" onclick="clearForm()">🔄 New Search</button></div>';
+  var tableHtml='<div style="overflow-x:auto"><table class="dtable"><thead><tr><th>#</th><th>Last Name</th><th>First Name</th><th>DOB</th><th>SSN</th><th>Street Address</th><th>City / State / ZIP</th><th>Phone</th><th></th></tr></thead><tbody>'+rows+'</tbody></table></div>'
+    +'<div style="padding:8px 2px 4px;font-size:11px;color:var(--muted)">TransUnion TruLookup · '+recs.length+' records · TxnID: '+G.txnId+'<br>Click any row to drill down into the full record. Email is not returned by TLO PersonSearch API.</div>'
+    +'<div class="dact"><button class="btn-s" onclick="clearForm()">🔄 New Search</button></div>';
+  document.getElementById('dbody').innerHTML=tableHtml;
+  document.querySelectorAll('.clickable-row').forEach(function(tr){
+    tr.style.cursor='pointer';
+    tr.addEventListener('click',function(){showRecordDetail(parseInt(this.dataset.idx));});
+    tr.addEventListener('mouseover',function(){this.style.background='rgba(96,165,250,.08)';});
+    tr.addEventListener('mouseout',function(){this.style.background='';});
+  });
+}
+
+function showRecordDetail(idx){
+  var rec=G.allRecords&&G.allRecords[idx];
+  if(!rec) return;
+  var bn=getFirst(rec.Names&&rec.Names.BasicName);
+  var fullName=bn?[bn.FirstName,bn.MiddleName,bn.LastName].filter(Boolean).join(' '):'Unknown';
+  var bd=getFirst(rec.DatesOfBirth&&rec.DatesOfBirth.BasicDateOfBirthRecord);
+  var dob=fmtDOB(bd&&bd.DOB);
+  var bs=getFirst(rec.SSNRecords&&rec.SSNRecords.BasicSSNRecord);
+  var ssn=bs&&bs.SSN?'***-**-'+String(bs.SSN).slice(-4):'—';
+  var ba=getFirst(rec.Addresses&&rec.Addresses.BasicAddressRecord);
+  var addrStr='—';
+  if(ba&&ba.Address){var a=ba.Address; addrStr=[a.Line1,a.City,a.State,a.Zip].filter(Boolean).join(', ');}
+  var bp=getFirst(rec.Phones&&rec.Phones.BasicPhoneListing);
+  var phone=fmtPhone(bp&&bp.PhoneNumber);
+  function kv(label,val){return '<div class="kv"><span style="color:var(--muted);font-size:12px">'+label+'</span><span style="font-weight:500">'+esc(val||'—')+'</span></div>';}
+  var html='<div style="background:#0d1525;border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:12px">'
+    +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">'
+    +'<div><div style="font-size:18px;font-weight:700;color:var(--text)">'+esc(fullName)+'</div>'
+    +'<div style="font-size:11px;color:var(--muted);margin-top:2px">Record '+(idx+1)+' of '+G.allRecords.length+' — TransUnion PersonSearch</div></div>'
+    +'<button class="btn-s" id="back-btn" style="font-size:12px">← Back to Results</button>'
+    +'</div>'
+    +'<div class="split">'
+    +'<div><div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Identity</div>'
+    +kv('Full Name', fullName)+kv('Date of Birth', dob)+kv('SSN', ssn)+'</div>'
+    +'<div><div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Contact</div>'
+    +kv('Address', addrStr)+kv('Phone', phone)+kv('Email', 'Not available from PersonSearch API')+'</div>'
+    +'</div>'
+    +'<div style="margin-top:16px;padding-top:12px;border-top:1px solid rgba(255,255,255,.06);font-size:11px;color:var(--muted)">💡 PersonSearch returns basic matching data. For comprehensive records including all historical addresses, associates, employment, and financial history, run a targeted search with SSN or DOB.</div>'
+    +'</div>'
+    +'<div class="dact"><button id="back-btn2" class="btn-s">← All Results</button><button class="btn-s" onclick="clearForm()">🔄 New Search</button></div>';
+  document.getElementById('dbody').innerHTML=html;
+  document.getElementById('back-btn').addEventListener('click', renderResultsTable);
+  document.getElementById('back-btn2').addEventListener('click', renderResultsTable);
 }
 
 function confirmProceed(){

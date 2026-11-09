@@ -95,6 +95,19 @@ tr:hover td{background:var(--hover);cursor:pointer}
 .qex-chips{display:flex;flex-wrap:wrap;gap:4px}
 .qex-chip{background:#0d1525;border:1px solid #4a6a99;border-radius:4px;padding:3px 9px;font-size:12px;color:#93c5fd;cursor:pointer;font-family:monospace;transition:all .15s}
 .qex-chip:hover{background:rgba(59,130,246,.15);border-color:var(--blue);color:#fff}
+
+.qconds{display:flex;flex-wrap:wrap;gap:6px;padding:8px 0 4px;min-height:32px;align-items:center;}
+.qcond-chip{display:inline-flex;align-items:center;gap:5px;background:rgba(59,130,246,.12);border:1px solid rgba(59,130,246,.3);border-radius:12px;padding:3px 10px 3px 10px;font-size:12px;color:#93c5fd;}
+.qcond-chip button{background:none;border:none;color:#93c5fd;cursor:pointer;font-size:13px;padding:0 0 0 2px;line-height:1;}
+.qcond-chip button:hover{color:#f87171;}
+.qconds-empty{font-size:12px;color:var(--muted);font-style:italic;}
+.qbtn-add{background:rgba(59,130,246,.15);border:1px solid rgba(59,130,246,.35);color:#93c5fd;border-radius:6px;padding:6px 14px;font-size:13px;cursor:pointer;}
+.qbtn-add:hover{background:rgba(59,130,246,.25);}
+.qbtn-add:disabled{opacity:.35;cursor:not-allowed;}
+.qbtn-run{background:linear-gradient(135deg,#1d4ed8,#3b82f6);border:none;color:#fff;border-radius:6px;padding:6px 18px;font-size:13px;font-weight:600;cursor:pointer;}
+.qbtn-run:hover{background:linear-gradient(135deg,#1e40af,#2563eb);}
+.qbtn-run:disabled{opacity:.35;cursor:not-allowed;}
+
 </style>
 <style id="ag-style">
 #auth-gate{display:flex;position:fixed;top:0;right:0;bottom:0;left:0;background:#0a0e1a;z-index:99999;align-items:center;justify-content:center;font-family:system-ui,-apple-system,sans-serif;}
@@ -200,8 +213,10 @@ tr:hover td{background:var(--hover);cursor:pointer}
       </div>
       <div class="qinput-row">
         <input class="qinput" id="qi" placeholder="Select a field to begin..." disabled autocomplete="off">
-        <button class="qbtn" id="qb" onclick="runQ()" disabled>Search</button>
+        <button class="qbtn-add" id="qb-add" onclick="addCondition()" disabled>+ Add</button>
+        <button class="qbtn-run" id="qb-run" onclick="runMultiQuery()" disabled>Search</button>
       </div>
+      <div class="qconds" id="qconds"><span class="qconds-empty">No filters yet — select a field and click + Add</span></div>
       <div class="ops">
         <span class="oplbl">Operator:</span>
         <button class="op active" id="oeq" onclick="setOp('eq')">= Equals</button>
@@ -474,172 +489,126 @@ function setOp(o) {
   ['eq','co','sw','ge','le'].forEach(function(x){var el=document.getElementById('o'+x);if(el)el.className='op'+(x===o?' active':'');});
 }
 
-async function runQ() {
-  if(gi<0||fi<0) return;
-  var fld=S[gi].fields[fi];
-  var val=document.getElementById('qi').value.trim();
-  if(!val) return;
-  // Try live TU API for person/contact fields
-  var liveRows = await runTUQuery(fld.k, val);
-  if (liveRows && liveRows.length>0) {
-    results = liveRows;
-    document.getElementById('rc').textContent = results.length+' (TU Live)';
-    document.getElementById('rl').textContent = fld.k+' '+op+' "'+val+'"';
-    showTable(fld);
+async 
+// ── MULTI-FIELD QUERY BUILDER ─────────────────────────────────────────────
+var queryConditions = []; // [{key, label, value, op}]
+
+function renderConditions() {
+  var el = document.getElementById('qconds');
+  var runBtn = document.getElementById('qb-run');
+  if (!queryConditions.length) {
+    el.innerHTML = '<span class="qconds-empty">No filters yet — select a field and click + Add</span>';
+    runBtn.disabled = true;
     return;
   }
-  // Fall back to SAMPLE data — warn if API was expected
-  if(FIELD_TO_API[fld.k]) { _simPopupShown=false; showSimWarning('Could not reach the TransUnion API. Results below are sample data, not real TU records.'); }
-  results=SAMPLE.filter(function(r){
-    var rv=String(r[fld.k]||'');
-    if(op==='eq') return rv.toLowerCase()===val.toLowerCase();
-    if(op==='co') return rv.toLowerCase().includes(val.toLowerCase());
-    if(op==='sw') return rv.toLowerCase().startsWith(val.toLowerCase());
-    if(op==='ge') return parseFloat(rv)>=parseFloat(val);
-    if(op==='le') return parseFloat(rv)<=parseFloat(val);
-    return false;
-  });
-  document.getElementById('rc').textContent=results.length;
-  document.getElementById('rl').textContent=fld.k+' '+op+' "'+val+'"';
-  showTable(fld);
+  el.innerHTML = queryConditions.map(function(c, i) {
+    var opLabel = c.op==='eq'?'=':c.op==='co'?'contains':c.op==='sw'?'starts with':c.op;
+    return '<span class="qcond-chip">'+esc(c.label)+' <em style="opacity:.7">'+opLabel+'</em> '+esc(c.value)+'<button onclick="removeCondition('+i+')" title="Remove">×</button></span>';
+  }).join('');
+  runBtn.disabled = false;
 }
 
-function showTable(fld) {
-  if(!results.length){
-    document.getElementById('tw').innerHTML='<div class="empty"><div class="empty-icon">?</div><div>No matching records</div></div>';
-    return;
+function addCondition() {
+  if (gi < 0 || fi < 0) return;
+  var fld = S[gi].fields[fi];
+  var val = document.getElementById('qi').value.trim();
+  if (!val) return;
+  // Replace existing condition for same field, or add new
+  var existing = queryConditions.findIndex(function(c){ return c.key === fld.k; });
+  var cond = { key: fld.k, label: fld.l, value: val, op: op };
+  if (existing >= 0) queryConditions[existing] = cond;
+  else queryConditions.push(cond);
+  renderConditions();
+  document.getElementById('qi').value = '';
+}
+
+function removeCondition(i) {
+  queryConditions.splice(i, 1);
+  renderConditions();
+}
+
+async function runMultiQuery() {
+  if (!queryConditions.length) return;
+  // Build API params from conditions (only TU-mapped fields go to live API)
+  var apiParams = { numberOfRecords: 50 };
+  var hasApiField = false;
+  queryConditions.forEach(function(c) {
+    if (FIELD_TO_API[c.key]) { apiParams[FIELD_TO_API[c.key]] = c.value; hasApiField = true; }
+  });
+
+  document.getElementById('rl').textContent = queryConditions.map(function(c){ return c.label+'='+c.value; }).join(' + ');
+  document.getElementById('rc').textContent = '…';
+  document.getElementById('tw').innerHTML = '<div class="empty"><div class="empty-icon">⟳</div><div>Querying TransUnion…</div></div>';
+
+  if (hasApiField) {
+    var liveRows = await runTUQuery_multi(apiParams);
+    if (liveRows && liveRows.length > 0) {
+      results = liveRows;
+      document.getElementById('rc').textContent = results.length + ' (TU Live)';
+      showTable(null);
+      return;
+    }
+    _simPopupShown = false;
+    showSimWarning('TransUnion returned no results for this combination. Try broadening your search.');
   }
-  var keys=Object.keys(results[0]).filter(function(k){return results.some(function(r){return r[k]!==undefined;});});
-  var html='<table><thead><tr>'+keys.map(function(k){return'<th>'+k+'</th>';}).join('')+'</tr></thead><tbody>';
-  results.forEach(function(r){
-    html+='<tr>';
-    keys.forEach(function(k){
-      var v=r[k]!==undefined?r[k]:'';
-      var hi=(k===fld.k)?'style="background:rgba(96,165,250,.15);color:var(--accent);font-weight:600"':'';
-      html+='<td '+hi+'>'+v+'</td>';
+  // Sample data fallback with client-side filter
+  results = SAMPLE.filter(function(r) {
+    return queryConditions.every(function(c) {
+      var rv = String(r[c.key] || '');
+      if (c.op==='eq') return rv.toLowerCase() === c.value.toLowerCase();
+      if (c.op==='co') return rv.toLowerCase().includes(c.value.toLowerCase());
+      if (c.op==='sw') return rv.toLowerCase().startsWith(c.value.toLowerCase());
+      return true;
     });
-    html+='</tr>';
   });
-  html+='</tbody></table>';
-  document.getElementById('tw').innerHTML=html;
+  document.getElementById('rc').textContent = results.length + ' (sample)';
+  showTable(null);
 }
 
-function clearQ() {
-  results=[]; document.getElementById('qi').value='';
-  document.getElementById('rc').textContent='0';
-  document.getElementById('rl').textContent='no query';
-  document.getElementById('tw').innerHTML='<div class="empty"><div class="empty-icon">?</div><div>Enter a value and search</div></div>';
-}
-
-function doExport() {
-  if(!results.length) return;
-  var rows=[Object.keys(results[0]).join(',')];
-  results.forEach(function(r){rows.push(Object.values(r).map(function(v){return'"'+String(v).replace(/"/g,'""')+'"';}).join(','));});
-  var a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(rows.join('\n'));
-  a.download='trulookup-'+Date.now()+'.csv';a.click();
-}
-
-// ── TU PROXY ──────────────────────────────────────────────────
-// ── SIMULATION WARNING POPUP ───────────────────────────────────
-var _simPopupShown = false;
-function showSimWarning(reason) {
-  if (_simPopupShown) return;
-  _simPopupShown = true;
-  var overlay = document.createElement('div');
-  overlay.id = 'sim-overlay';
-  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:199998;display:flex;align-items:center;justify-content:center;font-family:system-ui,-apple-system,sans-serif';
-  overlay.innerHTML = `
-    <div style="background:#1a2235;border:2px solid #f59e0b;border-radius:14px;padding:32px 36px;max-width:440px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.7)">
-      <div style="font-size:36px;text-align:center;margin-bottom:12px">⚠️</div>
-      <div style="font-size:17px;font-weight:700;color:#fcd34d;text-align:center;margin-bottom:8px">Running in Simulation Mode</div>
-      <div style="font-size:13px;color:#94a3b8;text-align:center;margin-bottom:20px">${reason||'The TransUnion API proxy is not reachable. Data shown is simulated — not real TransUnion records.'}</div>
-      <div style="background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);border-radius:8px;padding:14px 16px;margin-bottom:20px">
-        <div style="font-size:11px;font-weight:700;color:#fcd34d;text-transform:uppercase;letter-spacing:.7px;margin-bottom:8px">To enable live TransUnion data:</div>
-        <ol style="font-size:12px;color:#94a3b8;margin:0;padding-left:18px;line-height:1.8">
-          <li>The proxy is live at <code style="color:#93c5fd">https://tn-proxy-lp3.azurewebsites.net</code></li>
-          
-          
-        </ol>
-      </div>
-      <button id="sim-dismiss" style="width:100%;background:linear-gradient(135deg,#92400e,#f59e0b);color:#fff;border:none;border-radius:8px;padding:11px;font-size:14px;font-weight:700;cursor:pointer">
-        OK — Continue with Simulation
-      </button>
-    </div>
-  `;
-  document.body.appendChild(overlay);
-  document.getElementById('sim-dismiss').addEventListener('click', function() {
-    overlay.remove();
-  });
-}
-
-var PROXY = (window.location.hostname==='localhost'||window.location.hostname==='127.0.0.1')
-  ? '' : 'https://tn-proxy-lp3.azurewebsites.net';
-
-// Fields that map directly to PersonSearch params
-var FIELD_TO_API = {
-  first_name:'firstName', last_name:'lastName', dob:'dob', ssn:'ssn',
-  phone:'phone', phone_search:'phone',
-  addr_street1:'address', addr_city:'city', addr_state:'state', addr_zip:'zip'
-};
-
-(function checkProxy(){
-  fetch(PROXY+'/health').then(function(r){return r.json();})
-    .then(function(h){
-      var b=document.createElement('div');
-      b.style='position:fixed;bottom:10px;right:12px;font-size:11px;padding:5px 11px;border-radius:5px;z-index:9998;font-family:monospace;border:1px solid';
-      if(h.tu_connected){b.style.background='rgba(34,197,94,.12)';b.style.borderColor='rgba(34,197,94,.35)';b.style.color='#86efac';b.textContent='✓ TU API Live';}
-      else{b.style.background='rgba(245,158,11,.1)';b.style.borderColor='rgba(245,158,11,.3)';b.style.color='#fcd34d';b.textContent='⚠ Simulation — start proxy';}
-      document.body.appendChild(b);
-    }).catch(function(){
-      var b=document.createElement('div');
-      b.style='position:fixed;bottom:10px;right:12px;font-size:11px;padding:5px 11px;border-radius:5px;z-index:9998;font-family:monospace;border:1px solid rgba(245,158,11,.3);background:rgba(245,158,11,.08);color:#fcd34d';
-      b.textContent='⚠ Simulation — start proxy';
-      document.body.appendChild(b);
-      showSimWarning('The TransUnion API proxy is not running. Queries will fall back to sample data.');
-    });
-})();
-
-async function runTUQuery(fldKey, val) {
-  var apiParam = FIELD_TO_API[fldKey];
-  if (!apiParam) return null;
-  var body = {};
-  body[apiParam] = val;
-  // PersonSearch requires at least firstName+lastName or lastName alone for name-based search
-  if (apiParam==='firstName' && !body.lastName) body.lastName = val;
+async function runTUQuery_multi(apiParams) {
   try {
     var resp = await fetch(PROXY+'/api/lookup', {
       method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify(body)
+      body: JSON.stringify(apiParams)
     });
     if (!resp.ok) return null;
     var json = await resp.json();
     if (!json.success) return null;
-    // Map TLOPersonSearchOutputRecord array to display rows
     var res = json.data && json.data.PersonSearchResult;
-    if (!res || parseInt(res.ErrorCode)!==0) return null;
+    if (!res || parseInt(res.ErrorCode) !== 0) return null;
     var recs = res.PersonSearchOutputRecords && res.PersonSearchOutputRecords.TLOPersonSearchOutputRecord;
     if (!recs) return [];
-    if (!Array.isArray(recs)) recs=[recs];
-    return recs.map(function(r){
+    if (!Array.isArray(recs)) recs = [recs];
+    return recs.map(function(r) {
       var bn=r.Names&&r.Names.BasicName; var n=Array.isArray(bn)?bn[0]:bn;
       var ba=r.Addresses&&r.Addresses.BasicAddressRecord; var a=Array.isArray(ba)?ba[0]:ba;
       var bd=r.DatesOfBirth&&r.DatesOfBirth.BasicDateOfBirthRecord; var d=Array.isArray(bd)?bd[0]:bd;
       var bp=r.Phones&&r.Phones.BasicPhoneListing; var p=Array.isArray(bp)?bp[0]:bp;
       var bs=r.SSNRecords&&r.SSNRecords.BasicSSNRecord; var s=Array.isArray(bs)?bs[0]:bs;
       return {
-        first_name: n&&n.FirstName||'', last_name: n&&n.LastName||'',
-        dob: d&&d.DOB||'',
-        ssn: s&&s.SSN?'***-**-'+String(s.SSN).slice(-4):'',
-        addr_street1: a&&a.Address&&a.Address.Line1||'',
-        addr_city: a&&a.Address&&a.Address.City||'',
-        addr_state: a&&a.Address&&a.Address.State||'',
-        addr_zip: a&&a.Address&&a.Address.Zip||'',
-        phone: p&&p.PhoneNumber||'',
-        _source:'TU Live'
+        first_name:n&&n.FirstName||'', middle_name:n&&n.MiddleName||'', last_name:n&&n.LastName||'',
+        dob:d&&d.DOB||'', ssn:s&&s.SSN?'***-**-'+String(s.SSN).slice(-4):'',
+        addr_street1:a&&a.Address&&a.Address.Line1||'',
+        addr_city:a&&a.Address&&a.Address.City||'',
+        addr_state:a&&a.Address&&a.Address.State||'',
+        addr_zip:a&&a.Address&&a.Address.Zip||'',
+        phone:p&&p.PhoneNumber||'', _source:'TU Live'
       };
     }).filter(function(r){return r.first_name||r.last_name;});
   } catch(e) { return null; }
 }
+
+function runQ() {
+  // Single-field quick search — adds to conditions and runs immediately
+  if (gi < 0 || fi < 0) return;
+  var val = document.getElementById('qi').value.trim();
+  if (!val) return;
+  addCondition();
+  runMultiQuery();
+}
+
+
+
 
 
 buildList();

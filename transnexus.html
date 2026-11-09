@@ -287,10 +287,13 @@ tr:last-child td{border:none}
 
 <form id="vform" onsubmit="startVerify(event)">
 <div class="main" id="mainGrid">
+  <div style="grid-column:1/-1;background:rgba(59,130,246,.07);border:1px solid rgba(59,130,246,.2);border-radius:8px;padding:10px 16px;font-size:12px;color:#93c5fd;margin-bottom:4px;line-height:1.7">
+    <strong>How to search:</strong>&nbsp; Fill in the <strong>Individual Identity</strong> panel (left) to look up a person, <em>or</em> fill in the <strong>Company Identity</strong> panel (right) to look up a business — you do not need to fill in both.
+  </div>
 
   <!-- STEP 1: FORM -->
   <div class="sc">
-    <div class="sh"><div class="si p">👤</div><div><div class="st">Individual Identity</div><div class="ss">Personal identifying information</div></div></div>
+    <div class="sh"><div class="si p">👤</div><div><div class="st">Individual Identity <span style="font-size:10px;font-weight:400;color:var(--muted)"> — search this side OR Company</span></div><div class="ss">Personal identifying information</div></div></div>
     <div class="sb">
       <div class="fr c3"><div class="fld"><label>First Name</label><input type="text" id="fname" placeholder="John" autocomplete="off"></div><div class="fld"><label>Middle Name</label><input type="text" id="mname" placeholder="A." autocomplete="off"></div><div class="fld"><label>Last Name</label><input type="text" id="lname" placeholder="Smith" autocomplete="off"></div></div>
       <div class="fhint" style="grid-column:1/-1;background:rgba(59,130,246,.07);border:1px solid rgba(59,130,246,.2);border-radius:6px;padding:8px 12px;font-size:11px;color:#93c5fd;line-height:1.6"><strong>Minimum search criteria required by TransUnion:</strong><br>• <strong>Last Name + ZIP</strong> &nbsp;·&nbsp; <strong>First Name + Last Name + State</strong> &nbsp;·&nbsp; <strong>SSN</strong> &nbsp;·&nbsp; <strong>Phone Number</strong><br><span style="color:var(--muted)">Last name alone is too broad — add ZIP, State, DOB, SSN, or Phone to get results.</span></div>
@@ -302,7 +305,7 @@ tr:last-child td{border:none}
   </div>
 
   <div class="sc">
-    <div class="sh"><div class="si c">🏢</div><div><div class="st">Company Identity</div><div class="ss">Business identifying information</div></div></div>
+    <div class="sh"><div class="si c">🏢</div><div><div class="st">Company Identity <span style="font-size:10px;font-weight:400;color:var(--muted)"> — search this side OR Individual</span></div><div class="ss">Business identifying information</div></div></div>
     <div class="sb">
       <div class="fr c1"><div class="fld"><label>Company Name</label><input type="text" id="cname" placeholder="Acme Corporation LLC" autocomplete="off"></div></div>
       <div class="fr c1"><div class="fld"><label>Business Address</label><input type="text" id="caddr" placeholder="500 Corporate Blvd, Suite 200" autocomplete="off"></div></div>
@@ -695,7 +698,7 @@ function showCreditReview(){
   var hasChinaInd=rnd(0,2)===0; // ~33% chance of China flag
   var indHtml='';
   if(hasChinaInd){
-    indHtml+='<div class="cn-alert">🇨🇳 <strong>CHINA CONNECTION DETECTED</strong> — One or more financial relationships linked to People's Republic of China entities. Review flagged items below.</div>';
+    indHtml+='<div class="cn-alert">🇨🇳 <strong>CHINA CONNECTION DETECTED</strong> — One or more financial relationships linked to People\u2019s Republic of China entities. Review flagged items below.</div>';
   }
 
   indHtml+=creditTable('CREDIT SUMMARY','',[ 
@@ -774,7 +777,6 @@ function showCreditReview(){
   // Add next step button
   var nw=document.createElement('div');nw.className='next-wrap';nw.innerHTML='<button class="btn-p" onclick="showRiskProfile()">Continue to Risk Profile →</button>';
   document.getElementById('crw').appendChild(nw);
-}
 }
 
 function creditTable(title,note,rows){

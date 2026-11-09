@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -442,7 +442,7 @@ function selF(g, f) {
   var qi=document.getElementById('qi');
   qi.disabled=false; qi.value='';
   qi.placeholder='Enter '+(fld.ev?fld.ev.join(', '):fld.d)+' value...';
-  document.getElementById('qb').disabled=false; document.getElementById('qb-add').disabled=false;
+  var qbEl=document.getElementById('qb'); if(qbEl)qbEl.disabled=false; var qaEl=document.getElementById('qb-add'); if(qaEl)qaEl.disabled=false; var qrEl=document.getElementById('qb-run'); if(qrEl)qrEl.disabled=false;
   var isNum=(fld.d==='Integer');
   document.getElementById('oge').style.display=isNum?'':'none';
   document.getElementById('ole').style.display=isNum?'':'none';

@@ -525,6 +525,14 @@ function startVerify(e){
   G.ts=new Date();
   // Fire real TU API call — result awaited when animation finishes
   G.tuResult = null;
+  // Company-only guard: PersonSearch is individual only
+  var hasInd = G.lname||G.fname||G.ssn||G.zip||(G.phone?G.phone.replace(/\D/g,''):'');
+  var hasCo  = G.cname||G.ein||G.duns;
+  if (!hasInd && hasCo) {
+    var _msg = 'Company BusinessSearch is not yet connected in this demo. Use the Individual Identity panel to search for a person, or contact us to enable Business API access.';
+    G.tuResult = { success:false, errorCode:'company', error:_msg };
+    G.tuApiPromise = Promise.resolve(G.tuResult);
+  } else {
   G.tuApiPromise = callTU({
     firstName: G.fname||undefined, lastName: G.lname||undefined,
     dob:  G.dob  ? G.dob.replace(/-/g,'')  : undefined,
@@ -533,6 +541,7 @@ function startVerify(e){
     state: G.state||undefined,  zip:  G.zip||undefined,
     numberOfRecords: 50
   });
+  } // end company guard
 
   document.getElementById('sw').style.display='none';
   document.getElementById('pw').style.display='block';
@@ -589,7 +598,8 @@ function showDeconfliction(){
   var r=G.tuResult; var dhead=document.getElementById('dhead');
   if(!r||!r.success){
     var ec=r&&r.errorCode;
-    var msg=ec==='26'||ec===26?'Search too broad — add ZIP, State+First Name, DOB, SSN, or Phone.'
+    var msg=ec==='company'?'Company BusinessSearch not yet implemented. Use the Individual Identity panel to look up a person.'
+      :ec==='26'||ec===26?'Search too broad — add ZIP, State+First Name, DOB, SSN, or Phone.'
       :ec==='10'||ec===10?'Not enough data — provide Last Name + ZIP, SSN, or Phone.'
       :(r&&r.error?String(r.error):'TransUnion API error.');
     dhead.className='dhead warn';

@@ -293,6 +293,7 @@ tr:last-child td{border:none}
     <div class="sh"><div class="si p">👤</div><div><div class="st">Individual Identity</div><div class="ss">Personal identifying information</div></div></div>
     <div class="sb">
       <div class="fr c3"><div class="fld"><label>First Name</label><input type="text" id="fname" placeholder="John" autocomplete="off"></div><div class="fld"><label>Middle Name</label><input type="text" id="mname" placeholder="A." autocomplete="off"></div><div class="fld"><label>Last Name</label><input type="text" id="lname" placeholder="Smith" autocomplete="off"></div></div>
+      <div class="fhint" style="grid-column:1/-1;background:rgba(59,130,246,.07);border:1px solid rgba(59,130,246,.2);border-radius:6px;padding:8px 12px;font-size:11px;color:#93c5fd;line-height:1.6"><strong>Minimum search criteria required by TransUnion:</strong><br>• <strong>Last Name + ZIP</strong> &nbsp;·&nbsp; <strong>First Name + Last Name + State</strong> &nbsp;·&nbsp; <strong>SSN</strong> &nbsp;·&nbsp; <strong>Phone Number</strong><br><span style="color:var(--muted)">Last name alone is too broad — add ZIP, State, DOB, SSN, or Phone to get results.</span></div>
       <div class="fr c2"><div class="fld"><label>Date of Birth</label><input type="date" id="dob" autocomplete="off"></div><div class="fld"><label>SSN</label><input type="text" id="ssn" placeholder="XXX-XX-XXXX" maxlength="11" autocomplete="off" oninput="fmtSSN(this)"><div class="fhint">Format: 123-45-6789</div></div></div>
       <div class="fr c1"><div class="fld"><label>Street Address</label><input type="text" id="addr" placeholder="123 Main St" autocomplete="off"></div></div>
       <div class="fr c3"><div class="fld"><label>City</label><input type="text" id="city" placeholder="Annapolis" autocomplete="off"></div><div class="fld"><label>State</label><input type="text" id="state" placeholder="MD" maxlength="2" autocomplete="off" style="text-transform:uppercase"></div><div class="fld"><label>ZIP</label><input type="text" id="zip" placeholder="21401" maxlength="10" autocomplete="off"></div></div>
@@ -394,10 +395,11 @@ async function callTU(params) {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify(params)
     });
-    if (!resp.ok) throw new Error('HTTP '+resp.status);
-    return await resp.json();
+    var json = await resp.json();
+    if (!resp.ok) return { success:false, errorCode: json.errorCode, error: json.error||('HTTP '+resp.status), data: json.data };
+    return json;
   } catch(e) {
-    console.warn('TU API unavailable (simulation mode):', e.message);
+    console.warn('TU API unavailable:', e.message);
     return { success:false, simMode:true, error:e.message };
   }
 }
@@ -529,11 +531,13 @@ function startVerify(e){
   // Fire real TU API call — result awaited when animation finishes
   G.tuResult = null;
   G.tuApiPromise = callTU({
-    firstName: G.fname, lastName: G.lname,
+    firstName: G.fname||undefined, lastName: G.lname||undefined,
     dob:  G.dob  ? G.dob.replace(/-/g,'')  : undefined,
     ssn:  G.ssn  ? G.ssn.replace(/\D/g,'') : undefined,
+    phone: G.phone ? G.phone.replace(/\D/g,'') : undefined,
     address: G.addr||undefined, city: G.city||undefined,
-    state: G.state||undefined,  zip:  G.zip||undefined
+    state: G.state||undefined,  zip:  G.zip||undefined,
+    numberOfRecords: 50
   });
 
   document.getElementById('sw').style.display='none';
@@ -593,12 +597,25 @@ function showDeconfliction(){
   var dhead=document.getElementById('dhead');
 
   if(!r||!r.success){
+    var ec=r&&r.errorCode;
+    var msg='';
+    if(ec==='26'||ec===26){
+      msg='Search is too broad — TransUnion requires more criteria.<br><br>'
+        +'<strong>Add at least one of:</strong><ul style="margin:6px 0 0 16px;line-height:2">'
+        +'<li>ZIP code</li><li>State <em>and</em> First Name</li><li>Date of Birth</li><li>SSN</li><li>Phone Number</li></ul>';
+    } else if(ec==='10'||ec===10){
+      msg='Not enough data to search — TransUnion requires at least Last Name + ZIP, or SSN, or Phone.';
+    } else if(r&&r.simMode){
+      msg='TransUnion API proxy unreachable. Check <a href="https://tn-proxy-lp3.azurewebsites.net/health" target="_blank" style="color:#60a5fa">proxy health</a>.';
+    } else {
+      msg=r&&r.error?esc(r.error):'TransUnion returned an error (code '+ec+').';
+    }
     dhead.className='dhead warn';
-    document.getElementById('dicon').textContent='❌';
-    document.getElementById('dtitle').textContent='TransUnion API Error';
-    document.getElementById('dsub').textContent=r&&r.error?r.error:'Could not connect to TransUnion. Check proxy status.';
+    document.getElementById('dicon').textContent='⚠️';
+    document.getElementById('dtitle').textContent=ec==='26'||ec===26?'Search Too Broad':ec==='10'||ec===10?'Insufficient Search Criteria':'Search Error';
+    document.getElementById('dsub').textContent='Refine your search criteria and try again.';
     document.getElementById('dpct').textContent='';
-    document.getElementById('dbody').innerHTML='<div style="padding:16px 12px;color:#f87171;font-size:13px">'+(r&&r.error?esc(r.error):'No results available.')+'</div>';
+    document.getElementById('dbody').innerHTML='<div style="padding:14px 16px;color:#fcd34d;font-size:13px;line-height:1.6">'+msg+'</div>';
     return;
   }
 

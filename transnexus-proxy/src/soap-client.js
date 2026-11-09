@@ -192,4 +192,4 @@ async function personSearch(params = {}) {
 }
 
 
-module.exports = { echoTest, personSearch, businessSearch };
+module.exports = { echoTest, personSearch };

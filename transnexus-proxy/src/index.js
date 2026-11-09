@@ -5,7 +5,7 @@ const cors    = require('cors');
 const helmet  = require('helmet');
 const morgan  = require('morgan');
 const path    = require('path');
-const { personSearch, echoTest, businessSearch } = require('./soap-client');
+const { personSearch, echoTest } = require('./soap-client');
 
 const app  = express();
 const PORT = process.env.PORT || 3000;

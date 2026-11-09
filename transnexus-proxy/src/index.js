@@ -5,7 +5,7 @@ const cors    = require('cors');
 const helmet  = require('helmet');
 const morgan  = require('morgan');
 const path    = require('path');
-const { personSearch, echoTest } = require('./soap-client');
+const { personSearch, echoTest, businessSearch } = require('./soap-client');
 
 const app  = express();
 const PORT = process.env.PORT || 3000;
@@ -28,7 +28,7 @@ app.use(express.json());
 const WORKSPACE = path.join(__dirname, '../../');
 app.use(express.static(WORKSPACE, { index: false }));
 
-// ── Health / connectivity check ───────────────────────────────
+// A������??���,���A������??���,��� Health / connectivity check A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���
 app.get('/health', async (req, res) => {
   try {
     const echo = await echoTest();
@@ -52,7 +52,7 @@ app.get('/health', async (req, res) => {
   }
 });
 
-// ── PersonSearch ──────────────────────────────────────────────
+// A������??���,���A������??���,��� PersonSearch A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���
 app.post('/api/lookup', async (req, res) => {
   try {
     const { firstName, lastName, dob, ssn, address, city, state, zip, phone,
@@ -76,7 +76,7 @@ app.post('/api/lookup', async (req, res) => {
   }
 });
 
-// ── Outbound IP check ───────────────────────────────────────
+// A������??���,���A������??���,��� Outbound IP check A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���
 app.get('/ip', async (req, res) => {
   const https = require('https');
   const ip = await new Promise((resolve) => {
@@ -87,7 +87,7 @@ app.get('/ip', async (req, res) => {
   res.json({ outbound_ip: ip, ts: new Date().toISOString() });
 });
 
-// ── WSDL introspection (dev only) ────────────────────────────
+// A������??���,���A������??���,��� WSDL introspection (dev only) A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���A������??���,���
 app.get('/api/methods', async (req, res) => {
   try {
     const { getClient } = require('./soap-client');
@@ -98,8 +98,31 @@ app.get('/api/methods', async (req, res) => {
   }
 });
 
+
+// ── BusinessSearch ────────────────────────────────────────────
+app.post('/api/business-lookup', async (req, res) => {
+  try {
+    const { companyName, address, city, state, zip, ein, duns,
+            numberOfRecords, startingRecord } = req.body;
+    if (!companyName && !ein && !duns) {
+      return res.status(400).json({ error: 'Provide at least one of: companyName, ein, duns' });
+    }
+    const result = await businessSearch({ companyName, address, city, state, zip,
+                                          ein, duns, numberOfRecords, startingRecord });
+    const errCode = result?.BusinessSearchResult?.ErrorCode;
+    if (errCode && parseInt(errCode) !== 0) {
+      return res.status(422).json({ success: false, errorCode: errCode, data: result });
+    }
+    res.json({ success: true, data: result });
+  } catch (err) {
+    console.error('BusinessLookup error:', err.message);
+    res.status(500).json({ success: false, error: err.message,
+      responseBody: err.responseBody || null });
+  }
+});
+
 app.listen(PORT, () => {
-  console.log(`\nTransNexus proxy running → http://localhost:${PORT}`);
+  console.log(`\nTransNexus proxy running A������?������?T http://localhost:${PORT}`);
   console.log(`  Pages:   http://localhost:${PORT}/transnexus.html`);
   console.log(`           http://localhost:${PORT}/data-analysis.html`);
   console.log(`  Health:  http://localhost:${PORT}/health`);

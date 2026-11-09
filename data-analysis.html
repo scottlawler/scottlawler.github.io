@@ -599,7 +599,7 @@ var FIELD_TO_API = {
     });
 })();
 
-async async function runTUQuery(fldKey, val) {
+async function runTUQuery(fldKey, val) {
   var apiParam = FIELD_TO_API[fldKey];
   if (!apiParam) return null;
   var body = {};

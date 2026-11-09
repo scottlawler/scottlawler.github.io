@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TransNexus — Company Identity</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0f172a;--surface:#1a2235;--border:rgba(255,255,255,.08);--text:#e2e8f0;--muted:#64748b;--blue:#3b82f6;--accent:#60a5fa;--green:#22c55e;--red:#ef4444;--yellow:#f59e0b;--hover:rgba(255,255,255,.04)}
+body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,sans-serif;min-height:100vh}
+#auth-gate{position:fixed;inset:0;background:rgba(0,0,0,.85);display:flex;align-items:center;justify-content:center;z-index:999}
+.ag-box{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:40px;width:360px;text-align:center}
+.ag-logo-icon{font-size:40px;margin-bottom:8px}.ag-title{font-size:20px;font-weight:700;margin-bottom:4px}
+.ag-sub{font-size:13px;color:var(--muted);margin-bottom:24px}
+.ag-field{text-align:left;margin-bottom:14px}
+.ag-field label{font-size:12px;color:var(--muted);margin-bottom:4px;display:block}
+.ag-field input{width:100%;background:#0d1525;border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);font-size:14px;outline:none}
+.ag-field input:focus{border-color:var(--blue)}
+.ag-err{font-size:12px;color:var(--red);min-height:18px;margin-bottom:8px}
+.ag-btn{width:100%;background:linear-gradient(135deg,#1d4ed8,#3b82f6);color:#fff;border:none;border-radius:8px;padding:12px;font-size:15px;font-weight:600;cursor:pointer}
+.ag-btn:hover{opacity:.9}
+.header{background:linear-gradient(135deg,#0f172a,#1e3a5f);border-bottom:1px solid var(--border);padding:0 32px;height:64px;display:flex;align-items:center;justify-content:space-between}
+.logo{display:flex;align-items:center;gap:12px}
+.logo-icon{width:36px;height:36px;background:var(--blue);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px}
+.logo-name{font-size:16px;font-weight:700}
+.logo-name span{color:var(--accent)}
+.htitle{font-size:14px;color:var(--muted)}
+.hright{display:flex;align-items:center;gap:12px}
+.hbadge{background:rgba(59,130,246,.15);border:1px solid rgba(59,130,246,.3);color:var(--accent);font-size:11px;padding:4px 10px;border-radius:12px}
+.hlink{color:var(--muted);font-size:13px;text-decoration:none}.hlink:hover{color:var(--text)}
+.hero{text-align:center;padding:40px 24px 24px}
+.hero h1{font-size:28px;font-weight:800;margin-bottom:8px}
+.hero h1 span{color:var(--accent)}
+.hero p{font-size:14px;color:var(--muted);max-width:520px;margin:0 auto}
+.info-bar{background:rgba(59,130,246,.07);border:1px solid rgba(59,130,246,.2);border-radius:8px;padding:10px 16px;font-size:12px;color:#93c5fd;margin:0 24px 16px;line-height:1.7}
+.main{max-width:900px;margin:0 auto;padding:0 24px 48px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:20px}
+.sh{background:linear-gradient(135deg,#1e3a5f,#162d4a);padding:14px 18px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border)}
+.si{width:30px;height:30px;border-radius:7px;background:rgba(59,130,246,.2);display:flex;align-items:center;justify-content:center;font-size:16px}
+.st{font-size:14px;font-weight:600}.ss{font-size:11px;color:var(--muted)}
+.sb{padding:16px 18px}
+.fr{display:grid;gap:10px;margin-bottom:10px}
+.c1{grid-template-columns:1fr}.c2{grid-template-columns:1fr 1fr}.c3{grid-template-columns:1fr 1fr 1fr}
+.fld{display:flex;flex-direction:column;gap:3px}
+.fld label{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);font-weight:600}
+.fld input{background:#0d1525;border:1px solid var(--border);border-radius:7px;padding:9px 12px;color:var(--text);font-size:14px;font-family:inherit;outline:none;transition:border-color .2s}
+.fld input:focus{border-color:var(--blue)}
+.fhint{background:rgba(59,130,246,.07);border:1px solid rgba(59,130,246,.2);border-radius:6px;padding:8px 12px;font-size:11px;color:#93c5fd;line-height:1.6}
+.actions{display:flex;gap:12px;padding:4px 0 8px;justify-content:flex-end}
+.btn-go{background:linear-gradient(135deg,#1d4ed8,#3b82f6);color:#fff;border:none;border-radius:8px;padding:11px 28px;font-size:14px;font-weight:600;cursor:pointer}
+.btn-go:hover{opacity:.9}
+.btn-s{background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:9px 18px;font-size:13px;cursor:pointer}
+.btn-s:hover{border-color:var(--accent);color:var(--accent)}
+.results-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:20px;display:none}
+.rhead{padding:14px 18px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border)}
+.rhead.ok{background:rgba(34,197,94,.08)}
+.rhead.warn{background:rgba(245,158,11,.08)}
+.rbody{padding:16px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{background:#0d1525;color:var(--muted);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;padding:7px 11px;text-align:left;border-bottom:1px solid var(--border)}
+td{padding:8px 11px;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:top}
+tr.clickable:hover td{background:rgba(96,165,250,.08);cursor:pointer}
+.kv{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:13px;gap:8px}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+</style>
+</head>
+<body>
+<script>
+(function(){
+  var SK='tn_biz_auth';
+  if(sessionStorage.getItem(SK)==='1'){
+    document.addEventListener('DOMContentLoaded',function(){
+      var g=document.getElementById('auth-gate');if(g)g.remove();
+      var p=document.getElementById('page-content');if(p)p.style.display='block';
+    });
+  }
+})();
+</script>
+<div id="auth-gate">
+  <div class="ag-box">
+    <div class="ag-logo-icon">🔐</div>
+    <div class="ag-title">TransNexus</div>
+    <div class="ag-sub">Sign in to continue</div>
+    <div class="ag-field"><label>Email</label><input type="email" id="ag-user" placeholder="you@transnexus.tech" autocomplete="username"></div>
+    <div class="ag-field"><label>Password</label><input type="password" id="ag-pass" placeholder="••••••••" autocomplete="current-password"></div>
+    <div class="ag-err" id="ag-err"></div>
+    <button class="ag-btn" id="ag-submit">Sign In</button>
+  </div>
+</div>
+<script>
+(function(){
+  var SK='tn_biz_auth';
+  var USERS={'joemaidaiv@transnexus.tech':'TNTemp!','scott.lawler@transnexus.tech':'TNTemp!'};
+  function unlock(){var g=document.getElementById('auth-gate');if(g)g.remove();var p=document.getElementById('page-content');if(p)p.style.display='block';}
+  function attempt(){
+    var u=document.getElementById('ag-user').value.trim().toLowerCase();
+    var p=document.getElementById('ag-pass').value;
+    if(USERS[u]&&USERS[u]===p){sessionStorage.setItem(SK,'1');unlock();}
+    else{var el=document.getElementById('ag-err');el.textContent='Invalid email or password.';setTimeout(function(){el.textContent='';},3000);}
+  }
+  document.getElementById('ag-submit').addEventListener('click',attempt);
+  document.getElementById('ag-pass').addEventListener('keydown',function(e){if(e.key==='Enter')attempt();});
+  document.getElementById('ag-user').addEventListener('keydown',function(e){if(e.key==='Enter')document.getElementById('ag-pass').focus();});
+  setTimeout(function(){document.getElementById('ag-user').focus();},100);
+})();
+</script>
+
+<div id="page-content" style="display:none">
+
+<div class="header">
+  <div class="logo">
+    <div class="logo-icon">🏢</div>
+    <div><div class="logo-name">Trans<span>Nexus</span></div></div>
+  </div>
+  <div class="htitle">Company Identity Search</div>
+  <div class="hright">
+    <span class="hbadge">TruLookup Business API</span>
+    <a href="transnexus.html" class="hlink">Individual Search</a>
+    <a href="data-analysis.html" class="hlink">Data Analysis</a>
+    <a href="/" class="hlink">Demos</a>
+  </div>
+</div>
+
+<div class="hero">
+  <h1>Company <span>Identity</span> Search</h1>
+  <p>Search TransUnion TruLookup for business entity records including addresses, phone numbers, EIN, and company type.</p>
+</div>
+
+<div class="info-bar">
+  <strong>Search tips:</strong> Provide <strong>Company Name</strong>, or <strong>EIN</strong>, or <strong>DUNS Number</strong> — adding City/State narrows results.
+  Minimum: at least one of Company Name, EIN, or DUNS.
+</div>
+
+<div class="main">
+  <div class="card">
+    <div class="sh"><div class="si">🏢</div><div><div class="st">Company Identity</div><div class="ss">Business entity information</div></div></div>
+    <div class="sb">
+      <div class="fr c1"><div class="fld"><label>Company Name</label><input type="text" id="cname" placeholder="Acme Corporation LLC" autocomplete="off"></div></div>
+      <div class="fr c1"><div class="fld"><label>Business Address</label><input type="text" id="caddr" placeholder="500 Corporate Blvd, Suite 200" autocomplete="off"></div></div>
+      <div class="fr c3">
+        <div class="fld"><label>City</label><input type="text" id="ccity" placeholder="Annapolis" autocomplete="off"></div>
+        <div class="fld"><label>State</label><input type="text" id="cstate" placeholder="MD" maxlength="2" autocomplete="off" style="text-transform:uppercase"></div>
+        <div class="fld"><label>ZIP</label><input type="text" id="czip" placeholder="21401" maxlength="10" autocomplete="off"></div>
+      </div>
+      <div class="fr c2">
+        <div class="fld"><label>EIN (Tax ID)</label><input type="text" id="ein" placeholder="XX-XXXXXXX" maxlength="10" autocomplete="off"></div>
+        <div class="fld"><label>DUNS Number</label><input type="text" id="duns" placeholder="XX-XXX-XXXX" autocomplete="off"></div>
+      </div>
+      <div class="actions">
+        <button class="btn-s" onclick="clearForm()">Clear</button>
+        <button class="btn-go" onclick="runSearch()">🔍 Search TransUnion</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="results-card" id="results-card">
+    <div class="rhead" id="rhead">
+      <div style="font-size:22px" id="ricon">⌛</div>
+      <div><div style="font-size:14px;font-weight:700" id="rtitle">Searching...</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:2px" id="rsub">TransUnion TruLookup BusinessSearch</div></div>
+    </div>
+    <div class="rbody" id="rbody"><div style="color:var(--muted);font-size:13px">Searching TransUnion...</div></div>
+  </div>
+</div>
+
+<script>
+var PROXY = (window.location.hostname==='localhost'||window.location.hostname==='127.0.0.1') ? '' : 'https://tn-proxy-lp3.azurewebsites.net';
+
+// Proxy status banner
+(function(){
+  fetch(PROXY+'/health').then(function(r){return r.json();}).then(function(h){
+    var b=document.createElement('div');
+    b.style='position:fixed;bottom:12px;right:12px;font-size:11px;padding:5px 11px;border-radius:5px;z-index:9998;font-family:monospace;border:1px solid';
+    if(h.tu_connected){b.style.background='rgba(34,197,94,.12)';b.style.borderColor='rgba(34,197,94,.35)';b.style.color='#86efac';b.textContent='✓ TU API Live';}
+    else{b.style.background='rgba(245,158,11,.1)';b.style.borderColor='rgba(245,158,11,.3)';b.style.color='#fcd34d';b.textContent='⚠ Proxy offline';}
+    document.body.appendChild(b);
+  }).catch(function(){});
+})();
+
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function getFirst(v){return Array.isArray(v)?v[0]:v;}
+function safe(v){return v?String(v):'—';}
+function fmtPhone(p){var s=String(p||'').replace(/D/g,'');return s.length===10?'('+s.slice(0,3)+') '+s.slice(3,6)+'-'+s.slice(6):(p||'—');}
+
+var G = { allRecords: [] };
+
+function clearForm(){
+  ['cname','caddr','ccity','cstate','czip','ein','duns'].forEach(function(id){
+    var el=document.getElementById(id); if(el) el.value='';
+  });
+  document.getElementById('results-card').style.display='none';
+}
+
+async function runSearch(){
+  var cname = document.getElementById('cname').value.trim();
+  var caddr = document.getElementById('caddr').value.trim();
+  var ccity = document.getElementById('ccity').value.trim();
+  var cstate = document.getElementById('cstate').value.trim();
+  var czip  = document.getElementById('czip').value.trim();
+  var ein   = document.getElementById('ein').value.trim();
+  var duns  = document.getElementById('duns').value.trim();
+
+  if(!cname && !ein && !duns){
+    alert('Please enter at least a Company Name, EIN, or DUNS number.');
+    return;
+  }
+
+  var card = document.getElementById('results-card');
+  card.style.display='block';
+  document.getElementById('rhead').className='rhead';
+  document.getElementById('ricon').textContent='⌛';
+  document.getElementById('rtitle').textContent='Searching TransUnion...';
+  document.getElementById('rsub').textContent='Running BusinessSearch';
+  document.getElementById('rbody').innerHTML='<div style="color:var(--muted);padding:16px;font-size:13px">Querying TransUnion TruLookup...</div>';
+  card.scrollIntoView({behavior:'smooth',block:'start'});
+
+  try {
+    var resp = await fetch(PROXY+'/api/business-lookup', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ companyName:cname||undefined, address:caddr||undefined,
+        city:ccity||undefined, state:cstate||undefined, zip:czip||undefined,
+        ein:ein||undefined, duns:duns||undefined, numberOfRecords:50 })
+    });
+    var json = await resp.json();
+    if(!json.success){
+      showError(json.errorCode, json.error||'BusinessSearch failed');
+      return;
+    }
+    showResults(json.data);
+  } catch(e) {
+    showError('net', e.message);
+  }
+}
+
+function showError(code, msg){
+  document.getElementById('rhead').className='rhead warn';
+  document.getElementById('ricon').textContent='⚠️';
+  document.getElementById('rtitle').textContent='Search Error';
+  document.getElementById('rsub').textContent=msg||'An error occurred';
+  document.getElementById('rbody').innerHTML='<div style="padding:14px;color:#fcd34d;font-size:13px">'+esc(msg)+'</div>';
+}
+
+function showResults(data){
+  var bsr = data && data.BusinessSearchResult;
+  var count = parseInt(bsr&&bsr.NumberOfRecordsFound||'0');
+  var recs = (bsr&&bsr.BusinessSearchOutputRecords&&bsr.BusinessSearchOutputRecords.TLOBusinessSearchOutputRecord)||[];
+  if(!Array.isArray(recs)) recs=[recs];
+  G.allRecords = recs;
+
+  document.getElementById('rhead').className='rhead ok';
+  document.getElementById('ricon').textContent=count>0?'✅':'⚠️';
+  document.getElementById('rtitle').textContent=count+' Matching Business Record'+(count!==1?'s':'')+' Found — click any row for full detail';
+  document.getElementById('rsub').textContent='TransUnion TruLookup BusinessSearch · TxnID: '+(bsr&&bsr.TransactionId||'—');
+
+  if(count===0||recs.length===0){
+    document.getElementById('rbody').innerHTML='<div style="padding:16px;color:var(--muted);font-size:13px">No matching business records found. Try a different company name or EIN.</div>';
+    return;
+  }
+
+  renderTable(recs, bsr);
+}
+
+function renderTable(recs, bsr){
+  var rows = recs.map(function(rec, i){
+    var name = safe(rec.Names&&rec.Names.BusinessName);
+    var ba = getFirst(rec.Addresses&&rec.Addresses.BasicAddressRecord);
+    var addr='—', city='—', state='—', zip='—';
+    if(ba&&ba.Address){addr=safe(ba.Address.Line1);city=safe(ba.Address.City);state=safe(ba.Address.State);zip=safe(ba.Address.Zip);}
+    var phone = fmtPhone(rec.Phones&&rec.Phones.BasicPhoneListing&&rec.Phones.BasicPhoneListing.PhoneNumber);
+    var ein   = safe(rec.EIN);
+    var btype = safe(rec.BusinessType);
+    return '<tr class="clickable" data-idx="'+i+'"><td style="color:var(--muted);font-size:11px">'+(i+1)+'</td>'
+      +'<td style="font-weight:600">'+esc(name)+'</td>'
+      +'<td>'+esc(addr)+'</td>'
+      +'<td>'+esc(city)+', '+esc(state)+' '+esc(zip)+'</td>'
+      +'<td style="font-family:monospace">'+esc(ein)+'</td>'
+      +'<td>'+esc(phone)+'</td>'
+      +'<td>'+esc(btype)+'</td>'
+      +'<td style="color:var(--blue);font-size:11px;white-space:nowrap">View →</td></tr>';
+  }).join('');
+
+  var html = '<div style="overflow-x:auto"><table>'
+    +'<thead><tr><th>#</th><th>Company Name</th><th>Address</th><th>City / State / ZIP</th><th>EIN</th><th>Phone</th><th>Type</th><th></th></tr></thead>'
+    +'<tbody>'+rows+'</tbody></table></div>'
+    +'<div style="padding:8px 2px 4px;font-size:11px;color:var(--muted)">TransUnion TruLookup · '+recs.length+' records · TxnID: '+(bsr&&bsr.TransactionId||'—')+' · Click any row to drill down.</div>'
+    +'<div style="padding-top:8px"><button class="btn-s" onclick="clearForm()">🔄 New Search</button></div>';
+
+  document.getElementById('rbody').innerHTML = html;
+  document.querySelectorAll('.clickable').forEach(function(tr){
+    tr.addEventListener('click', function(){ showDetail(parseInt(this.dataset.idx)); });
+  });
+}
+
+function showDetail(idx){
+  var rec = G.allRecords[idx];
+  if(!rec) return;
+  var name  = safe(rec.Names&&rec.Names.BusinessName);
+  var ba = getFirst(rec.Addresses&&rec.Addresses.BasicAddressRecord);
+  var addr='—'; if(ba&&ba.Address){var a=ba.Address;addr=[a.Line1,a.City,a.State,a.Zip].filter(Boolean).join(', ');}
+  var phone = fmtPhone(rec.Phones&&rec.Phones.BasicPhoneListing&&rec.Phones.BasicPhoneListing.PhoneNumber);
+  function kv(label,val){return '<div class="kv"><span style="color:var(--muted);font-size:12px">'+label+'</span><span style="font-weight:500">'+esc(val||'—')+'</span></div>';}
+
+  var html = '<div style="background:#0d1525;border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:12px">'
+    +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">'
+    +'<div><div style="font-size:18px;font-weight:700">'+esc(name)+'</div>'
+    +'<div style="font-size:11px;color:var(--muted);margin-top:2px">Record '+(idx+1)+' of '+G.allRecords.length+' — TransUnion BusinessSearch</div></div>'
+    +'<button class="btn-s" id="back-biz">← Back to Results</button>'
+    +'</div>'
+    +'<div class="split">'
+    +'<div><div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Company</div>'
+    +kv('Business Name', name)+kv('EIN / Tax ID', rec.EIN)+kv('DUNS', rec.DUNS)
+    +kv('Business Type', rec.BusinessType)+kv('State of Inc.', rec.StateOfIncorporation)+'</div>'
+    +'<div><div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Contact</div>'
+    +kv('Address', addr)+kv('Phone', phone)+'</div>'
+    +'</div>'
+    +'<div style="margin-top:16px;padding-top:12px;border-top:1px solid rgba(255,255,255,.06);font-size:11px;color:var(--muted)">💡 BusinessSearch returns registered entity data. For officer/principal names, run a combined search with the company name and state.</div>'
+    +'</div>'
+    +'<div style="padding-top:8px;display:flex;gap:10px"><button id="back-biz2" class="btn-s">← All Results</button><button class="btn-s" onclick="clearForm()">🔄 New Search</button></div>';
+
+  G._savedTable = document.getElementById('rbody').innerHTML;
+  document.getElementById('rbody').innerHTML = html;
+  document.getElementById('back-biz').addEventListener('click', function(){ renderTable(G.allRecords, {TransactionId:'-'}); });
+  document.getElementById('back-biz2').addEventListener('click', function(){ renderTable(G.allRecords, {TransactionId:'-'}); });
+}
+</script>
+</div>
+</body>
+</html>

@@ -192,4 +192,43 @@ async function personSearch(params = {}) {
 }
 
 
-module.exports = { echoTest, personSearch };
+
+// -- BusinessSearch --
+function parseBusinessSearch(xml) {
+  var txnId = null, errCode = null, count = "0", recs = [];
+  var m = xml.match(/<TransactionId>([^<]+)<\/TransactionId>/); if(m) txnId=m[1];
+  m = xml.match(/<ErrorCode>([^<]+)<\/ErrorCode>/); if(m) errCode=m[1];
+  m = xml.match(/<NumberOfRecordsFound>([^<]+)<\/NumberOfRecordsFound>/); if(m) count=m[1];
+  var recBlocks = []; var rx = /<TLOBusinessSearchOutputRecord>([sS]*?)<\/TLOBusinessSearchOutputRecord>/g;
+  var rm; while((rm=rx.exec(xml))!==null) recBlocks.push(rm[1]);
+  recs = recBlocks.map(function(rec) {
+    function v(tag){ var x=rec.match(new RegExp('<'+tag+'[^>]*>([^<]*)<\/'+tag+'>')); return x?x[1]:null; }
+    return { Names:{BusinessName:v('BusinessName')||v('Name')||v('CompanyName')},
+             Addresses:{BasicAddressRecord:{Address:{Line1:v('Line1')||v('StreetAddress'),City:v('City'),State:v('State'),Zip:v('Zip')||v('ZipCode')}}},
+             Phones:{BasicPhoneListing:{PhoneNumber:v('PhoneNumber')}},
+             EIN:v('EIN')||v('TaxID'), BusinessType:v('BusinessType')||v('EntityType'), StateOfIncorporation:v('StateOfIncorporation') };
+  });
+  return { BusinessSearchResult:{TransactionId:txnId,ErrorCode:errCode,NumberOfRecordsFound:count,BusinessSearchOutputRecords:{TLOBusinessSearchOutputRecord:recs}} };
+}
+
+async function businessSearch(params) {
+  params = params || {};
+  const fields = { ...baseCreds({ NumberOfRecords: params.numberOfRecords || '50', StartingRecord: params.startingRecord || '0' }) };
+  if (params.companyName) fields.Name = String(params.companyName).toUpperCase();
+  if (params.address || params.city || params.state || params.zip) {
+    fields.Address = {};
+    if (params.address) fields.Address.StreetAddress = params.address;
+    if (params.city)    fields.Address.City  = params.city.toUpperCase();
+    if (params.state)   fields.Address.State = params.state.toUpperCase();
+    if (params.zip)     fields.Address.Zip   = params.zip;
+  }
+  if (params.ein)  fields.EIN  = String(params.ein).replace(/[^0-9]/g, '');
+  if (params.duns) fields.DUNS = String(params.duns);
+  const body = buildEnvelope('BusinessSearch', 'businessSearchInput', fields);
+  const { status, body: xml } = await post(body, 'BusinessSearch');
+  if (status !== 200) { const e=new Error('SOAP HTTP '+status); e.responseBody=xml.substring(0,500); e.responseStatus=status; throw e; }
+  const errCode = xmlVal(xml, 'ErrorCode'), errMsg = xmlVal(xml, 'ErrorMessage');
+  if (errCode && errCode !== '0') { const e=new Error('TLO error '+errCode+': '+(errMsg||'no message')); e.responseBody=xml.substring(0,500); throw e; }
+  return parseBusinessSearch(xml);
+}
+module.exports = { echoTest, personSearch, businessSearch };

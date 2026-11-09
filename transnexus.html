@@ -587,71 +587,53 @@ function showDeconfliction(){
   document.getElementById('dw').style.display='block';
   setStep(3);
   document.getElementById('dw').scrollIntoView({behavior:'smooth',block:'start'});
-
-  var pm=0.08;
-  var iFields=[
-    {k:'Full Name',    entered:(G.fname+' '+G.mname+' '+G.lname).trim(), tu:tuField('name',   (G.fname+' '+G.lname).trim(),pm)},
-    {k:'Date of Birth',entered:G.dob||'—',                                tu:tuField('dob',    G.dob,pm)},
-    {k:'SSN',          entered:G.ssn||'—',                                tu:tuField('ssn',    G.ssn,pm)},
-    {k:'Address',      entered:G.addr||'—',                               tu:tuField('address',G.addr,pm)},
-    {k:'City',         entered:G.city||'—',                               tu:tuField('city',   G.city,pm)},
-    {k:'State',        entered:G.state||'—',                              tu:tuField('state',  G.state,pm)},
-    {k:'Phone',        entered:G.phone||'—',                              tu:tuField('phone',  G.phone,pm)},
-    {k:'Email',        entered:G.email||'—',                              tu:simTURecord(G.email,pm)},
-  ];
-  var cFields=[
-    {k:'Company Name',entered:G.cname||'—',tu:simTURecord(G.cname,pm)},
-    {k:'Business Address',entered:G.caddr||'—',tu:simTURecord(G.caddr,pm)},
-    {k:'City',entered:G.ccity||'—',tu:simTURecord(G.ccity,pm)},
-    {k:'EIN',entered:G.ein||'—',tu:simTURecord(G.ein,pm)},
-    {k:'DUNS',entered:G.duns||'—',tu:simTURecord(G.duns,pm)},
-  ];
-  G.iFields=iFields;G.cFields=cFields;
-
-  var allFields=iFields.concat(cFields).filter(function(f){return f.tu.status!=='skip';});
-  var matched=allFields.filter(function(f){return f.tu.status==='match';}).length;
-  var total=allFields.length;
-  var pct=total?Math.round((matched/total)*100):100;
-  G.matchPct=pct;
-  var warn=pct<90;
-
+  var r=G.tuResult;
   var dhead=document.getElementById('dhead');
-  dhead.className='dhead '+(warn?'warn':'ok');
-  document.getElementById('dicon').textContent=warn?'⚠️':'✅';
-  document.getElementById('dtitle').textContent=warn?'Deconfliction Required — Discrepancies Found':'Identity Confirmed — Data Matches';
-  document.getElementById('dsub').textContent=warn?'Less than 90% of fields match TransUnion records. Review discrepancies and confirm to proceed.':'All submitted fields match TransUnion records within acceptable tolerance.';
-  document.getElementById('dpct').className='dpct '+(warn?'warn':'ok');
-  document.getElementById('dpct').textContent=pct+'%';
-
-  function fieldRows(fields){
-    return fields.map(function(f){
-      var st=f.tu.status;
-      var rowCls=st==='mismatch'?'mm':st==='partial'?'pm':'ok';
-      var valCls=st==='mismatch'?'mm':st==='partial'?'pm':'';
-      var icon=st==='mismatch'?'✗':st==='partial'?'~':'✓';
-      var iconCol=st==='mismatch'?'color:var(--red)':st==='partial'?'color:var(--yellow)':'color:var(--green)';
-      return'<tr class="'+rowCls+'"><td>'+esc(f.k)+'</td><td class="ev">'+esc(f.entered)+'</td><td class="tv '+valCls+'">'+esc(f.tu.val)+'</td><td style="'+iconCol+';font-weight:700;font-size:15px">'+icon+'</td></tr>';
-    }).join('');
+  if(!r||!r.success){
+    var ec=r&&r.errorCode;
+    var msg=ec==='26'||ec===26?'Search too broad — add ZIP, State+First Name, DOB, SSN, or Phone.'
+      :ec==='10'||ec===10?'Not enough data — provide Last Name + ZIP, SSN, or Phone.'
+      :(r&&r.error?String(r.error):'TransUnion API error.');
+    dhead.className='dhead warn';
+    document.getElementById('dicon').textContent='⚠️';
+    document.getElementById('dtitle').textContent='Search Error';
+    document.getElementById('dsub').textContent=msg;
+    document.getElementById('dpct').textContent='';
+    document.getElementById('dbody').innerHTML='<div style="padding:14px;color:#fcd34d;font-size:13px">'+esc(msg)+'</div>';
+    return;
   }
-
-  var html='<table class="dtable"><thead><tr><th>Field</th><th>You Entered</th><th>TransUnion Record</th><th>Match</th></tr></thead><tbody>';
-  html+='<tr><td colspan="4" class="sec-div ind">👤 INDIVIDUAL</td></tr>';
-  html+=fieldRows(iFields);
-  if(G.cname){
-    html+='<tr><td colspan="4" class="sec-div co">🏢 COMPANY</td></tr>';
-    html+=fieldRows(cFields);
+  var psr=r.data&&r.data.PersonSearchResult;
+  var count=parseInt(psr&&psr.NumberOfRecordsFound||'0');
+  var recs=(psr&&psr.PersonSearchOutputRecords&&psr.PersonSearchOutputRecords.TLOPersonSearchOutputRecord)||[];
+  if(!Array.isArray(recs)) recs=[recs];
+  dhead.className='dhead ok';
+  document.getElementById('dicon').textContent=count>0?'✅':'⚠️';
+  document.getElementById('dtitle').textContent=count+' Matching Record'+(count!==1?'s':'')+' Found';
+  document.getElementById('dsub').textContent='TransUnion TruLookup PersonSearch';
+  document.getElementById('dpct').textContent='';
+  if(count===0||recs.length===0){
+    document.getElementById('dbody').innerHTML='<div style="padding:16px;color:var(--muted);font-size:13px">No matching records found.</div>';
+    return;
   }
-  html+='</tbody></table>';
-
-  if(warn){
-    html+='<div style="background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.25);border-radius:8px;padding:12px 16px;margin-bottom:12px;font-size:13px;color:#ffb0b0">⚠️ Match rate is <strong>'+pct+'%</strong> — below the 90% threshold required for automatic confirmation. Review the highlighted discrepancies above. Click <strong>Confirm &amp; Proceed</strong> to accept the TU record data, or <strong>Correct My Data</strong> to update your entries.</div>';
-    html+='<div class="dact"><button class="btn-go" onclick="confirmProceed()">✓ Confirm &amp; Proceed</button><button class="btn-s" onclick="clearForm()">← Correct My Data</button></div>';
-  }else{
-    html+='<div style="background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.2);border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:13px;color:#86efac">✅ Identity confirmed. Match rate: <strong>'+pct+'%</strong> — proceeding to credit and risk review.</div>';
-    html+='<div class="dact"><button class="btn-go" onclick="confirmProceed()">Continue to Credit Review →</button></div>';
-  }
-
-  document.getElementById('dbody').innerHTML=html;
+  function getFirst(v){return Array.isArray(v)?v[0]:v;}
+  function safe(v){return v?String(v):'—';}
+  function fmtDOB(d){return d?String(d).replace(/^(\d{4})(\d{2})(\d{2})$/,'$2/$3/$1'):'—';}
+  function fmtPhone(p){var s=String(p||'').replace(/\D/g,'');return s.length===10?'('+s.slice(0,3)+') '+s.slice(3,6)+'-'+s.slice(6):(p||'—');}
+  var rows=recs.map(function(rec,i){
+    var bn=getFirst(rec.Names&&rec.Names.BasicName);
+    var first=bn?safe(bn.FirstName):'—', last=bn?safe(bn.LastName):'—', mid=bn&&bn.MiddleName?safe(bn.MiddleName):'';
+    var bd=getFirst(rec.DatesOfBirth&&rec.DatesOfBirth.BasicDateOfBirthRecord);
+    var dob=fmtDOB(bd&&bd.DOB);
+    var bs=getFirst(rec.SSNRecords&&rec.SSNRecords.BasicSSNRecord);
+    var ssn=bs&&bs.SSN?'***-**-'+String(bs.SSN).slice(-4):'—';
+    var ba=getFirst(rec.Addresses&&rec.Addresses.BasicAddressRecord);
+    var addr='—',city='—',state='—',zip='—';
+    if(ba&&ba.Address){addr=safe(ba.Address.Line1);city=safe(ba.Address.City);state=safe(ba.Address.State);zip=safe(ba.Address.Zip);}
+    var bp=getFirst(rec.Phones&&rec.Phones.BasicPhoneListing);
+    var phone=fmtPhone(bp&&bp.PhoneNumber);
+    return '<tr><td style="color:var(--muted);font-size:11px">'+(i+1)+'</td><td style="font-weight:600">'+esc(last)+'</td><td>'+esc(first)+(mid?' '+esc(mid):'')+'</td><td>'+esc(dob)+'</td><td style="font-family:monospace">'+esc(ssn)+'</td><td>'+esc(addr)+'</td><td>'+esc(city)+', '+esc(state)+' '+esc(zip)+'</td><td>'+esc(phone)+'</td></tr>';
+  }).join('');
+  document.getElementById('dbody').innerHTML='<div style="overflow-x:auto"><table class="dtable"><thead><tr><th>#</th><th>Last Name</th><th>First Name</th><th>DOB</th><th>SSN</th><th>Street Address</th><th>City / State / ZIP</th><th>Phone</th></tr></thead><tbody>'+rows+'</tbody></table></div><div style="padding:8px 2px 4px;font-size:11px;color:var(--muted)">TransUnion TruLookup · '+count+' record'+(count!==1?'s':'')+' · TxnID: '+(psr&&psr.TransactionId||'—')+'<br>Note: Email is not returned by PersonSearch API.</div><div class="dact"><button class="btn-s" onclick="clearForm()">🔄 New Search</button></div>';
 }
 
 function confirmProceed(){

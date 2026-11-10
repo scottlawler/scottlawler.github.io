@@ -604,6 +604,7 @@ async function runTUQuery_multi(apiParams) {
     var recs = res.PersonSearchOutputRecords && res.PersonSearchOutputRecords.TLOPersonSearchOutputRecord;
     if (!recs) return [];
     if (!Array.isArray(recs)) recs = [recs];
+    rawResults = recs;
     return recs.map(function(r) {
       var bn=r.Names&&r.Names.BasicName; var n=Array.isArray(bn)?bn[0]:bn;
       var ba=r.Addresses&&r.Addresses.BasicAddressRecord; var a=Array.isArray(ba)?ba[0]:ba;

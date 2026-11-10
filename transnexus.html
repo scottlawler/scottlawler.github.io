@@ -489,9 +489,9 @@ var G = {};
 
 // ── STEP 2: QUERY ──────────────────────────
 var TU_STEPS=[
-  {icon:'🔐',label:'Connecting to TransUnion TLO API',sub:'Establishing mTLS client certificate connection',dur:600},
-  {icon:'👤',label:'Running PersonSearch Query',sub:'Searching TransUnion consumer database by provided criteria',dur:1200},
-  {icon:'📋',label:'Processing Results',sub:'Parsing and formatting matching records from TransUnion',dur:400},
+  {icon:'🔐',label:'Connecting to data sources',sub:'Establishing mTLS client certificate connection',dur:600},
+  {icon:'👤',label:'Running PersonSearch Query',sub:'Searching data sources by provided criteria',dur:1200},
+  {icon:'📋',label:'Processing Results',sub:'Parsing and formatting matching records',dur:400},
 ];
 
 function startVerify(e){
@@ -611,7 +611,7 @@ function showDeconfliction(){
   dhead.className='dhead ok';
   document.getElementById('dicon').textContent=count>0?'✅':'⚠️';
   var filteredCount = recs.length; var filterNote = filteredCount < count ? ' ('+filteredCount+' match your criteria)' : '';
-  document.getElementById('dtitle').textContent=count+' TLO Record'+(count!==1?'s':'')+' Found'+filterNote+' — click any row for full detail';
+  document.getElementById('dtitle').textContent=count+' Record'+(count!==1?'s':'')+' Found'+filterNote+' — click any row for full detail';
   document.getElementById('dsub').textContent='TransUnion TruLookup PersonSearch · TxnID: '+(psr&&psr.TransactionId||'—');
   document.getElementById('dpct').textContent='';
   if(count===0||recs.length===0){
@@ -669,7 +669,7 @@ function renderResultsTable(){
     return '<tr class="clickable-row" data-idx="'+i+'"><td style="color:var(--muted);font-size:11px">'+(i+1)+'</td><td style="font-weight:600">'+esc(last)+'</td><td>'+esc(first)+(mid?' '+esc(mid):'')+'</td><td>'+esc(dob)+'</td><td style="font-family:monospace">'+esc(ssn)+'</td><td>'+esc(addr)+'</td><td>'+esc(city)+', '+esc(state)+' '+esc(zip)+'</td><td>'+esc(phone)+'</td><td style="color:var(--blue);font-size:11px;white-space:nowrap">View →</td></tr>';
   }).join('');
   var tableHtml='<div style="overflow-x:auto"><table class="dtable"><thead><tr><th>#</th><th>Last Name</th><th>First Name</th><th>DOB</th><th>SSN</th><th>Street Address</th><th>City / State / ZIP</th><th>Phone</th><th></th></tr></thead><tbody>'+rows+'</tbody></table></div>'
-    +'<div style="padding:8px 2px 4px;font-size:11px;color:var(--muted)">TransUnion TruLookup · '+recs.length+' records · TxnID: '+G.txnId+'<br>Click any row to drill down into the full record. Email is not returned by TLO PersonSearch API.</div>'
+    +'<div style="padding:8px 2px 4px;font-size:11px;color:var(--muted)">'+recs.length+' record'+(recs.length!==1?'s':'')+' found</div>'
     +'<div class="dact"><button class="btn-s" onclick="clearForm()">🔄 New Search</button></div>';
   document.getElementById('dbody').innerHTML=tableHtml;
   document.querySelectorAll('.clickable-row').forEach(function(tr){

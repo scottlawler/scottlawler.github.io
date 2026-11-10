@@ -156,9 +156,9 @@ tr.clickable:hover td{background:rgba(96,165,250,.08);cursor:pointer}
     <div class="rhead" id="rhead">
       <div style="font-size:22px" id="ricon">⌛</div>
       <div><div style="font-size:14px;font-weight:700" id="rtitle">Searching...</div>
-      <div style="font-size:11px;color:var(--muted);margin-top:2px" id="rsub">TransUnion TruLookup BusinessSearch</div></div>
+      <div style="font-size:11px;color:var(--muted);margin-top:2px" id="rsub">data sources</div></div>
     </div>
-    <div class="rbody" id="rbody"><div style="color:var(--muted);font-size:13px">Searching TransUnion...</div></div>
+    <div class="rbody" id="rbody"><div style="color:var(--muted);font-size:13px">Searching data sources...</div></div>
   </div>
 </div>
 
@@ -208,9 +208,9 @@ async function runSearch(){
   card.style.display='block';
   document.getElementById('rhead').className='rhead';
   document.getElementById('ricon').textContent='⌛';
-  document.getElementById('rtitle').textContent='Searching TransUnion...';
+  document.getElementById('rtitle').textContent='Searching data sources...';
   document.getElementById('rsub').textContent='Running BusinessSearch';
-  document.getElementById('rbody').innerHTML='<div style="color:var(--muted);padding:16px;font-size:13px">Querying TransUnion TruLookup...</div>';
+  document.getElementById('rbody').innerHTML='<div style="color:var(--muted);padding:16px;font-size:13px">Querying data sources...</div>';
   card.scrollIntoView({behavior:'smooth',block:'start'});
 
   try {
@@ -289,7 +289,7 @@ function showResults(data){
   document.getElementById('rhead').className='rhead ok';
   document.getElementById('ricon').textContent=count>0?'✅':'⚠️';
   document.getElementById('rtitle').textContent=count+' Matching Business Record'+(count!==1?'s':'')+' Found — click any row for full detail';
-  document.getElementById('rsub').textContent='TransUnion TruLookup BusinessSearch · TxnID: '+(bsr&&bsr.TransactionId||'—');
+  document.getElementById('rsub').textContent='data sources · TxnID: '+(bsr&&bsr.TransactionId||'—');
 
   if(count===0||recs.length===0){
     document.getElementById('rbody').innerHTML='<div style="padding:16px;color:var(--muted);font-size:13px">No matching business records found. Try a different company name or EIN.</div>';

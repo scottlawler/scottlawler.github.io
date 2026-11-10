@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TransNexus - TruLookup Data Analysis</title>
+<title>TransNexus Data Source Analysis</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{--bg:#0a0e1a;--card:#1a2235;--border:#2a3652;--text:#e8edf5;--muted:#a0b4cc;--blue:#3b82f6;--green:#22c55e;--yellow:#f59e0b;--red:#ef4444;--accent:#93c5fd;--hover:#1f2d47}
@@ -192,13 +192,14 @@ tr:hover td{background:var(--hover);cursor:pointer}
     <div class="logo-icon">T</div>
     <div><div class="logo-name">Trans<span>Nexus</span></div></div>
   </div>
-  <div class="htitle">TruLookup Data Analysis</div>
+  <div class="htitle">TransNexus Data Source Analysis</div>
   <div class="hright">
-    <span class="hbadge">TruLookup API v6.10.14</span>
+    <span class="hbadge">Data Source Analysis</span>
     <a href="transnexus.html" class="hlink">Verification</a>
     <a href="/" class="hlink">Demos</a>
   </div>
 </div>
+<div style="background:rgba(59,130,246,.06);border-bottom:1px solid rgba(59,130,246,.15);padding:8px 20px;font-size:13px;color:#94a3b8">Click a search field (e.g. <strong style="color:#cbd5e1">Last Name</strong>), type a value (e.g. <strong style="color:#cbd5e1">smith</strong>), then click <strong style="color:#cbd5e1">+ Add</strong>. Repeat for each search criterion. Click <strong style="color:#cbd5e1">Search</strong> for results.</div>
 <div class="layout">
   <div class="fl">
     <div class="fl-search-wrap">
@@ -218,8 +219,8 @@ tr:hover td{background:var(--hover);cursor:pointer}
         <button class="qbtn-add" id="qb-add" onclick="addCondition()" disabled>+ Add</button>
         <button class="qbtn-run" id="qb-run" onclick="runMultiQuery()" disabled>Search</button>
       </div>
-      <div style="font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;margin-top:12px;padding-bottom:4px;border-bottom:1px solid rgba(59,130,246,.2)">&#9654; Active Search Criteria</div>
-      <div id="qconds-summary" style="display:none;background:rgba(59,130,246,.12);border:1px solid rgba(59,130,246,.35);border-radius:6px;padding:10px 14px;font-size:14px;font-weight:600;color:#93c5fd;margin-bottom:6px"></div>
+      <div style="font-size:13px;font-weight:700;color:#ffffff;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;margin-top:12px;padding-bottom:4px;border-bottom:1px solid rgba(59,130,246,.2)">&#9654; Active Search Criteria</div>
+      <div id="qconds-summary" style="display:none;background:rgba(59,130,246,.12);border:1px solid rgba(59,130,246,.35);border-radius:6px;padding:10px 14px;font-size:15px;font-weight:600;color:#ffffff;margin-bottom:6px"></div>
       <div class="qconds" id="qconds"><span class="qconds-empty">No filters yet — select a field and click + Add</span></div>
       <div class="ops">
         <span class="oplbl">Operator:</span>

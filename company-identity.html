@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -222,6 +222,14 @@ async function runSearch(){
     });
     var json = await resp.json();
     if(!json.success){
+      var ec=json.errorCode||''; var isAccess=String(json.error||'').includes('Access denied')||ec==='1';
+      if(isAccess && cname) {
+        try {
+          var r2=await fetch(PROXY+'/api/lookup',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({lastName:cname,state:cstate||undefined,zip:czip||undefined,numberOfRecords:50})});
+          var j2=await r2.json();
+          if(j2.success){showPersonResults(j2.data,cname);return;}
+        } catch(e2){}
+      }
       showError(json.errorCode, json.error||'BusinessSearch failed');
       return;
     }
@@ -237,6 +245,38 @@ function showError(code, msg){
   document.getElementById('rtitle').textContent='Search Error';
   document.getElementById('rsub').textContent=msg||'An error occurred';
   document.getElementById('rbody').innerHTML='<div style="padding:14px;color:#fcd34d;font-size:13px">'+esc(msg)+'</div>';
+}
+
+
+function showPersonResults(data, companyQuery) {
+  var psr = data && data.PersonSearchResult;
+  var count = parseInt(psr&&psr.NumberOfRecordsFound||'0');
+  var recs = (psr&&psr.PersonSearchOutputRecords&&psr.PersonSearchOutputRecords.TLOPersonSearchOutputRecord)||[];
+  if(!Array.isArray(recs)) recs=[recs];
+  G.allRecords = recs;
+  document.getElementById('rhead').className='rhead ok';
+  document.getElementById('ricon').textContent='⚠️';
+  document.getElementById('rtitle').textContent=count+' Result'+(count!==1?'s':'')+' Found (PersonSearch fallback)';
+  document.getElementById('rsub').textContent='BusinessSearch not yet enabled — showing PersonSearch results for: '+esc(companyQuery);
+  if(!count||!recs.length){
+    document.getElementById('rbody').innerHTML='<div style="padding:16px;color:var(--muted);font-size:13px">No records found. BusinessSearch requires additional TLO account permissions — contact TransUnion to enable.</div>';
+    return;
+  }
+  function getFirst(v){return Array.isArray(v)?v[0]:v;}
+  function safe(v){return v?String(v):'—';}
+  function fmtPhone(p){var s=String(p||'').replace(/\D/g,'');return s.length===10?'('+s.slice(0,3)+') '+s.slice(3,6)+'-'+s.slice(6):(p||'—');}
+  var rows=recs.map(function(rec,i){
+    var bn=getFirst(rec.Names&&rec.Names.BasicName);
+    var name=bn?[bn.FirstName,bn.MiddleName,bn.LastName].filter(Boolean).join(' '):'—';
+    var ba=getFirst(rec.Addresses&&rec.Addresses.BasicAddressRecord);
+    var addr='—',city='—',state='—',zip='—';
+    if(ba&&ba.Address){addr=safe(ba.Address.Line1);city=safe(ba.Address.City);state=safe(ba.Address.State);zip=safe(ba.Address.Zip);}
+    var bp=getFirst(rec.Phones&&rec.Phones.BasicPhoneListing);
+    var phone=fmtPhone(bp&&bp.PhoneNumber);
+    return '<tr><td style="color:var(--muted);font-size:11px">'+(i+1)+'</td><td style="font-weight:600">'+esc(name)+'</td><td>'+esc(addr)+'</td><td>'+esc(city)+', '+esc(state)+' '+esc(zip)+'</td><td>'+esc(phone)+'</td></tr>';
+  }).join('');
+  var note='<div style="background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);border-radius:6px;padding:10px 14px;margin-bottom:12px;font-size:12px;color:#fcd34d">⚠️ BusinessSearch requires additional TLO account permissions. Showing PersonSearch results for "'+esc(companyQuery)+'". <a href="mailto:API@transunion.com" style="color:#60a5fa">Email TransUnion API support</a> to enable BusinessSearch on this account.</div>';
+  document.getElementById('rbody').innerHTML=note+'<div style="overflow-x:auto"><table><thead><tr><th>#</th><th>Name</th><th>Address</th><th>City / State / ZIP</th><th>Phone</th></tr></thead><tbody>'+rows+'</tbody></table></div><div style="padding:8px 0 4px;font-size:11px;color:var(--muted)">TxnID: '+(psr&&psr.TransactionId||'—')+'</div><div style="padding-top:8px"><button class="btn-s" onclick="clearForm()">🔄 New Search</button></div>';
 }
 
 function showResults(data){

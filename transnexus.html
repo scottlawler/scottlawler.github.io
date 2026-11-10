@@ -632,6 +632,13 @@ function fmtPhone(p){var s=String(p||'').replace(/\D/g,'');return s.length===10?
 
 function renderResultsTable(){
   var recs=G.allRecords;
+  // Sort: exact lastName matches first
+  var searchedLast = (G.lname||'').toUpperCase();
+  recs = recs.slice().sort(function(a,b){
+    function getLast(r){var bn=getFirst(r.Names&&r.Names.BasicName);return bn?String(bn.LastName||'').toUpperCase():''}
+    var aMatch = getLast(a)===searchedLast?0:1; var bMatch = getLast(b)===searchedLast?0:1;
+    return aMatch-bMatch;
+  });
   var rows=recs.map(function(rec,i){
     var bn=getFirst(rec.Names&&rec.Names.BasicName);
     var first=bn?safeTU(bn.FirstName):'—', last=bn?safeTU(bn.LastName):'—', mid=bn&&bn.MiddleName?safeTU(bn.MiddleName):'';

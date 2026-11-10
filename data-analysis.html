@@ -670,17 +670,13 @@ function doExport() {
   if (!results || !results.length) return;
   var cols = ['last_name','first_name','middle_name','dob','ssn','addr_street1','addr_city','addr_state','addr_zip','phone'];
   var hdrs = ['Last Name','First Name','MI','DOB','SSN','Street','City','State','ZIP','Phone'];
-  var csv = hdrs.join(',') + '
-' + results.map(function(r){
-    return cols.map(function(k){ var v=String(r[k]||'').replace(/"/g,'""'); return '"'+v+'"'; }).join(',');
-  }).join('
-');
+  var rows = results.map(function(r){ return cols.map(function(k){ var v=String(r[k]||'').replace(/"/g,'""'); return '"'+v+'"'; }).join(','); });
+  var csv = hdrs.join(',') + "\n" + rows.join("\n");
   var a = document.createElement('a');
   a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
   a.download = 'data-source-results.csv';
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
 }
-
 function clearQ() {
   queryConditions = []; results = [];
   document.getElementById('rc').textContent = '0';

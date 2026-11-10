@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
+﻿﻿﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -273,7 +273,7 @@ tr:last-child td{border:none}
   <div class="steps" id="stepFlow">
     <div class="step active" id="s1"><div class="sn">1</div><div class="sl">Enter Data</div></div>
     <div class="sline"></div>
-    <div class="step" id="s2"><div class="sn">2</div><div class="sl">TU Query</div></div>
+    <div class="step" id="s2"><div class="sn">2</div><div class="sl">Query</div></div>
     <div class="sline"></div>
     <div class="step" id="s3"><div class="sn">3</div><div class="sl">Deconfliction</div></div>
     <div class="sline"></div>
@@ -487,7 +487,7 @@ function clearForm(){document.getElementById('vform').reset();['pw','dw','crw','
 // ── GLOBAL STATE ──────────────────────────────
 var G = {};
 
-// ── STEP 2: TU QUERY ──────────────────────────
+// ── STEP 2: QUERY ──────────────────────────
 var TU_STEPS=[
   {icon:'🔐',label:'Connecting to TransUnion TLO API',sub:'Establishing mTLS client certificate connection',dur:600},
   {icon:'👤',label:'Running PersonSearch Query',sub:'Searching TransUnion consumer database by provided criteria',dur:1200},

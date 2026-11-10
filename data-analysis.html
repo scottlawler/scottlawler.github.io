@@ -534,6 +534,17 @@ function removeCondition(i) {
   renderConditions();
 }
 
+var FIELD_TO_API = {
+  first_name:   'firstName',
+  last_name:    'lastName',
+  dob:          'dob',
+  ssn:          'ssn',
+  addr_street1: 'address',
+  addr_city:    'city',
+  addr_state:   'state',
+  addr_zip:     'zip',
+  phone:        'phone'
+};
 async function runMultiQuery() {
   if (!queryConditions.length) return;
   // Build API params from conditions (only TU-mapped fields go to live API)
@@ -551,7 +562,7 @@ async function runMultiQuery() {
     var liveRows = await runTUQuery_multi(apiParams);
     if (liveRows && liveRows.length > 0) {
       results = liveRows;
-      document.getElementById('rc').textContent = results.length + ' (TU Live)';
+      document.getElementById('rc').textContent = results.length + ' (live)';
       showTable(null);
       // Prepend active criteria header to results
       var _tw = document.getElementById('tw');

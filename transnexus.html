@@ -612,7 +612,7 @@ function showDeconfliction(){
   document.getElementById('dicon').textContent=count>0?'✅':'⚠️';
   var filteredCount = recs.length; var filterNote = filteredCount < count ? ' ('+filteredCount+' match your criteria)' : '';
   document.getElementById('dtitle').textContent=count+' Record'+(count!==1?'s':'')+' Found'+filterNote+' — click any row for full detail';
-  document.getElementById('dsub').textContent='TransUnion TruLookup PersonSearch · TxnID: '+(psr&&psr.TransactionId||'—');
+  document.getElementById('dsub').textContent='PersonSearch · TxnID: '+(psr&&psr.TransactionId||'-');
   document.getElementById('dpct').textContent='';
   if(count===0||recs.length===0){
     document.getElementById('dbody').innerHTML='<div style="padding:16px;color:var(--muted);font-size:13px">No matching records found.</div>';

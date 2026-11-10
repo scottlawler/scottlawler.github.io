@@ -636,6 +636,60 @@ function runQ() {
 
 
 
+var _simPopupShown = false;
+
+function showSimWarning(msg) {
+  document.getElementById('tw').innerHTML =
+    '<div style="padding:40px;text-align:center">' +
+    '<div style="font-size:32px;margin-bottom:12px">??</div>' +
+    '<div style="font-size:15px;font-weight:700;color:#fcd34d;margin-bottom:8px">No Results</div>' +
+    '<div style="font-size:13px;color:var(--muted)">'+esc(msg)+'</div></div>';
+  document.getElementById('rc').textContent = '0';
+}
+
+function showTable(filter) {
+  var rows = results;
+  if (!rows || !rows.length) {
+    document.getElementById('tw').innerHTML = '<div class="empty"><div class="empty-icon">??</div><div>No matching records found.</div></div>';
+    return;
+  }
+  var cols = [
+    {k:'last_name',l:'Last Name'},{k:'first_name',l:'First Name'},{k:'middle_name',l:'MI'},
+    {k:'dob',l:'DOB'},{k:'ssn',l:'SSN'},{k:'addr_street1',l:'Address'},
+    {k:'addr_city',l:'City'},{k:'addr_state',l:'St'},{k:'addr_zip',l:'ZIP'},{k:'phone',l:'Phone'}
+  ];
+  var thead = '<tr>'+cols.map(function(c){return '<th>'+c.l+'</th>';}).join('')+'</tr>';
+  var tbody = rows.map(function(r){
+    return '<tr>'+cols.map(function(c){return '<td>'+esc(r[c.k]||'')+'</td>';}).join('')+'</tr>';
+  }).join('');
+  document.getElementById('tw').innerHTML =
+    '<div style="overflow-x:auto"><table><thead>'+thead+'</thead><tbody>'+tbody+'</tbody></table></div>';
+}
+
+function doExport() {
+  if (!results || !results.length) return;
+  var cols = ['last_name','first_name','middle_name','dob','ssn','addr_street1','addr_city','addr_state','addr_zip','phone'];
+  var hdrs = ['Last Name','First Name','MI','DOB','SSN','Street','City','State','ZIP','Phone'];
+  var csv = hdrs.join(',') + '
+' + results.map(function(r){
+    return cols.map(function(k){ var v=String(r[k]||'').replace(/"/g,'""'); return '"'+v+'"'; }).join(',');
+  }).join('
+');
+  var a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+  a.download = 'data-source-results.csv';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+}
+
+function clearQ() {
+  queryConditions = []; results = [];
+  document.getElementById('rc').textContent = '0';
+  document.getElementById('rl').textContent = 'no query';
+  document.getElementById('tw').innerHTML = '<div class="empty"><div class="empty-icon">??</div><div>Select a field and enter a value</div></div>';
+  document.getElementById('qconds').innerHTML = '<span class="qconds-empty">No filters yet - select a field and click + Add</span>';
+  var s = document.getElementById('qconds-summary'); if(s){s.style.display='none';s.textContent='';}
+  document.getElementById('qb-run').disabled = true;
+}
 buildList();
 selF(0,0);
 </script>

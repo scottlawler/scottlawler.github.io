@@ -557,7 +557,7 @@ async function runMultiQuery() {
 
   document.getElementById('rl').textContent = queryConditions.map(function(c){ return c.label+'='+c.value; }).join(' + ');
   document.getElementById('rc').textContent = '…';
-  document.getElementById('tw').innerHTML = '<div class="empty"><div class="empty-icon">⟳</div><div>Querying TransUnion…</div></div>';
+  document.getElementById('tw').innerHTML = '<div class="empty"><div class="empty-icon">?</div><div>Querying Data Source.</div></div>';
 
   if (hasApiField) {
     var liveRows = await runTUQuery_multi(apiParams);

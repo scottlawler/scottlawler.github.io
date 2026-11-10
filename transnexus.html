@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+﻿﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -511,15 +511,15 @@ function startVerify(e){
   G.state=document.getElementById('state').value.trim();
   G.zip=document.getElementById('zip').value.trim();
   G.phone=document.getElementById('phone').value.trim();
-  G.email=document.getElementById('email').value.trim();
-  G.cname=document.getElementById('cname').value.trim();
-  G.caddr=document.getElementById('caddr').value.trim();
-  G.ccity=document.getElementById('ccity').value.trim();
-  G.cstate=document.getElementById('cstate').value.trim();
-  G.czip=document.getElementById('czip').value.trim();
-  G.cfounded=document.getElementById('cfounded').value;
-  G.ein=document.getElementById('ein').value.trim();
-  G.duns=document.getElementById('duns').value.trim();
+  G.email=(document.getElementById('email')||{value:''}).value.trim();
+  G.cname=(document.getElementById('cname')||{value:''}).value.trim();
+  G.caddr=(document.getElementById('caddr')||{value:''}).value.trim();
+  G.ccity=(document.getElementById('ccity')||{value:''}).value.trim();
+  G.cstate=(document.getElementById('cstate')||{value:''}).value.trim();
+  G.czip=(document.getElementById('czip')||{value:''}).value.trim();
+  G.cfounded=(document.getElementById('cfounded')||{value:''}).value;
+  G.ein=(document.getElementById('ein')||{value:''}).value.trim();
+  G.duns=(document.getElementById('duns')||{value:''}).value.trim();
   G.ts=new Date();
   // Fire real TU API call — result awaited when animation finishes
   G.tuResult = null;

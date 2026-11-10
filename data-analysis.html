@@ -551,6 +551,12 @@ async function runMultiQuery() {
       results = liveRows;
       document.getElementById('rc').textContent = results.length + ' (TU Live)';
       showTable(null);
+      // Prepend active criteria header to results
+      var _tw = document.getElementById('tw');
+      if(_tw && queryConditions.length>0){
+        var _ch='<div style="background:rgba(59,130,246,.07);border:1px solid rgba(59,130,246,.2);border-radius:6px;padding:8px 12px;margin-bottom:10px;font-size:12px;color:#93c5fd"><strong>Searching for:</strong> '+queryConditions.map(function(c){return esc(c.label)+' = <strong>'+esc(c.value)+'</strong>';}).join(' &nbsp;+&nbsp; ')+'</div>';
+        _tw.innerHTML = _ch + _tw.innerHTML;
+      }
       return;
     }
     _simPopupShown = false;

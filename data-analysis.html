@@ -388,7 +388,7 @@ var SAMPLE = [
   {vin:'5YJ3E1EA1JF000001',plate:'VA-XYZ789',plate_state:'VA',make:'Tesla',model:'Model 3',color:'Black',veh_year_from:2020}
 ];
 
-var gi=-1, fi=-1, op='eq', results=[];
+var gi=-1, fi=-1, op='eq', results=[], rawResults=[];
 
 function useExample(val) {
   var qi=document.getElementById('qi');
@@ -658,14 +658,49 @@ function showTable(filter) {
     {k:'dob',l:'DOB'},{k:'ssn',l:'SSN'},{k:'addr_street1',l:'Address'},
     {k:'addr_city',l:'City'},{k:'addr_state',l:'St'},{k:'addr_zip',l:'ZIP'},{k:'phone',l:'Phone'}
   ];
-  var thead = '<tr>'+cols.map(function(c){return '<th>'+c.l+'</th>';}).join('')+'</tr>';
-  var tbody = rows.map(function(r){
-    return '<tr>'+cols.map(function(c){return '<td>'+esc(r[c.k]||'')+'</td>';}).join('')+'</tr>';
+  var thead = '<tr>'+cols.map(function(c){return '<th>'+c.l+'</th>';}).join('')+'<th></th></tr>';
+  var tbody = rows.map(function(r,i){
+    return '<tr class="clickable-row" data-idx="'+i+'" style="cursor:pointer">'+cols.map(function(c){return '<td>'+esc(r[c.k]||'')+'</td>';}).join('')+'<td style="color:var(--accent);font-size:12px;white-space:nowrap">View &#8250;</td></tr>';
   }).join('');
-  document.getElementById('tw').innerHTML =
-    '<div style="overflow-x:auto"><table><thead>'+thead+'</thead><tbody>'+tbody+'</tbody></table></div>';
+  document.getElementById('tw').innerHTML = '<div style="overflow-x:auto"><table><thead>'+thead+'</thead><tbody>'+tbody+'</tbody></table></div>';
+  document.querySelectorAll('.clickable-row').forEach(function(tr){
+    tr.addEventListener('click',function(){ showRecordDetail(parseInt(this.dataset.idx)); });
+    tr.addEventListener('mouseover',function(){ this.style.background='rgba(96,165,250,.12)'; });
+    tr.addEventListener('mouseout',function(){ this.style.background=''; });
+  });
 }
 
+function fmtDOB_da(d){ if(!d||d.length<8) return d||'-'; return d.substring(4,6)+'/' +d.substring(6,8)+'/' +d.substring(0,4); }
+function fmtPhone_da(p){ if(!p) return '-'; var s=String(p).replace(/D/g,''); return s.length===10?'('+s.substring(0,3)+') '+s.substring(3,6)+'-'+s.substring(6):s; }
+function getArr_da(v){ if(!v) return []; return Array.isArray(v)?v:[v]; }
+
+function showRecordDetail(idx) {
+  var flat=results[idx]; var raw=rawResults[idx];
+  if(!flat) return;
+  var fullName=[flat.first_name,flat.middle_name,flat.last_name].filter(Boolean).join(' ');
+  function kv(label,val){ return '<div class="kv"><span style="color:var(--muted);font-size:12px">'+label+'</span><span style="font-weight:500">'+esc(String(val||'-'))+'</span></div>'; }
+  function sec(t){ return '<div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin:14px 0 6px">'+t+'</div>'; }
+  var html='<div style="background:#0d1525;border:1px solid var(--border);border-radius:10px;padding:20px;margin:8px">';
+  html+='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">';
+  html+='<div><div style="font-size:18px;font-weight:700;color:var(--text)">'+esc(fullName)+'</div>';
+  html+='<div style="font-size:11px;color:var(--muted);margin-top:2px">Record '+(idx+1)+' of '+results.length+' &mdash; PersonSearch</div></div>';
+  html+='<button onclick="showTable(null)" style="background:#1e3a5f;border:1px solid var(--border);color:var(--accent);border-radius:6px;padding:6px 14px;cursor:pointer;font-size:12px">&larr; Back to Results</button></div>';
+  html+='<div class="split">';
+  html+='<div>'+sec('Identity')+kv('Full Name',fullName)+kv('Date of Birth',fmtDOB_da(flat.dob))+kv('SSN',flat.ssn||'-');
+  if(raw){ var names=getArr_da(raw.Names&&raw.Names.BasicName); if(names.length>1){ html+=sec('Also Known As'); names.slice(1).forEach(function(n){ html+=kv('',[(n.FirstName||''),(n.MiddleName||''),(n.LastName||'')].filter(Boolean).join(' ')); }); } }
+  html+='</div><div>'+sec('Contact');
+  if(raw){
+    getArr_da(raw.Addresses&&raw.Addresses.BasicAddressRecord).slice(0,5).forEach(function(a,i){ var adr=a&&a.Address; if(!adr) return; html+=kv(i===0?'Address':'Previous Address',[adr.Line1,adr.City,adr.State,adr.Zip].filter(Boolean).join(', ')); });
+    getArr_da(raw.Phones&&raw.Phones.BasicPhoneListing).slice(0,3).forEach(function(p,i){ html+=kv(i===0?'Phone':'Alt Phone',fmtPhone_da(p&&p.PhoneNumber)); });
+  } else {
+    html+=kv('Address',[flat.addr_street1,flat.addr_city,flat.addr_state,flat.addr_zip].filter(Boolean).join(', '));
+    html+=kv('Phone',fmtPhone_da(flat.phone));
+  }
+  html+=kv('Email','Not available from PersonSearch API')+'</div></div>';
+  if(raw){ var assoc=getArr_da(raw.Associates&&(raw.Associates.PersonAssociate||raw.Associates.BasicPersonAssociate)); if(assoc.length){ html+=sec('Associates / Relatives')+'<div style="display:flex;flex-wrap:wrap;gap:6px">'; assoc.slice(0,10).forEach(function(a){ var n=a.Names&&(Array.isArray(a.Names.BasicName)?a.Names.BasicName[0]:a.Names.BasicName); var nm=n?[(n.FirstName||''),(n.LastName||'')].filter(Boolean).join(' '):'Unknown'; var rel=a.RelationshipType||a.AssociationType||''; html+='<span style="background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.25);border-radius:4px;padding:3px 8px;font-size:12px">'+esc(nm)+(rel?' <em style="opacity:.6">'+esc(rel)+'</em>':'')+'</span>'; }); html+='</div>'; } }
+  html+='<div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--border);font-size:11px;color:var(--muted)">?? PersonSearch returns basic matching data. For comprehensive records, run a targeted search with SSN or DOB.</div></div>';
+  document.getElementById('tw').innerHTML=html;
+}
 function doExport() {
   if (!results || !results.length) return;
   var cols = ['last_name','first_name','middle_name','dob','ssn','addr_street1','addr_city','addr_state','addr_zip','phone'];
@@ -678,7 +713,7 @@ function doExport() {
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
 }
 function clearQ() {
-  queryConditions = []; results = [];
+  queryConditions = []; results = []; rawResults = [];
   document.getElementById('rc').textContent = '0';
   document.getElementById('rl').textContent = 'no query';
   document.getElementById('tw').innerHTML = '<div class="empty"><div class="empty-icon">??</div><div>Select a field and enter a value</div></div>';

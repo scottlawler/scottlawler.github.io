@@ -275,7 +275,7 @@ function showPersonResults(data, companyQuery) {
     var phone=fmtPhone(bp&&bp.PhoneNumber);
     return '<tr><td style="color:var(--muted);font-size:11px">'+(i+1)+'</td><td style="font-weight:600">'+esc(name)+'</td><td>'+esc(addr)+'</td><td>'+esc(city)+', '+esc(state)+' '+esc(zip)+'</td><td>'+esc(phone)+'</td></tr>';
   }).join('');
-  var note='<div style="background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);border-radius:6px;padding:10px 14px;margin-bottom:12px;font-size:12px;color:#fcd34d">⚠️ BusinessSearch requires additional TLO account permissions. Showing PersonSearch results for "'+esc(companyQuery)+'". <a href="mailto:API@transunion.com" style="color:#60a5fa">Email TransUnion API support</a> to enable BusinessSearch on this account.</div>';
+  var note='<div style="background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);border-radius:6px;padding:10px 14px;margin-bottom:12px;font-size:12px;color:#fcd34d">⚠️ BusinessSearch requires additional account permissions. Showing PersonSearch results for "'+esc(companyQuery)+'". <a href="mailto:API@transunion.com" style="color:#60a5fa">Email TransUnion API support</a> to enable BusinessSearch on this account.</div>';
   document.getElementById('rbody').innerHTML=note+'<div style="overflow-x:auto"><table><thead><tr><th>#</th><th>Name</th><th>Address</th><th>City / State / ZIP</th><th>Phone</th></tr></thead><tbody>'+rows+'</tbody></table></div><div style="padding:8px 0 4px;font-size:11px;color:var(--muted)">TxnID: '+(psr&&psr.TransactionId||'—')+'</div><div style="padding-top:8px"><button class="btn-s" onclick="clearForm()">🔄 New Search</button></div>';
 }
 

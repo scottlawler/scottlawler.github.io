@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -301,14 +301,12 @@ tr:last-child td{border:none}
     </div>
   </div>
 
-  <div class="sc">
-    <div class="sh"><div class="si c">🏢</div><div><div class="st">Company Identity <span style="font-size:10px;font-weight:400;color:var(--muted)"> &mdash; OR Individual</span></div><div class="ss">Business identifying information</div></div></div>
-    <div class="sb">
-      <div class="fr c1"><div class="fld"><label>Company Name</label><input type="text" id="cname" placeholder="Acme Corporation LLC" autocomplete="off"></div></div>
-      <div class="fr c1"><div class="fld"><label>Business Address</label><input type="text" id="caddr" placeholder="500 Corporate Blvd, Suite 200" autocomplete="off"></div></div>
-      <div class="fr c3"><div class="fld"><label>City</label><input type="text" id="ccity" placeholder="Annapolis" autocomplete="off"></div><div class="fld"><label>State</label><input type="text" id="cstate" placeholder="MD" maxlength="2" autocomplete="off" style="text-transform:uppercase"></div><div class="fld"><label>ZIP</label><input type="text" id="czip" placeholder="21401" maxlength="10" autocomplete="off"></div></div>
-      <div class="fr c2"><div class="fld"><label>Date Founded</label><input type="date" id="cfounded" autocomplete="off"></div><div class="fld"><label>EIN</label><input type="text" id="ein" placeholder="XX-XXXXXXX" maxlength="10" autocomplete="off" oninput="fmtEIN(this)"><div class="fhint">Format: 12-3456789</div></div></div>
-      <div class="fr c1"><div class="fld"><label>DUNS Number</label><input type="text" id="duns" placeholder="XX-XXX-XXXX" maxlength="11" autocomplete="off" oninput="fmtDUNS(this)"><div class="fhint">9-digit D&amp;B identifier</div></div></div>
+  <div class="sc" style="display:flex;align-items:center;justify-content:center;min-height:200px;background:linear-gradient(135deg,#162d4a,#1a2235);cursor:pointer" onclick="window.location='company-identity.html'">
+    <div style="text-align:center;padding:32px">
+      <div style="font-size:40px;margin-bottom:12px">🏢</div>
+      <div style="font-size:17px;font-weight:700;color:var(--text);margin-bottom:8px">Company Identity Search</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:20px">Search TransUnion for business entity records including EIN, address, phone, and company type.</div>
+      <a href="company-identity.html" style="display:inline-block;background:linear-gradient(135deg,#1d4ed8,#3b82f6);color:#fff;text-decoration:none;border-radius:8px;padding:10px 24px;font-size:14px;font-weight:600">Open Company Search →</a>
     </div>
   </div>
 

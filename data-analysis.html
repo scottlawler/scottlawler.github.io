@@ -1,4 +1,4 @@
-﻿﻿<!DOCTYPE html>
+﻿﻿﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -218,7 +218,7 @@ tr:hover td{background:var(--hover);cursor:pointer}
         <button class="qbtn-add" id="qb-add" onclick="addCondition()" disabled>+ Add</button>
         <button class="qbtn-run" id="qb-run" onclick="runMultiQuery()" disabled>Search</button>
       </div>
-      <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;margin-top:8px">Active Search Criteria</div>
+      <div style="font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;margin-top:12px;padding-bottom:4px;border-bottom:1px solid rgba(59,130,246,.2)">&#9654; Active Search Criteria</div>
       <div class="qconds" id="qconds"><span class="qconds-empty">No filters yet — select a field and click + Add</span></div>
       <div class="ops">
         <span class="oplbl">Operator:</span>
@@ -494,7 +494,7 @@ function setOp(o) {
   ['eq','co','sw','ge','le'].forEach(function(x){var el=document.getElementById('o'+x);if(el)el.className='op'+(x===o?' active':'');});
 }
 
-async 
+
 // ── MULTI-FIELD QUERY BUILDER ─────────────────────────────────────────────
 var queryConditions = []; // [{key, label, value, op}]
 

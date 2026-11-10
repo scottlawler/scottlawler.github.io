@@ -1,4 +1,4 @@
-﻿﻿<!DOCTYPE html>
+﻿﻿﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -489,14 +489,9 @@ var G = {};
 
 // ── STEP 2: TU QUERY ──────────────────────────
 var TU_STEPS=[
-  {icon:'🔐',label:'Authenticate with TransUnion API',sub:'OAuth 2.0 token exchange — TU Identity Services',dur:600},
-  {icon:'👤',label:'Query Individual Consumer Record',sub:'Searching TU consumer database by name, DOB, SSN',dur:900},
-  {icon:'📍',label:'Address & History Verification',sub:'Cross-referencing current and prior address records',dur:700},
-  {icon:'📞',label:'Phone & Email Linkage',sub:'Validating contact info against TU identity graph',dur:500},
-  {icon:'🏢',label:'Query Business Entity Record',sub:'Searching TU commercial database by name, EIN, DUNS',dur:850},
-  {icon:'🔗',label:'Individual ↔ Company Association',sub:'Detecting ownership and officer-level connections',dur:600},
-  {icon:'💳',label:'Retrieve Credit & Financial Data',sub:'Pulling credit history, debt obligations, account records',dur:750},
-  {icon:'📊',label:'Compiling Verification Dataset',sub:'Preparing deconfliction and risk scoring payload',dur:400},
+  {icon:'🔐',label:'Connecting to TransUnion TLO API',sub:'Establishing mTLS client certificate connection',dur:600},
+  {icon:'👤',label:'Running PersonSearch Query',sub:'Searching TransUnion consumer database by provided criteria',dur:1200},
+  {icon:'📋',label:'Processing Results',sub:'Parsing and formatting matching records from TransUnion',dur:400},
 ];
 
 function startVerify(e){

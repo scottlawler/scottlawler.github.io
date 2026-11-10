@@ -96,7 +96,7 @@ body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,
 .sec-div{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;padding:8px 0 3px;border-top:1px solid var(--border);margin-top:6px}
 .sec-div.ind{color:var(--accent)}.sec-div.co{color:var(--green)}
 
-/* CREDIT REVIEW */
+/* DATA REVIEW */
 .crw{grid-column:1/-1;display:none}
 .crtabs{display:flex;gap:4px;margin-bottom:16px}
 .crtab{padding:8px 18px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;border:1px solid var(--border);color:var(--muted);transition:all .2s}
@@ -277,7 +277,7 @@ tr:last-child td{border:none}
     <div class="sline"></div>
     <div class="step" id="s3"><div class="sn">3</div><div class="sl">Deconfliction</div></div>
     <div class="sline"></div>
-    <div class="step" id="s4"><div class="sn">4</div><div class="sl">Credit Review</div></div>
+    <div class="step" id="s4"><div class="sn">4</div><div class="sl">Data Review</div></div>
     <div class="sline"></div>
     <div class="step" id="s5"><div class="sn">5</div><div class="sl">Risk Profile</div></div>
     <div class="sline"></div>
@@ -323,7 +323,7 @@ tr:last-child td{border:none}
     </div>
   </div>
 
-  <!-- STEP 4: CREDIT REVIEW -->
+  <!-- STEP 4: DATA REVIEW -->
   <div class="crw full-col" id="crw">
     <div class="crtabs"><div class="crtab active" onclick="crTab('ind')">👤 Individual Credit</div><div class="crtab" onclick="crTab('co')">🏢 Company Credit</div></div>
     <div class="crpanel active" id="cr-ind" id="cr-ind"></div>
@@ -719,7 +719,7 @@ function confirmProceed(){
   showCreditReview();
 }
 
-// ── STEP 4: CREDIT REVIEW ─────────────────────
+// ── STEP 4: DATA REVIEW ─────────────────────
 function crTab(t){
   document.querySelectorAll('.crtab').forEach(function(el,i){el.className='crtab'+(i===(t==='ind'?0:1)?' active':'');});
   document.getElementById('cr-ind').className='crpanel'+(t==='ind'?' active':'');
@@ -952,7 +952,7 @@ function showStep6(){
   iLog+=logLine('k','','  Match Rate     ')+' : '+logLine(G.matchPct>=90?'ok':'w','',G.matchPct+'%');
   iLog+=logLine('k','','  Outcome        ')+' : '+logLine('ok','',G.matchPct>=90?'AUTO-CONFIRMED':'MANUALLY CONFIRMED BY OPERATOR');
   iLog+='';
-  iLog+=logLine('ts','','['+ts+']')+' '+logLine('k','','STEP 4a — Individual Credit Review');
+  iLog+=logLine('ts','','['+ts+']')+' '+logLine('k','','STEP 4a — Individual Data Review');
   iLog+=logLine('k','','  Credit Score   ')+' : '+logLine('v','','712 (Good)');
   iLog+=logLine('k','','  Total Debt     ')+' : '+logLine('v','','$124,800');
   if(G.hasChinaInd){
@@ -991,7 +991,7 @@ function showStep6(){
   cLog+=logLine('k','','  DB Queried     ')+' : '+logLine('v','','TU Commercial Database');
   cLog+=logLine('k','','  Fields Checked ')+' : '+logLine('v','','Name, Address, EIN, DUNS');
   cLog+='';
-  cLog+=logLine('ts','','['+ts+']')+' '+logLine('k','','STEP 4b — Company Credit Review');
+  cLog+=logLine('ts','','['+ts+']')+' '+logLine('k','','STEP 4b — Company Data Review');
   cLog+=logLine('k','','  Credit Score   ')+' : '+logLine('v','','72 (Good)');
   cLog+=logLine('k','','  Total Debt     ')+' : '+logLine('v','','$2,400,000');
   if(G.hasChinaCo){

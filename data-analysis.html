@@ -132,6 +132,7 @@ tr:hover td{background:var(--hover);cursor:pointer}
     document.addEventListener('DOMContentLoaded',function(){
       var g=document.getElementById('auth-gate');if(g)g.remove();
       var p=document.getElementById('page-content');if(p)p.style.display='block';
+      setTimeout(function(){if(typeof buildList==='function'){buildList();selF(0,0);}},50);
     });
   }
 })();
@@ -165,6 +166,7 @@ tr:hover td{background:var(--hover);cursor:pointer}
   function unlock(){
     var g=document.getElementById('auth-gate');if(g)g.remove();
     var p=document.getElementById('page-content');if(p)p.style.display='block';
+    setTimeout(function(){if(typeof buildList==='function'){buildList();selF(0,0);}},50);
   }
   function attempt(){
     var u=document.getElementById('ag-user').value.trim().toLowerCase();

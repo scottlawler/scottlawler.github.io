@@ -1,4 +1,4 @@
-﻿﻿﻿<!DOCTYPE html>
+﻿﻿﻿﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -265,6 +265,7 @@ tr:hover td{background:var(--hover);cursor:pointer}
 <script>
 var PROXY = (window.location.hostname==='localhost'||window.location.hostname==='127.0.0.1') ? '' : 'https://tn-proxy-lp3.azurewebsites.net';
 var queryConditions = [];
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 var S = [
   {g:'Person Search', fields:[
     {k:'first_name', l:'First Name', d:'String', f:'Alpha only', minL:1, maxL:25, ex:['John','Mary'], note:'Alpha characters only. Legal first name. Used in: BasicPersonSearch, PersonSearch, ComprehensivePerson, LocateReport, DeathMaster, Criminal, Incarceration, Voter, Eviction, WatchList.'},

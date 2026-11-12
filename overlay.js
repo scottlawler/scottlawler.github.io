@@ -15,7 +15,7 @@ var LOGO=window.__oc_logo||'';
 function alertLabel(t){if(!t)return '';if(t==='ROUND_DOLLAR_AMOUNTS'||t==='DOLLAR_MATCH')return 'DOLLAR_MATCH';if(t==='SANCTIONS_LIST_MATCH')return 'PEP_MATCH';return t;}
 function hl(v,on){if(!v||v==='-')return v||'-';if(on)return '<span style="background:#b2f0b2;padding:1px 5px;border-radius:3px;font-weight:700">'+v+'</span>';return v;}
 function prioBadge(p){
-    if(p===null||p===undefined||p==='')return '-';
+    if(p===null||p===undefined||p===''||p==='blank')return '';
     var s=String(p).trim(),su=s.toUpperCase();
     var style='display:inline-block;padding:2px 10px;border-radius:4px;font-weight:700;color:#000;font-size:13px;';
     if(su==='RED'||parseInt(p)===1) return '<span style="'+style+'background:#EF5350">Red</span>';

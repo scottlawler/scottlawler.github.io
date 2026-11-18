@@ -37,6 +37,19 @@ var isAmt=origAt==='DOLLAR_MATCH'||origAt==='ROUND_DOLLAR_AMOUNTS'||origAt==='HI
 var isGeo=origAt==='HIGH_RISK_COUNTRY';var isSt=origAt==='STRUCTURING';
 mf={SenderFirstName:isName,SenderLastName:isName,SenderAddressLine1:isName,SenderCity:isName,SenderState:isName,ReceiverFirstName:isName,ReceiverLastName:isName,ReceiverAddressLine1:isName,ReceiverCity:isName,ReceiverState:isName,SenderBankAccountNumber:isAcct,SenderBankRoutingNumber:isAcct,ReceiverBankAccountNumber:isAcct,ReceiverBankRoutingNumber:isAcct,Amount:isAmt||isSt,ReceiverCountry:isGeo};
 if(r.MatchedFields){var mfl=r.MatchedFields.split(',');mfl.forEach(function(f2){mf[f2.trim()]=true;});}
+var reasons=[];if(isName)reasons.push('Name/Address');if(isAcct)reasons.push('Account+Routing');if(isAmt)reasons.push('Dollar Amount');if(isGeo)reasons.push('Geographic');if(isSt)reasons.push('Structuring');
+var secs={'Alert Info':['AlertType','PRIORITY','MatchType','FundsFlow','Channel','CurrencyCode'],'Transaction':['TransactionID','TransactionTime','Amount'],'Sender':['SenderFirstName','SenderLastName','SenderBankAccountNumber','SenderBankRoutingNumber','SenderBankName','SenderTaxID','SenderAddressLine1','SenderCity','SenderState','SenderPostcode'],'Receiver':['ReceiverFirstName','ReceiverLastName','ReceiverBankAccountNumber','ReceiverBankRoutingNumber','ReceiverBankName','ReceiverTaxID','ReceiverAddressLine1','ReceiverCity','ReceiverState','ReceiverCountry','ReceiverPostcode'],'Metadata':['WatcherGuid','UserId']};
+var mw=document.createElement('div');mw.id='__oc_modal_wrap';mw.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:2147483647;display:flex;align-items:flex-start;justify-content:center;padding:30px 20px;overflow:auto';
+var box=document.createElement('div');box.style.cssText='background:#fff;border-radius:8px;width:100%;max-width:640px;box-shadow:0 8px 40px rgba(0,0,0,.3);overflow:hidden;margin:auto';
+var mhdr=document.createElement('div');mhdr.style.cssText='background:#0d2d6e;color:#fff;padding:14px 20px;display:flex;justify-content:space-between;align-items:center';
+var mhl=document.createElement('div');
+var mt=document.createElement('div');mt.style.cssText='font-size:16px;font-weight:700';mt.textContent='Full Alert Record';
+var ms=document.createElement('div');ms.style.cssText='font-size:12px;opacity:.8';ms.textContent=dispAt+' | '+prioBadge(r.PRIORITY).replace(/<[^>]+>/g,'');
+mhl.appendChild(mt);mhl.appendChild(ms);
+var mcb=document.createElement('button');mcb.textContent='X';mcb.style.cssText='background:none;border:none;color:#fff;font-size:24px;cursor:pointer;padding:0';mcb.onclick=function(){mw.remove();};
+mhdr.appendChild(mhl);mhdr.appendChild(mcb);
+var mbody=document.createElement('div');mbody.style.cssText='padding:16px 20px;max-height:72vh;overflow-y:auto';
+if(reasons.length){var banner=document.createElement('div');banner.style.cssText='background:#e8f5e9;border-left:4px solid #2e7d32;padding:8px 12px;margin-bottom:12px;font-size:14px';banner.innerHTML='<b>Match:</b> '+reasons.join(' + ');mbody.appendChild(banner);}
 Object.keys(secs).forEach(function(sn){
 var hasRows=false;
 var sec=document.createElement('div');sec.style.marginBottom='12px';

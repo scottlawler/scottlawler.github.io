@@ -7,7 +7,7 @@ var API='https://oloaxv80ee.execute-api.us-east-1.amazonaws.com/prod/getMatching
 var currentHours=24,allRecords=[],knownIds=new Set();
 var newTimestamps=new Map();
 var NAME_T={PEP_MATCH:1,SANCTIONS_LIST_MATCH:1};
-var AMT_T={HIGH_VALUE_TRANSACTION:1,DOLLAR_MATCH:1,ROUND_DOLLAR_AMOUNTS:1};
+var AMT_T={HIGH_VALUE_TRANSACTION:1,DOLLAR_MATCH:1,ROUND_DOLLAR_AMOUNTS:1,STRUCTURING:1};
 var ACCT_T={SHELL_COMPANY:1,RAPID_MOVEMENT:1};
 var GEO_T={HIGH_RISK_COUNTRY:1};
 var US_VALS=['US','USA','UNITED STATES','UNITED STATES OF AMERICA'];
